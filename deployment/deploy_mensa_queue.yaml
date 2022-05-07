@@ -1,0 +1,19 @@
+---
+- name: Mensaqueuebot deployment playbook
+  hosts: SOME_TODO_IP
+  tasks:
+    - name: Moves application files to remote
+      ansible.posix.synchronize:
+        # ansible.builtin.copy Is extremely slow
+        src: ../../../mensa_queue_bot/
+        dest: ./mensaqueuebot
+
+    - name: Builds the container remotely
+      ansible.builtin.command: 
+          cmd: docker build -t mensaqueuebot ./mensaqueuebot
+
+
+    - name: Executes container with docker-compose
+      community.docker.docker_compose:
+          env_file: .env # On remote host
+          project_src: ./mensaqueuebot/deployment
