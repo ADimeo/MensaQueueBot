@@ -216,6 +216,14 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 	}
 }
 
+func getLocalLocation() *time.Location {
+	potsdamLocation, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		zap.S().Panic("Can't load location Europe/Berlin!")
+	}
+	return potsdamLocation
+}
+
 /*
    Sends a message to the specified user, depending on when the last reported queue length was;
    - For reported lengths within the last 5 minute
@@ -231,7 +239,12 @@ func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 
 	timestampNow := time.Now()
 	timestampThen := time.Unix(int64(timeOfReport), 0)
-	zap.S().Infof("Loading queue length report from %s (Current time is %s)", timestampThen.Format("15:04"), timestampNow.Format("15:04"))
+
+	potsdamLocation := getLocalLocation()
+	timestampNow = timestampNow.In(potsdamLocation)
+	timestampThen = timestampThen.In(potsdamLocation)
+
+	zap.S().Infof("Loading queue length report from %s Europe/Berlin(Current time is %s Europe/Berlin)", timestampThen.Format("15:04"), timestampNow.Format("15:04"))
 
 	var err error
 
@@ -323,18 +336,24 @@ func initiateLogger() {
 	zap.ReplaceGlobals(logger)
 }
 
+// Accesses a number of variables in order to crash early
+// if some configuration flaw exists
+// We only call methods that aren't already called directly in main()
+func runEnvironmentTests() {
+	GetTelegramToken()
+	getMensaLocationSlice() // Load to test for early panic
+	GetReplyKeyboard()
+	getLocalLocation()
+}
+
 func main() {
 	initiateLogger()
 	zap.S().Info("Initializing Server...")
 
 	// Only used for non-critical operations
 	rand.Seed(time.Now().UnixNano())
-	personalToken := getPersonalToken()
-	GetTelegramToken()
-	getMensaLocationSlice() // Load to test for early panic
-	GetReplyKeyboard()
-
 	InitNewDB()
+	personalToken := getPersonalToken()
 
 	r := gin.Default()
 
