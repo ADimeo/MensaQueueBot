@@ -1,34 +1,34 @@
 [
     {
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wild_Platypus_4.jpg",
+        "photo_url": "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L00_practically_empty.jpg?raw=true",
         "description": "L00_practically_empty"
     },
     {
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Platypus-sketch.jpg",
+        "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L01_within_kitchen.jpg?raw=true",
         "description": "L01_within_kitchen"
     },
     {
-        "photo_url": "https://slm-assets.secondlife.com/assets/5008043/view_large/mesh_platypus.jpg?1327966966",
+        "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L02_up_to_food_trays.jpg?raw=true",
         "description": "L02_up_to_food_trays"
     },
     {
-        "photo_url": "https://i.pinimg.com/736x/d5/6c/a1/d56ca12beac737bf756885ca05ac8bdd--platypus-echidna.jpg",
+        "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L03_within_first_room.jpg?raw=true",
         "description": "L03_within_first_room"
     },
     {
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wild_Platypus_4.jpg",
+        "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L04_starting_to_corner.jpg?raw=true",
+        "description": "L04_starting_to_corner"
+    },
+    {
+        "photo_url": "hhttps://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L05_past_first_desk.jpg?raw=true",
         "description": "L05_past_first_desk"
     },
     {
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wild_Platypus_4.jpg",
+        "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L06_past_second_desk.jpg?raw=true",
         "description": "L06_past_second_desk"
     },
     {
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wild_Platypus_4.jpg",
+        "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L07_up_to_stairs.jpg?raw=true",
         "description": "L07_up_to_stairs"
-    },
-    {
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wild_Platypus_4.jpg",
-        "description": "L08_even_longer"
     }
 ]
