@@ -356,6 +356,7 @@ func main() {
 	personalToken := getPersonalToken()
 
 	r := gin.Default()
+	r.SetTrustedProxies(nil)
 
 	personalUrlPath := "/" + personalToken + "/"
 	zap.S().Infof("Sub-URL is %s", personalUrlPath)
