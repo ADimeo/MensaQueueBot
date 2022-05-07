@@ -224,7 +224,7 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 */
 func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength string) {
 	baseMessageReportAvailable := "Current length of mensa queue is %s"
-	baseMessageNoRecentReportAvailable := "No recent report, but at %s the length was %s"
+	baseMessageNoRecentReportAvailable := "No recent report, but today at %s the length was %s"
 	baseMessageNoReportAvailable := "No queue length reported today."
 
 	acceptableDeltaSinceLastReport, _ := time.ParseDuration("5m")
