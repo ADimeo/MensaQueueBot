@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,7 @@ const KEY_PERSONAL_TOKEN string = "MENSA_QUEUE_BOT_PERSONAL_TOKEN"
 
 const MENSA_LOCATION_JSON_LOCATION string = "./mensa_locations.json"
 
-const REPORT_PREFIX string = "L0" // A message that has this prefix is a length report, and should be treated as such
+const REPORT_REGEX string = `^L\d: ` // A message that matches this regex is a length report, and should be treated as such
 
 var globalEmojiOfTheDay emojiOfTheDay
 
@@ -43,7 +43,7 @@ func getWelcomeMessageArray() [9]string {
 		"Thanks for joining the wait-less-for-food initiative! I'll quickly get you onboarded, if you don't mind",
 		"Your assignment is to report the length of the mensa queue. To simplify reporting we have assigned different IDs to different queue lengths. For example:",
 		// Send picture here
-		"If the mensa line ends before this red line you'd report it as L03_within_first_room",
+		"If the mensa line ends before this red line you'd report it as \"L3: Within first room\"",
 		"To report a length you tap on the buttons displayed in this chat. In total, we have defined 8 queue length segments, so you have 9 reporting buttons available - the catchall \"even longer\" is not explicitly illustrated",
 		"The different line segments are the following:",
 		// Send pictures here
@@ -63,7 +63,7 @@ func getWelcomeMessageArray() [9]string {
    The specific logic of how these two interact is encoded within sendWelcomeMessage
 
    The messages defined for these need to be consistent with the keyboard defined in ./keyboard.json, which is used by telegram_connector.go,
-   as well as with the prefix REPORT_PREFIX that is used to identify the type of inbound messages in reactToRequest
+   as well as with the regex REPORT_REGEX that is used to identify the type of inbound messages in reactToRequest
 
 */
 func getMensaLocationSlice() *[]mensaLocation {
@@ -72,18 +72,18 @@ func getMensaLocationSlice() *[]mensaLocation {
 	// Read these from json file
 	jsonFile, err := os.Open(MENSA_LOCATION_JSON_LOCATION)
 	if err != nil {
-		zap.S().Panicw("Can't access mensa locations json file at", MENSA_LOCATION_JSON_LOCATION)
+		zap.S().Panicf("Can't access mensa locations json file at %s", MENSA_LOCATION_JSON_LOCATION)
 	}
 	defer jsonFile.Close()
 
 	jsonAsBytes, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		zap.S().Panicw("Can't read mensa locations json file at", MENSA_LOCATION_JSON_LOCATION)
+		zap.S().Panicf("Can't read mensa locations json file at %s", MENSA_LOCATION_JSON_LOCATION)
 
 	}
 	err = json.Unmarshal(jsonAsBytes, &mensaLocationArray)
 	if err != nil {
-		zap.S().Panicw("Mensa location json file is malformed, at", MENSA_LOCATION_JSON_LOCATION)
+		zap.S().Panicf("Mensa location json file is malformed, at %s", MENSA_LOCATION_JSON_LOCATION)
 	}
 
 	return &mensaLocationArray
@@ -98,7 +98,7 @@ func getPersonalToken() string {
 	personalKey, doesExist := os.LookupEnv(KEY_PERSONAL_TOKEN)
 
 	if !doesExist {
-		zap.S().Panic("Fatal Error: Environment variable for personal key not set:", KEY_PERSONAL_TOKEN)
+		zap.S().Panicf("Fatal Error: Environment variable for personal key not set: %s", KEY_PERSONAL_TOKEN)
 	}
 	return personalKey
 }
@@ -284,6 +284,7 @@ func reactToRequest(ginContext *gin.Context) {
 	} else {
 		zap.S().Error("Inbound data from telegram couldn't be parsed", err)
 	}
+	lengthReportRegex := regexp.MustCompile(REPORT_REGEX)
 
 	sentMessage := bodyAsStruct.Message.Text
 	chatID := bodyAsStruct.Message.Chat.ID
@@ -305,7 +306,7 @@ func reactToRequest(ginContext *gin.Context) {
 			time, reportedQueueLength := GetLatestQueueLengthReport()
 			sendQueueLengthReport(chatID, time, reportedQueueLength)
 		}
-	case strings.HasPrefix(sentMessage, REPORT_PREFIX):
+	case lengthReportRegex.Match([]byte(sentMessage)):
 		{
 			zap.S().Infof("Received a new report: %s", sentMessage)
 			messageUnixTime := bodyAsStruct.Message.Date
@@ -341,13 +342,14 @@ func initiateLogger() {
 // We only call methods that aren't already called directly in main()
 func runEnvironmentTests() {
 	GetTelegramToken()
-	getMensaLocationSlice() // Load to test for early panic
+	getMensaLocationSlice()
 	GetReplyKeyboard()
 	getLocalLocation()
 }
 
 func main() {
 	initiateLogger()
+	runEnvironmentTests()
 	zap.S().Info("Initializing Server...")
 
 	// Only used for non-critical operations

@@ -1,6 +1,6 @@
 [
-	["L00_practically_empty", "L01_within_kitchen", "L02_up_to_food_trays"],
-	["L03_within_first_room", "L04_starting_to_corner", "L05_past_first_desk"],
-	["L06_past_second_desk", "L07_up_to_stairs","L08_even_longer"],
+	["L0: Virtually empty", "L1: Within kitchen", "L2: Up to food trays"],
+	["L3: Within first room", "L4: Starting to corner", "L5: Past first desk"],
+	["L6: Past second desk", "L7: Up to stairs","L8: Even longer"],
 	     ["/jetze"]
 ]

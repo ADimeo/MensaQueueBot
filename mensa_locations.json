@@ -1,34 +1,34 @@
 [
     {
         "photo_url": "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L00_practically_empty.jpg?raw=true",
-        "description": "L00_practically_empty"
+        "description": "L0: Virtually empty"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L01_within_kitchen.jpg?raw=true",
-        "description": "L01_within_kitchen"
+        "description": "L1: Within kitchen"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L02_up_to_food_trays.jpg?raw=true",
-        "description": "L02_up_to_food_trays"
+        "description": "L2: Up to food trays"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L03_within_first_room.jpg?raw=true",
-        "description": "L03_within_first_room"
+        "description": "L3: Within first room"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L04_starting_to_corner.jpg?raw=true",
-        "description": "L04_starting_to_corner"
+        "description": "L4: Starting to corner"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L05_past_first_desk.jpg?raw=true",
-        "description": "L05_past_first_desk"
+        "description": "L5: Past first desk"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L06_past_second_desk.jpg?raw=true",
-        "description": "L06_past_second_desk"
+        "description": "L6: Past second desk"
     },
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L07_up_to_stairs.jpg?raw=true",
-        "description": "L07_up_to_stairs"
+        "description": "L7: Up to stairs"
     }
 ]
