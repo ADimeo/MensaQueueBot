@@ -44,7 +44,7 @@ func getWelcomeMessageArray() [9]string {
 		"Your assignment is to report the length of the mensa queue. To simplify reporting we have assigned different IDs to different queue lengths. For example:",
 		// Send picture here
 		"If the mensa line ends before this red line you'd report it as L03_within_first_room",
-		"To report a length you tap on the buttons displayed in this chat. In total, we have defined 8 queue length segments, so you have 8 reporting buttons available",
+		"To report a length you tap on the buttons displayed in this chat. In total, we have defined 8 queue length segments, so you have 9 reporting buttons available - the catchall \"even longer\" is not explicitly illustrated",
 		"The different line segments are the following:",
 		// Send pictures here
 		"Once we have collected enough data we'll provide you with an overview of when on which days the mensa queue is shortest - that means you'll waste less time just standing in line",
@@ -304,7 +304,7 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/platypus":
 		{
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
-			SendPhoto(chatID, url, "So cute")
+			SendPhoto(chatID, url, "So cute ❤️")
 		}
 	default:
 		{
