@@ -157,7 +157,7 @@ func sendWelcomeMessage(chatID int) {
 		}
 	}
 
-	for i := 5; i < 7; i++ {
+	for i := 5; i < 9; i++ {
 		messageString := messageArray[i]
 		err = SendMessage(chatID, messageString)
 		if err != nil {
