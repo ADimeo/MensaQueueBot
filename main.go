@@ -358,7 +358,14 @@ func main() {
 	personalToken := getPersonalToken()
 
 	r := gin.Default()
-	r.SetTrustedProxies(nil)
+	// r.SetTrustedProxies([]string{"172.21.0.2"})
+	// We trust all proxies, [as is insecure default in gin](https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies)
+	//That shouldn't be a problem since we have
+	// a reverse proxy in front of this server, and it "shouldn't" be
+	// directly reachable from anywhere else.
+	// We don't want to trust that reverse proxy explicitly because
+	// it's wihtin our docker network, and assigning static IP addresses
+	// to containers [may not be recommended](https://stackoverflow.com/questions/39493490/provide-static-ip-to-docker-containers-via-docker-compose)
 
 	personalUrlPath := "/" + personalToken + "/"
 	zap.S().Infof("Sub-URL is %s", personalUrlPath)
