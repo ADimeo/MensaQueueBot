@@ -2,6 +2,11 @@
 
 This is a minimalist telegram bot written in go that allows you to record the current length of the Griebnitzsee mensa queue.
 
+> Oh shit. Oh shit. Oh shit.
+>
+> -- <cite>Enthusiastic user feedback</cite>
+
+
 ## Features
 - Allows users to report current queue length
 	- Stores these reports without allowing direct inference of who reported it
