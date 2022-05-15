@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -32,99 +31,6 @@ type emojiOfTheDay struct {
 	Emoji     rune
 }
 
-/*
-   Contains a number of messages that should be sent to users as an introduction.
-   Should be sent together with the image (links) defined in getMensaLocationSlice.
-
-   The specific logic of how these two interact is encoded within sendWelcomeMessage
-*/
-func getWelcomeMessageArray() [9]string {
-	var messageArray = [...]string{
-		"Thanks for joining the wait-less-for-food initiative! I'll quickly get you onboarded, if you don't mind",
-		"Your assignment is to report the length of the mensa queue. To simplify reporting we have assigned different IDs to different queue lengths. For example:",
-		// Send picture here
-		"If the mensa line ends before this red line you'd report it as \"L3: Within first room\"",
-		"To report a length you tap on the buttons displayed in this chat. In total, we have defined 8 queue length segments, so you have 9 reporting buttons available - the catchall \"even longer\" is not explicitly illustrated",
-		"The different line segments are the following:",
-		// Send pictures here
-		"Once we have collected enough data we'll provide you with an overview of when on which days the mensa queue is shortest - that means you'll waste less time just standing in line",
-		"You can also use /jetze to find out what length the mensa queue has right now, but be aware that queue lengths can quickly change",
-		"If you use /help the bot will send the queue length examples again",
-		"If you have any additional questions feel free to ask @adimeo. For everything else the repository for this bot is available at https://github.com/ADimeo/MensaQueueBot",
-	}
-	return messageArray
-}
-
-/*
-   Returns a slice that contains a number of links to photographs and corresponding messages
-   encoded within a mensaLocation struct.
-
-   Should be sent together with the texts defined in getWelcomeMessageArray
-   The specific logic of how these two interact is encoded within sendWelcomeMessage
-
-   The messages defined for these need to be consistent with the keyboard defined in ./keyboard.json, which is used by telegram_connector.go,
-   as well as with the regex REPORT_REGEX that is used to identify the type of inbound messages in reactToRequest
-
-*/
-func getMensaLocationSlice() *[]mensaLocation {
-	var mensaLocationArray []mensaLocation
-
-	// Read these from json file
-	jsonFile, err := os.Open(MENSA_LOCATION_JSON_LOCATION)
-	if err != nil {
-		zap.S().Panicf("Can't access mensa locations json file at %s", MENSA_LOCATION_JSON_LOCATION)
-	}
-	defer jsonFile.Close()
-
-	jsonAsBytes, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		zap.S().Panicf("Can't read mensa locations json file at %s", MENSA_LOCATION_JSON_LOCATION)
-
-	}
-	err = json.Unmarshal(jsonAsBytes, &mensaLocationArray)
-	if err != nil {
-		zap.S().Panicf("Mensa location json file is malformed, at %s", MENSA_LOCATION_JSON_LOCATION)
-	}
-
-	return &mensaLocationArray
-}
-
-func getLocalLocation() *time.Location {
-	potsdamLocation, err := time.LoadLocation("Europe/Berlin")
-	if err != nil {
-		zap.S().Panic("Can't load location Europe/Berlin!")
-	}
-	return potsdamLocation
-}
-
-/*
-   Reads the personal token from environment variables.
-   The personal token is part of the url path, and tries to prevent non-authorized users from accessing our webhooks, and therefore spamming our users.
-   For this purpose it needs to be long, random, and non-public.
-*/
-func getPersonalToken() string {
-	personalKey, doesExist := os.LookupEnv(KEY_PERSONAL_TOKEN)
-
-	if !doesExist {
-		zap.S().Panicf("Fatal Error: Environment variable for personal key not set: %s", KEY_PERSONAL_TOKEN)
-	}
-	return personalKey
-}
-
-func getMensaOpeningTime() time {
-	var today = time.Now()
-	// Mensa opens at 08:00
-	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, getLocalLocation())
-	return openingTime
-}
-
-func getClosingTime() time {
-	var today = time.Now()
-	// Mensa closes at 15:00
-	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, getLocalLocation())
-	return closingTime
-}
-
 func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
 	body := &WebhookRequestBody{}
 	err := c.ShouldBind(&body)
@@ -137,55 +43,6 @@ func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
 func saveQueueLength(queueLength string, unixTimestamp int, chatID int) error {
 	chatIDString := strconv.Itoa(chatID)
 	return WriteReportToDB(chatIDString, unixTimestamp, queueLength)
-}
-
-/*
-   Sends a number of messages to the specified user, explaining the base concept and instructing them on how to act
-   Tightly coupled with getWelcomeMessageArray and getMensaLocationSlice
-*/
-func sendWelcomeMessage(chatID int) {
-	messageArray := getWelcomeMessageArray()
-	mensaLocationArray := *getMensaLocationSlice()
-
-	var err error
-	// Send first two messages
-	for i := 0; i < 2; i++ {
-		messageString := messageArray[i]
-		err = SendMessage(chatID, messageString)
-		if err != nil {
-			zap.S().Error("Error while sending first welcome messages.", err)
-		}
-
-	}
-
-	// Send single photo for illustration
-	err = SendPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description)
-	if err != nil {
-		zap.S().Error("Error while sending first welcome messages.", err)
-	}
-
-	for i := 2; i < 5; i++ {
-		messageString := messageArray[i]
-		err = SendMessage(chatID, messageString)
-		if err != nil {
-			zap.S().Error("Error while sending second welcome messages.", err)
-		}
-	}
-	// Send all photos
-	for _, mensaLocation := range mensaLocationArray {
-		err = SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
-		if err != nil {
-			zap.S().Error("Error while sending queue length examples.", err)
-		}
-	}
-
-	for i := 5; i < 9; i++ {
-		messageString := messageArray[i]
-		err = SendMessage(chatID, messageString)
-		if err != nil {
-			zap.S().Error("Error while sending final welcome messages.", err)
-		}
-	}
 }
 
 /*
@@ -236,7 +93,8 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 	}
 }
 
-func sendNoThanksMessage(chatID int, textSentByUser string) bool {
+func sendNoThanksMessage(chatID int, textSentByUser string) {
+	emojiRune := getRandomAcceptableEmoji()
 	baseMessage := "...are you sure?" + string(emojiRune)
 
 	zap.S().Infof("Sending no thanks for %s", textSentByUser)
@@ -266,7 +124,7 @@ func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 	timestampNow := time.Now()
 	timestampThen := time.Unix(int64(timeOfReport), 0)
 
-	potsdamLocation := getLocalLocation()
+	potsdamLocation := GetLocalLocation()
 	timestampNow = timestampNow.In(potsdamLocation)
 	timestampThen = timestampThen.In(potsdamLocation)
 
@@ -292,7 +150,7 @@ func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 }
 
 func sendQueueLengthExamples(chatID int) {
-	mensaLocationArray := *getMensaLocationSlice()
+	mensaLocationArray := *GetMensaLocationSlice()
 	for _, mensaLocation := range mensaLocationArray {
 		err := SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
 		if err != nil {
@@ -311,8 +169,8 @@ func reportAppearsValid(reportText string) bool {
 		return false
 	}
 
-	if getMensaOpeningTime().After(today) ||
-		getMensaClosingTime().Before(today) {
+	if GetMensaOpeningTime().After(today) ||
+		GetMensaClosingTime().Before(today) {
 		zap.S().Info("Report is outside of mensa hours")
 		// Outside of mensa closing times
 		return false
@@ -342,7 +200,7 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/start":
 		{
 			zap.S().Info("Sending onboarding (/start) messages")
-			sendWelcomeMessage(chatID)
+			SendWelcomeMessage(chatID)
 		}
 	case sentMessage == "/help":
 		{
@@ -359,6 +217,7 @@ func reactToRequest(ginContext *gin.Context) {
 		{
 			zap.S().Infof("Received a new report: %s", sentMessage)
 			if reportAppearsValid(sentMessage) {
+				messageUnixTime := bodyAsStruct.Message.Date
 				errorWhileSaving := saveQueueLength(sentMessage, messageUnixTime, chatID)
 				if errorWhileSaving == nil {
 					sendThankYouMessage(chatID, sentMessage)
@@ -394,9 +253,9 @@ func initiateLogger() {
 // We only call methods that aren't already called directly in main()
 func runEnvironmentTests() {
 	GetTelegramToken()
-	getMensaLocationSlice()
+	GetMensaLocationSlice()
 	GetReplyKeyboard()
-	getLocalLocation()
+	GetLocalLocation()
 }
 
 func main() {
@@ -407,7 +266,7 @@ func main() {
 	// Only used for non-critical operations
 	rand.Seed(time.Now().UnixNano())
 	InitNewDB()
-	personalToken := getPersonalToken()
+	personalToken := GetPersonalToken()
 
 	r := gin.Default()
 	// r.SetTrustedProxies([]string{"172.21.0.2"})
