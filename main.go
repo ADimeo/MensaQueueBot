@@ -89,6 +89,14 @@ func getMensaLocationSlice() *[]mensaLocation {
 	return &mensaLocationArray
 }
 
+func getLocalLocation() *time.Location {
+	potsdamLocation, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		zap.S().Panic("Can't load location Europe/Berlin!")
+	}
+	return potsdamLocation
+}
+
 /*
    Reads the personal token from environment variables.
    The personal token is part of the url path, and tries to prevent non-authorized users from accessing our webhooks, and therefore spamming our users.
@@ -101,6 +109,20 @@ func getPersonalToken() string {
 		zap.S().Panicf("Fatal Error: Environment variable for personal key not set: %s", KEY_PERSONAL_TOKEN)
 	}
 	return personalKey
+}
+
+func getMensaOpeningTime() time {
+	var today = time.Now()
+	// Mensa opens at 08:00
+	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, getLocalLocation())
+	return openingTime
+}
+
+func getClosingTime() time {
+	var today = time.Now()
+	// Mensa closes at 15:00
+	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, getLocalLocation())
+	return closingTime
 }
 
 func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
@@ -206,8 +228,6 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 	emojiRune := getRandomAcceptableEmoji()
 	baseMessage := "You reported length %s, thanks" + string(emojiRune)
 
-	// Say what they logged, and thanks
-
 	zap.S().Infof("Sending thank you for %s", textSentByUser)
 
 	err := SendMessage(chatID, fmt.Sprintf(baseMessage, textSentByUser))
@@ -216,12 +236,15 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 	}
 }
 
-func getLocalLocation() *time.Location {
-	potsdamLocation, err := time.LoadLocation("Europe/Berlin")
+func sendNoThanksMessage(chatID int, textSentByUser string) bool {
+	baseMessage := "...are you sure?" + string(emojiRune)
+
+	zap.S().Infof("Sending no thanks for %s", textSentByUser)
+
+	err := SendMessage(chatID, baseMessage)
 	if err != nil {
-		zap.S().Panic("Can't load location Europe/Berlin!")
+		zap.S().Error("Error while sending no thanks message.", err)
 	}
-	return potsdamLocation
 }
 
 /*
@@ -278,6 +301,27 @@ func sendQueueLengthExamples(chatID int) {
 	}
 }
 
+func reportAppearsValid(reportText string) bool {
+	// Checking time: It's not on the weekend
+	var today = time.Now()
+
+	if today.Weekday() == 0 || today.Weekday() == 6 {
+		// Sunday or Saturday, per https://golang.google.cn/pkg/time/#Weekday
+		zap.S().Info("Report is on weekend")
+		return false
+	}
+
+	if getMensaOpeningTime().After(today) ||
+		getMensaClosingTime().Before(today) {
+		zap.S().Info("Report is outside of mensa hours")
+		// Outside of mensa closing times
+		return false
+	}
+	zap.S().Info("Report is considered valid")
+	return true
+
+}
+
 func reactToRequest(ginContext *gin.Context) {
 	// Return some 200 or something
 
@@ -314,10 +358,13 @@ func reactToRequest(ginContext *gin.Context) {
 	case lengthReportRegex.Match([]byte(sentMessage)):
 		{
 			zap.S().Infof("Received a new report: %s", sentMessage)
-			messageUnixTime := bodyAsStruct.Message.Date
-			errorWhileSaving := saveQueueLength(sentMessage, messageUnixTime, chatID)
-			if errorWhileSaving == nil {
-				sendThankYouMessage(chatID, sentMessage)
+			if reportAppearsValid(sentMessage) {
+				errorWhileSaving := saveQueueLength(sentMessage, messageUnixTime, chatID)
+				if errorWhileSaving == nil {
+					sendThankYouMessage(chatID, sentMessage)
+				}
+			} else {
+				sendNoThanksMessage(chatID, sentMessage)
 			}
 		}
 	case sentMessage == "/platypus":
