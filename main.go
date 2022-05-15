@@ -151,6 +151,9 @@ func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 
 func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
+
+	SendTopViewOfMensa(chatID)
+
 	for _, mensaLocation := range mensaLocationArray {
 		err := SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
 		if err != nil {

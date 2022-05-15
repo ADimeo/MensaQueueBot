@@ -29,9 +29,9 @@ func getWelcomeMessageArray() [9]string {
 		"To report a length you tap on the buttons displayed in this chat. In total, we have defined 8 queue length segments, so you have 9 reporting buttons available - the catchall \"even longer\" is not explicitly illustrated",
 		"The different line segments are the following:",
 		// Send top picture here
+		"(If you want a better illustration of line lengths you can use /help)",
 		"Once we have collected enough data we'll provide you with an overview of when on which days the mensa queue is shortest - that means you'll waste less time just standing in line",
 		"You can also use /jetze to find out what length the mensa queue has right now, but be aware that queue lengths can quickly change",
-		"If you use /help the bot will send the queue length examples again",
 		"If you have any additional questions feel free to ask @adimeo. For everything else the repository for this bot is available at https://github.com/ADimeo/MensaQueueBot",
 	}
 	return messageArray
@@ -107,6 +107,13 @@ func GetPersonalToken() string {
 	return personalKey
 }
 
+func SendTopViewOfMensa(chatID int) error {
+	const linkToTopView = "" // TODO
+	const topViewText = "I'm an artist"
+	err := SendPhoto(chatID, linkToTopView, topViewText)
+	return err
+}
+
 /*
    Sends a number of messages to the specified user, explaining the base concept and instructing them on how to act
    Tightly coupled with getWelcomeMessageArray and GetMensaLocationSlice
@@ -139,6 +146,12 @@ func SendWelcomeMessage(chatID int) {
 			zap.S().Error("Error while sending second welcome messages.", err)
 		}
 	}
+
+	err = SendTopViewOfMensa(chatID)
+	if err != nil {
+		zap.S().Error("Error while sending Top View of mensa.", err)
+	}
+
 	// Send all photos
 	for _, mensaLocation := range mensaLocationArray {
 		err = SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
