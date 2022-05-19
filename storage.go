@@ -14,6 +14,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const TOP_VIEW_URL = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
+
 /*
    Contains a number of messages that should be sent to users as an introduction.
    Should be sent together with the image (links) defined in GetMensaLocationSlice.
@@ -108,9 +110,9 @@ func GetPersonalToken() string {
 }
 
 func SendTopViewOfMensa(chatID int) error {
-	const linkToTopView = "" // TODO
+	const linkToTopView = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
 	const topViewText = "I'm an artist"
-	err := SendPhoto(chatID, linkToTopView, topViewText)
+	err := SendPhoto(chatID, TOP_VIEW_URL, topViewText)
 	return err
 }
 
@@ -147,17 +149,10 @@ func SendWelcomeMessage(chatID int) {
 		}
 	}
 
+	// Send Top view of mensa
 	err = SendTopViewOfMensa(chatID)
 	if err != nil {
 		zap.S().Error("Error while sending Top View of mensa.", err)
-	}
-
-	// Send all photos
-	for _, mensaLocation := range mensaLocationArray {
-		err = SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
-		if err != nil {
-			zap.S().Error("Error while sending queue length examples.", err)
-		}
 	}
 
 	for i := 5; i < 9; i++ {

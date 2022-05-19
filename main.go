@@ -31,20 +31,6 @@ type emojiOfTheDay struct {
 	Emoji     rune
 }
 
-func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
-	body := &WebhookRequestBody{}
-	err := c.ShouldBind(&body)
-	return body, err
-}
-
-/*
-   Writes the given queue length to the database
-*/
-func saveQueueLength(queueLength string, unixTimestamp int, chatID int) error {
-	chatIDString := strconv.Itoa(chatID)
-	return WriteReportToDB(chatIDString, unixTimestamp, queueLength)
-}
-
 /*
    People like emoji. People also like slot machines. Return a random, pre-vetted emoji when they
    report, for "engagement"
@@ -76,6 +62,20 @@ func getRandomAcceptableEmoji() rune {
 	}
 	return globalEmojiOfTheDay.Emoji
 }
+func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
+	body := &WebhookRequestBody{}
+	err := c.ShouldBind(&body)
+	return body, err
+}
+
+/*
+   Writes the given queue length to the database
+*/
+func saveQueueLength(queueLength string, unixTimestamp int, chatID int) error {
+	chatIDString := strconv.Itoa(chatID)
+	return WriteReportToDB(chatIDString, unixTimestamp, queueLength)
+}
+
 
 /*
    Sends a thank you message for a report
@@ -151,15 +151,13 @@ func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 
 func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
-
-	SendTopViewOfMensa(chatID)
-
 	for _, mensaLocation := range mensaLocationArray {
 		err := SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
 		if err != nil {
 			zap.S().Error("Error while sending help message photographs.", err)
 		}
 	}
+	SendTopViewOfMensa(chatID)
 }
 
 func reportAppearsValid(reportText string) bool {
@@ -189,7 +187,7 @@ func reactToRequest(ginContext *gin.Context) {
 	bodyAsStruct, err := parseRequest(ginContext)
 	if err == nil {
 		ginContext.JSON(200, gin.H{
-			"message": "Thanks nice serverr",
+			"message": "Thanks nice server",
 		})
 	} else {
 		zap.S().Error("Inbound data from telegram couldn't be parsed", err)
@@ -269,12 +267,13 @@ func main() {
 	// Only used for non-critical operations
 	rand.Seed(time.Now().UnixNano())
 	InitNewDB()
+	InitNewChangelogDB()
 	personalToken := GetPersonalToken()
 
 	r := gin.Default()
 	// r.SetTrustedProxies([]string{"172.21.0.2"})
 	// We trust all proxies, [as is insecure default in gin](https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies)
-	//That shouldn't be a problem since we have
+	// That shouldn't be a problem since we have
 	// a reverse proxy in front of this server, and it "shouldn't" be
 	// directly reachable from anywhere else.
 	// We don't want to trust that reverse proxy explicitly because
