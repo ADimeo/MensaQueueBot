@@ -5,19 +5,11 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/base64"
-	"os"
-	"sync"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
-
-const KEY_DB_BASE_PATH string = "MENSA_QUEUE_BOT_DB_PATH"
-const DB_NAME string = "queue_database.db"
-
-var globalDBHandle *sql.DB = nil
-var dbMutex sync.Mutex
 
 var globalPseudonymizationAttribute pseudonymizationAttribute
 
@@ -56,26 +48,6 @@ func getPseudonymizationAttribute() pseudonymizationAttribute {
 	return globalPseudonymizationAttribute
 }
 
-func getDBHandle() *sql.DB {
-	dbPath, doesExist := os.LookupEnv(KEY_DB_BASE_PATH)
-	dbPath = dbPath + DB_NAME
-
-	if !doesExist {
-		zap.S().Panic("Fatal Error: Environment variable for personal key not set:", KEY_DB_BASE_PATH)
-	}
-
-	if globalDBHandle == nil {
-		// init db
-		db, err := sql.Open("sqlite3", dbPath)
-		if err != nil {
-			zap.S().Panicf("Couldn't get DB handle with path %s", dbPath)
-
-		}
-		globalDBHandle = db
-	}
-	return globalDBHandle
-}
-
 // Returns the most recently reported queue length, as well as the reporting unix timestamp
 func GetLatestQueueLengthReport() (int, string) {
 	queryString := "SELECT queueLength, MAX(time) from queueReports"
@@ -84,7 +56,7 @@ func GetLatestQueueLengthReport() (int, string) {
 	var retrievedQueueLength string
 
 	zap.S().Info("Querying for latest queue length report")
-	db := getDBHandle()
+	db := GetDBHandle()
 	if err := db.QueryRow(queryString).Scan(&retrievedQueueLength, &retrievedReportTime); err != nil {
 		if err == sql.ErrNoRows {
 			zap.S().Error("No rows returned when querying for latest queue length report")
@@ -100,13 +72,13 @@ func GetLatestQueueLengthReport() (int, string) {
 func WriteReportToDB(reporter string, time int, queueLength string) error {
 	anonymizedReporter := pseudonymizeReporter(reporter)
 
-	db := getDBHandle()
+	db := GetDBHandle()
 
 	zap.S().Info("Writing new report into DB")
-	dbMutex.Lock()
+	DBMutex.Lock()
 	// Nice try
 	_, err := db.Exec("INSERT INTO queueReports VALUES(NULL,?,?,?);", anonymizedReporter, time, queueLength)
-	dbMutex.Unlock()
+	DBMutex.Unlock()
 	return err
 }
 
@@ -165,14 +137,12 @@ func InitNewDB() error {
   queueLength TEXT NOT NULL
   );`
 
-	db := getDBHandle()
+	db := GetDBHandle()
 
-	zap.S().Info("Recreating Database...")
+	zap.S().Info("Recreating database for queue length tracking...")
 	if _, err := db.Exec(tableCreationString); err != nil {
-		zap.S().Panic("Couldn't create database")
+		zap.S().Panic("Couldn't create report table")
 		return err
 	}
-
 	return nil
-
 }

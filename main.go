@@ -76,6 +76,19 @@ func saveQueueLength(queueLength string, unixTimestamp int, chatID int) error {
 	return WriteReportToDB(chatIDString, unixTimestamp, queueLength)
 }
 
+func sendChangelogIfNecessary(chatID int) {
+	numberOfLastSentChangelog := GetLatestChangelogSentToUser(chatID)
+	changelog, noChangelogWithIDError := GetChangelogByNumber(numberOfLastSentChangelog + 1)
+
+	if noChangelogWithIDError == nil {
+		sendError := SendMessage(chatID, changelog)
+		if sendError == nil {
+			SaveNewChangelogForUser(chatID, numberOfLastSentChangelog+1)
+		} else {
+			zap.S().Error("Got an error while sending changelog to user.", sendError)
+		}
+	}
+}
 
 /*
    Sends a thank you message for a report
@@ -213,6 +226,7 @@ func reactToRequest(ginContext *gin.Context) {
 			zap.S().Infof("Received a /jetze request")
 			time, reportedQueueLength := GetLatestQueueLengthReport()
 			sendQueueLengthReport(chatID, time, reportedQueueLength)
+			sendChangelogIfNecessary(chatID)
 		}
 	case lengthReportRegex.Match([]byte(sentMessage)):
 		{
@@ -226,6 +240,7 @@ func reactToRequest(ginContext *gin.Context) {
 			} else {
 				sendNoThanksMessage(chatID, sentMessage)
 			}
+			sendChangelogIfNecessary(chatID)
 		}
 	case sentMessage == "/platypus":
 		{
@@ -257,6 +272,7 @@ func runEnvironmentTests() {
 	GetMensaLocationSlice()
 	GetReplyKeyboard()
 	GetLocalLocation()
+	GetChangelogByNumber(0)
 }
 
 func main() {

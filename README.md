@@ -12,7 +12,11 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 	- Stores these reports without allowing direct inference of who reported it
 	- Reports are stored in a sqlite database
 - Allows users to request the current queue length
+- Allows to define messages that should be sent to users the next time they interact with the bot
+    - In praxis, this is mostly used for changelogs
+    - To define a new message to be sent, edit `changelog.psv`
 - That's about it
+
 
 
 
@@ -21,10 +25,15 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 - `mensa_locations.json` defines the different mensa locations, and should contain direct links to the images within `queue_length_illustrations`. These should also be consistent with the buttons defined in `keyboard.json`
 - `keyboard.json` defines the buttons that are shown to users
 - `emoji_list` contains selective non-aggressive emoji that can be used for whatever
+- `changelog.psv` is a csv (except with pipes as a separator) that defines messages to be sent to users. Pleaes keep IDs incrementing one by one
 
-- `db_connector.go` implements most of the database related logic
+- `db_utilities.go` implements a number of base functions that can be useful for all db related tasks
+- `db_connector.go` implements database logic related to storing actual queue length reports
+- `changelog_db_connector.go` implements database logic related to tracking which users are aware of which changes, and what changelogs should still be sent out
+
 - `telegram_connecor.go` implements most of the telegram-interaction related logic
 - `main.go` implements the rest
+- `storage.go` contains functions that either act as static variables, or have encoded some knowledge that really should be stored somewhere else in a proper program. Basically, a catchall for functions that are hacky
 - `deployment` folder contains
         - A `Caddyfile` tht defines [web server](https://caddyserver.com/) configuration
         - A `docker-compose` file that allows for relatively simple deployment of a server + reverse proxy setup
