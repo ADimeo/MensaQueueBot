@@ -96,7 +96,7 @@ func sendChangelogIfNecessary(chatID int) {
 */
 func sendThankYouMessage(chatID int, textSentByUser string) {
 	emojiRune := getRandomAcceptableEmoji()
-	baseMessage := "You reported length %s, thanks" + string(emojiRune)
+	baseMessage := "You reported length %s, thanks " + string(emojiRune)
 
 	zap.S().Infof("Sending thank you for %s", textSentByUser)
 
