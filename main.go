@@ -18,7 +18,7 @@ const KEY_PERSONAL_TOKEN string = "MENSA_QUEUE_BOT_PERSONAL_TOKEN"
 const MENSA_LOCATION_JSON_LOCATION string = "./mensa_locations.json"
 
 const REPORT_REGEX string = `^L\d: ` // A message that matches this regex is a length report, and should be treated as such
-const POINTS_REGEX string = `^/points(_track|_delete|)$`
+const POINTS_REGEX string = `^/points(_track|_delete|_help|)$`
 
 var globalEmojiOfTheDay emojiOfTheDay
 
@@ -188,7 +188,7 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 		", and I'll be honest, I don't know what to say 🪕",
 	}
 
-	explanationMessage := `You're currently not collecting points, but please know that we greatly appreciate all reports. For information about points send "/points_help"`
+	explanationMessage := `You're currently not collecting points, but please know that we greatly appreciate all reports. For information about points send /points_help`
 
 	var err error
 	zap.S().Info("Sending pointsrequest message.")
@@ -244,20 +244,23 @@ func sendPointsOptOutResponse(chatID int, currentlyOptedIn bool) {
 	}
 }
 
-func sendPointsHelpMessage(chatID int, currentlyOptedIn bool) {
-	/*
-		var messageArray = [...]string{
-			"If you want to, you can opt in to collect internetpoints for your reports!",
-			"You get one point for each report, and your points will add up with each report you make",
-			"Here at MensaQueueBot, we try to minimize the data we collect. Right now all your reports are anonymized. Your reports will stay anonymous regardless of whether you collect points or not, but if you opt in we'll need to store additional information, specifically how many reports you've made. Just wanted to let you know that.",
-			"Right now points don't do anything except prove to everybody what a great reporter you are, but we have plans for the future! (Maybe!)",
-			`To start collecting points send "/points_track"`,
-			`To stop colletcing points and delete all data related to point collection send "/points_delete"`,
-			`To see your points send "/points"`,
+func sendPointsHelpMessages(chatID int) {
+	var messageArray = [...]string{
+		"If you want to, you can opt in to collect internetpoints for your reports!",
+		"You get one point for each report, and your points will add up with each report you make",
+		"Here at MensaQueueBot, we try to minimize the data we collect. Right now all your reports are anonymized. Your reports will stay anonymous regardless of whether you collect points or not, but if you opt in we'll need to store additional information, specifically how many reports you've made. Just wanted to let you know that.",
+		"Right now points don't do anything except prove to everybody what a great reporter you are, but we have plans for the future! (Maybe!)",
+		`To start collecting points send /points_track`,
+		`To stop colletcing points and delete all data related to point collection send /points_delete`,
+		`To see your points send /points`,
+	}
+	for i := 0; i < len(messageArray); i++ {
+		messageString := messageArray[i]
+		err := SendMessage(chatID, messageString)
+		if err != nil {
+			zap.S().Error("Error while sending help message for point", err)
 		}
-		zap.S().Error("Not implemented")
-	*/
-
+	}
 }
 
 func reportAppearsValid(reportText string) bool {
@@ -304,6 +307,8 @@ func handlePointsRequest(sentMessage string, chatID int) {
 			// Nothing to do: User is already opted out
 		}
 		sendPointsOptOutResponse(chatID, userIsCollectingPoints)
+	} else if sentMessage == "/points_help" {
+		sendPointsHelpMessages(chatID)
 	} else {
 		zap.S().Infof("Usermessage '%s' does not match with any point message", sentMessage)
 	}

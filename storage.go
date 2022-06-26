@@ -33,7 +33,7 @@ func getWelcomeMessageArray() [9]string {
 		// Send top picture here
 		"(If you want a better illustration of line lengths you can use /help)",
 		"Once we have collected enough data we'll provide you with an overview of when on which days the mensa queue is shortest - that means you'll waste less time just standing in line",
-		"You can also use /jetze to find out what length the mensa queue has right now, but be aware that queue lengths can quickly change",
+		`You can also use /jetze to find out what length the mensa queue has right now, and if you're interested in getting points for your reports be sure to check out /points_help`,
 		"If you have any additional questions feel free to ask @adimeo. For everything else the repository for this bot is available at https://github.com/ADimeo/MensaQueueBot",
 	}
 	return messageArray
