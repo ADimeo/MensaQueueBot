@@ -11,6 +11,7 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 - Allows users to report current queue length
 	- Stores these reports without allowing direct inference of who reported it
 	- Reports are stored in a sqlite database
+        - Users can collect internetpoints for their reports
 - Allows users to request the current queue length
 - Allows to define messages that should be sent to users the next time they interact with the bot
     - In praxis, this is mostly used for changelogs
@@ -30,6 +31,7 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 - `db_utilities.go` implements a number of base functions that can be useful for all db related tasks
 - `db_connector.go` implements database logic related to storing actual queue length reports
 - `changelog_db_connector.go` implements database logic related to tracking which users are aware of which changes, and what changelogs should still be sent out
+- `internetpoints_db_connector.go` implements database logic related to users collecting internetpoints
 
 - `telegram_connecor.go` implements most of the telegram-interaction related logic
 - `main.go` implements the rest
