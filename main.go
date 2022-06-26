@@ -346,6 +346,7 @@ func reactToRequest(ginContext *gin.Context) {
 		{
 			zap.S().Info("User is checking point status")
 			handlePointsRequest(sentMessage, chatID)
+			sendChangelogIfNecessary(chatID)
 		}
 	case sentMessage == "/jetze":
 		{
