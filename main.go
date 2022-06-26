@@ -215,8 +215,8 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 }
 
 func sendPointsOptInResponse(chatID int, currentlyOptedIn bool) {
-	messageOptIn := "Alrighty, from now on you're collecting points"
-	messageDoubleOptIn := "Sure, but you were already collecting points"
+	messageOptIn := "Alrighty, from now on you're collecting points 🧞"
+	messageDoubleOptIn := "Sure, but you were already collecting points 🧞"
 
 	var err error
 	if currentlyOptedIn {
@@ -230,8 +230,8 @@ func sendPointsOptInResponse(chatID int, currentlyOptedIn bool) {
 }
 
 func sendPointsOptOutResponse(chatID int, currentlyOptedIn bool) {
-	messageOptOut := "You're the boss, all your points have been deleted"
-	messageDoubleOptOut := "There's nothing to delete: You weren't collecting points"
+	messageOptOut := "You're the boss, all your points have been deleted 🥷"
+	messageDoubleOptOut := "There's nothing to delete: You weren't collecting points 🥷"
 
 	var err error
 	if currentlyOptedIn {
