@@ -355,6 +355,11 @@ func reactToRequest(ginContext *gin.Context) {
 			sendQueueLengthReport(chatID, time, reportedQueueLength)
 			sendChangelogIfNecessary(chatID)
 		}
+	case sentMessage == "/jetze@MensaQueueBot":
+		zap.S().Infof("Received a /jetze request, but in a group")
+		time, reportedQueueLength := GetLatestQueueLengthReport()
+		sendQueueLengthReport(chatID, time, reportedQueueLength)
+		sendChangelogIfNecessary(chatID)
 	case lengthReportRegex.Match([]byte(sentMessage)):
 		{
 			zap.S().Infof("Received a new report: %s", sentMessage)
