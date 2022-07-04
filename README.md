@@ -43,9 +43,24 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 
 
 ## Deployment
-1. `mv  /docker-compose/.env-template /docker-compose.env` and modify all variables within it
+1. `mv deployment/.env-template deployment/.env` and modify all variables within it
 2. Advise telegram where your bot will be hosted, e.g. via `curl -F "url=https://your.url.example.com/long-random-string-defined-as-MENSA_QUEUE_BOT_PERSONAL_TOKEN/"  "https://api.telegram.org/bot<telegram-token-provided-by-botfather>/setWebhook"`
-3. Build the docker container locally with `docker build -t mensaqueuebot .`
+3. Build the docker container on the machine you want to run it on with `docker build -t mensaqueuebot .`
 4. `cd deployment && docker-compose --env-file .env up --build` to the bot server and a reverse proxy
 
-Steps 3. and 4. can be automated away with the `deploy-mensa-queue.yaml` ansible file that is provided.
+Steps 3. and 4. can be automated away with the `deploy-mensa-queue.yaml` ansible file that is provided in the `deployment` folder.
+
+## Extracting Data
+This assumes that the deployment is identical to the one described above.
+
+Data is stored in an sqlite file within a docker volume created by docker-compose. To download it to your machine follow these steps:
+
+1. ssh into your server
+2. Copy the report file from the docker volume to your home directory via `sudo cp /var/lib/docker/volumes/deployment_db_data/_data/queue_database.db /home/your-user/databases/queue_database.db`
+3. Copy the file from the remote system to your system by using rsync ip-of-your-system:~/queue_database.db .
+
+You now have a local sqlite3 file. You can view or edit it in a variety of ways, including the [DB browser for SQLITE](https://sqlitebrowser.org/), or the [command line shell for sqlite](https://www.sqlite.org/cli.html)
+
+Mensa queue length reports are in the queueReports table. You can extract them to csv by running `sqlite3 -header -csv cheue_database.db "select time, queueLength from queueReports" > queueReports.csv`
+
+All steps can be automated using the `pull_db.yaml` ansible file that is provided in the `deployment` folder.
