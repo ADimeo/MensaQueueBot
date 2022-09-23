@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 import csv
 from datetime import datetime, date
 
-csv_file_path = "../data/queueReports.csv"
+import pytz
+import matplotlib.pyplot as plt
+
+
+CSV_FILE_PATH = "../data/queueReports.csv"
 
 
 def load_csv():
@@ -13,8 +17,7 @@ def load_csv():
     """
     array_of_measurements = []
 
-    with open(csv_file_path) as csv_file:
-        i = 0
+    with open(CSV_FILE_PATH) as csv_file:
         csv_reader = csv.reader(csv_file)
         for row in csv_reader:
             if row[0].isdigit():
@@ -42,19 +45,18 @@ def sort_into_weekdays(array_of_measurements):
     return day_buckets
 
 
-def normalize_measurement_tuple(m):
-    """Given a tuple of (timestamp, string), this 
+def normalize_measurement_tuple(m_tuple):
+    """Given a tuple of (timestamp, string), this
     normalizes the timestamp to include just time, not date, and the
     string to an int.
     All timestamps returned by this function keep their time,
     but now happen on the same day.
     For the labels each LX value is converted to the appropriate X"""
     # Normalize Time
-    time = datetime.fromtimestamp(m[0]).time()
+    time = datetime.fromtimestamp(m_tuple[0], tz=pytz.timezone('Europe/Berlin')).time()
     time_normalized = datetime.combine(date(2022,1,1), time)
-
     # Normalize Label
-    label_as_int = int(m[1][1])
+    label_as_int = int(m_tuple[1][1])
 
     return (time_normalized, label_as_int)
 
