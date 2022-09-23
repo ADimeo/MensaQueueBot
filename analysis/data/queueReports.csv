@@ -1,601 +1,888 @@
 time,queueLength
-1652090544,L1: Within kitchen
-1652091929,L0: Virtually empty
-1652091955,L0: Virtually empty
-1652092401,L0: Virtually empty
-1652093004,L1: Within kitchen
-1652093012,L3: Within first room
-1652095403,L0: Virtually empty
-1652124577,L0: Virtually empty
-1652125194,L0: Virtually empty
-1652127964,L8: Even longer
-1652127975,L0: Virtually empty
-1652129535,L0: Virtually empty
-1652130106,L0: Virtually empty
-1652135810,L0: Virtually empty
-1652158785,L0: Virtually empty
-1652175610,L0: Virtually empty
-1652175871,L5: Past first desk
-1652175950,L7: Up to stairs
-1652177032,L7: Up to stairs
-1652177100,L6: Past second desk
-1652177153,L7: Up to stairs
-1652177190,L7: Up to stairs
-1652177245,L6: Past second desk
-1652177674,L6: Past second desk
-1652177734,L6: Past second desk
-1652177736,L6: Past second desk
-1652177834,L5: Past first desk
-1652177921,L6: Past second desk
-1652178227,L4: Starting to corner
-1652178240,L0: Virtually empty
-1652178512,L5: Past first desk
-1652178544,L4: Starting to corner
-1652178656,L8: Even longer
-1652178737,L3: Within first room
-1652178793,L4: Starting to corner
-1652178832,L4: Starting to corner
-1652178845,L4: Starting to corner
-1652178854,L4: Starting to corner
-1652178857,L4: Starting to corner
-1652178861,L4: Starting to corner
-1652178871,L4: Starting to corner
-1652178872,L4: Starting to corner
-1652178873,L4: Starting to corner
-1652178873,L4: Starting to corner
-1652178873,L4: Starting to corner
-1652178873,L4: Starting to corner
-1652178873,L4: Starting to corner
-1652178874,L4: Starting to corner
-1652178874,L4: Starting to corner
-1652178874,L4: Starting to corner
-1652178875,L4: Starting to corner
-1652178875,L4: Starting to corner
-1652178875,L4: Starting to corner
-1652178875,L4: Starting to corner
-1652178876,L4: Starting to corner
-1652178876,L4: Starting to corner
-1652178876,L4: Starting to corner
-1652178876,L4: Starting to corner
-1652178876,L4: Starting to corner
-1652178876,L4: Starting to corner
-1652178877,L4: Starting to corner
-1652178877,L4: Starting to corner
-1652178877,L4: Starting to corner
-1652178877,L4: Starting to corner
-1652178878,L4: Starting to corner
-1652178893,L5: Past first desk
-1652178910,L4: Starting to corner
-1652178994,L5: Past first desk
-1652179021,L5: Past first desk
-1652179036,L5: Past first desk
-1652179060,L4: Starting to corner
-1652179094,L4: Starting to corner
-1652179155,L8: Even longer
-1652179155,L8: Even longer
-1652179155,L8: Even longer
-1652179166,L4: Starting to corner
-1652179166,L4: Starting to corner
-1652179180,L0: Virtually empty
-1652179181,L5: Past first desk
-1652179191,L8: Even longer
-1652179194,L3: Within first room
-1652179197,L4: Starting to corner
-1652179438,L5: Past first desk
-1652179658,L5: Past first desk
-1652179807,L5: Past first desk
-1652179969,L3: Within first room
-1652179993,L3: Within first room
-1652179996,L3: Within first room
-1652180046,L3: Within first room
-1652180298,L2: Up to food trays
-1652180737,L1: Within kitchen
-1652181047,L0: Virtually empty
-1652181144,L1: Within kitchen
-1652181633,L0: Virtually empty
-1652181975,L4: Starting to corner
-1652181993,L1: Within kitchen
-1652182150,L7: Up to stairs
-1652182175,L0: Virtually empty
-1652193733,L0: Virtually empty
-1652196066,L0: Virtually empty
-1652259981,L0: Virtually empty
-1652262289,L1: Within kitchen
-1652262860,L6: Past second desk
-1652263542,L4: Starting to corner
-1652263569,L4: Starting to corner
-1652263782,L2: Up to food trays
-1652263812,L2: Up to food trays
-1652264164,L1: Within kitchen
-1652264670,L1: Within kitchen
-1652264692,L1: Within kitchen
-1652265253,L1: Within kitchen
-1652265276,L3: Within first room
-1652265304,L2: Up to food trays
-1652265305,L3: Within first room
-1652265316,L3: Within first room
-1652265358,L1: Within kitchen
-1652265367,L3: Within first room
-1652265467,L3: Within first room
-1652265495,L4: Starting to corner
-1652265639,L3: Within first room
-1652266063,L1: Within kitchen
-1652266724,L1: Within kitchen
-1652267423,L0: Virtually empty
-1652270830,L0: Virtually empty
-1652347372,L0: Virtually empty
-1652347385,L0: Virtually empty
-1652349691,L4: Starting to corner
-1652349758,L4: Starting to corner
-1652349780,L5: Past first desk
-1652349783,L4: Starting to corner
-1652350358,L4: Starting to corner
-1652350812,L3: Within first room
-1652350953,L3: Within first room
-1652351061,L2: Up to food trays
-1652351061,L2: Up to food trays
-1652351084,L3: Within first room
-1652351087,L3: Within first room
-1652351117,L3: Within first room
-1652351220,L2: Up to food trays
-1652351271,L3: Within first room
-1652351285,L3: Within first room
-1652351433,L0: Virtually empty
-1652351527,L3: Within first room
-1652351529,L3: Within first room
-1652351550,L0: Virtually empty
-1652351553,L3: Within first room
-1652351556,L0: Virtually empty
-1652351560,L3: Within first room
-1652351562,L0: Virtually empty
-1652351582,L3: Within first room
-1652351586,L0: Virtually empty
-1652351616,L3: Within first room
-1652351630,L3: Within first room
-1652351680,L3: Within first room
-1652351696,L2: Up to food trays
-1652351712,L3: Within first room
-1652351737,L3: Within first room
-1652351953,L3: Within first room
-1652351979,L3: Within first room
-1652352001,L3: Within first room
-1652352238,L1: Within kitchen
-1652352362,L2: Up to food trays
-1652352727,L0: Virtually empty
-1652353334,L0: Virtually empty
-1652354203,L1: Within kitchen
-1652435259,L0: Virtually empty
-1652435722,L3: Within first room
-1652435741,L3: Within first room
-1652436083,L2: Up to food trays
-1652436277,L1: Within kitchen
-1652436604,L1: Within kitchen
-1652437421,L0: Virtually empty
-1652437837,L0: Virtually empty
-1652437967,L1: Within kitchen
-1652438185,L8: Even longer
-1652438302,L4: Starting to corner
-1652438378,L1: Within kitchen
-1652438598,L1: Within kitchen
-1652439011,L0: Virtually empty
-1652439011,L0: Virtually empty
-1652439147,L1: Within kitchen
-1652439285,L0: Virtually empty
-1652439550,L0: Virtually empty
-1652466979,L0: Virtually empty
-1652467000,L8: Even longer
-1652467001,L8: Even longer
-1652467004,L8: Even longer
-1652467005,L8: Even longer
-1652467006,L8: Even longer
-1652467007,L8: Even longer
-1652467008,L8: Even longer
-1652467009,L8: Even longer
-1652467022,L5: Past first desk
-1652467038,L8: Even longer
-1652467038,L8: Even longer
-1652467039,L8: Even longer
-1652467039,L8: Even longer
-1652467040,L8: Even longer
-1652467040,L8: Even longer
-1652467040,L8: Even longer
-1652467041,L8: Even longer
-1652467041,L8: Even longer
-1652467041,L8: Even longer
-1652467042,L8: Even longer
-1652467042,L8: Even longer
-1652467042,L8: Even longer
-1652467043,L8: Even longer
-1652467043,L8: Even longer
-1652467049,L8: Even longer
-1652467049,L8: Even longer
-1652467049,L8: Even longer
-1652467055,L8: Even longer
-1652467055,L8: Even longer
-1652467056,L8: Even longer
-1652467056,L8: Even longer
-1652467056,L8: Even longer
-1652467057,L8: Even longer
-1652467057,L8: Even longer
-1652467057,L8: Even longer
-1652467058,L8: Even longer
-1652486562,L1: Within kitchen
-1652692409,L0: Virtually empty
-1652692513,L0: Virtually empty
-1652695392,L1: Within kitchen
-1652695796,L3: Within first room
-1652695829,L3: Within first room
-1652695920,L3: Within first room
-1652696304,L1: Within kitchen
-1652697153,L1: Within kitchen
-1652697169,L1: Within kitchen
-1652697256,L1: Within kitchen
-1652697278,L1: Within kitchen
-1652697402,L3: Within first room
-1652697529,L4: Starting to corner
-1652697643,L4: Starting to corner
-1652697650,L5: Past first desk
-1652697652,L5: Past first desk
-1652697657,L5: Past first desk
-1652697873,L5: Past first desk
-1652698264,L4: Starting to corner
-1652698522,L5: Past first desk
-1652698522,L5: Past first desk
-1652698563,L5: Past first desk
-1652698836,L4: Starting to corner
-1652699085,L3: Within first room
-1652699496,L4: Starting to corner
-1652703620,L0: Virtually empty
-1652780913,L7: Up to stairs
-1652781088,L8: Even longer
-1652781192,L8: Even longer
-1652783544,L4: Starting to corner
-1652783551,L4: Starting to corner
-1652783555,L8: Even longer
-1652783580,L7: Up to stairs
-1652783638,L7: Up to stairs
-1652783639,L8: Even longer
-1652783642,L8: Even longer
-1652783644,L8: Even longer
-1652783658,L8: Even longer
-1652783724,L8: Even longer
-1652783744,L8: Even longer
-1652783750,L7: Up to stairs
-1652783751,L0: Virtually empty
-1652783755,L8: Even longer
-1652783781,L7: Up to stairs
-1652783975,L7: Up to stairs
-1652784109,L6: Past second desk
-1652784146,L6: Past second desk
-1652784168,L6: Past second desk
-1652784211,L6: Past second desk
-1652784414,L7: Up to stairs
-1652785621,L3: Within first room
-1652785904,L2: Up to food trays
-1652786486,L0: Virtually empty
-1652786793,L6: Past second desk
-1652866966,L3: Within first room
-1652867458,L5: Past first desk
-1652867570,L5: Past first desk
-1652867635,L6: Past second desk
-1652867791,L6: Past second desk
-1652867793,L7: Up to stairs
-1652867918,L6: Past second desk
-1652868022,L5: Past first desk
-1652868349,L6: Past second desk
-1652868351,L6: Past second desk
-1652868552,L6: Past second desk
-1652868585,L6: Past second desk
-1652869000,L4: Starting to corner
-1652869003,L4: Starting to corner
-1652869025,L5: Past first desk
-1652869042,L0: Virtually empty
-1652869050,L5: Past first desk
-1652869585,L4: Starting to corner
-1652869819,L5: Past first desk
-1652869852,L4: Starting to corner
-1652869991,L4: Starting to corner
-1652870021,L5: Past first desk
-1652870037,L5: Past first desk
-1652870046,L5: Past first desk
-1652870130,L5: Past first desk
-1652870134,L5: Past first desk
-1652870288,L6: Past second desk
-1652870321,L7: Up to stairs
-1652870329,L8: Even longer
-1652870523,L7: Up to stairs
-1652870740,L7: Up to stairs
-1652870833,L6: Past second desk
-1652870991,L4: Starting to corner
-1652871158,L5: Past first desk
-1652871898,L3: Within first room
-1652872158,L3: Within first room
-1652872353,L2: Up to food trays
-1652880540,L8: Even longer
-1652880540,L8: Even longer
-1652880541,L8: Even longer
-1652880541,L8: Even longer
-1652880541,L8: Even longer
-1652880542,L8: Even longer
-1652880542,L8: Even longer
-1652880543,L8: Even longer
-1652880543,L8: Even longer
-1652880543,L8: Even longer
-1652880543,L8: Even longer
-1652880544,L8: Even longer
-1652951448,L0: Virtually empty
-1652954090,L5: Past first desk
-1652954561,L4: Starting to corner
-1652954628,L4: Starting to corner
-1652954973,L3: Within first room
-1652955206,L3: Within first room
-1652955350,L4: Starting to corner
-1652955354,L4: Starting to corner
-1652955467,L4: Starting to corner
-1652955655,L4: Starting to corner
-1652955746,L5: Past first desk
-1652956109,L3: Within first room
-1652956128,L3: Within first room
-1652956465,L4: Starting to corner
-1652956483,L4: Starting to corner
-1652956553,L5: Past first desk
-1652956553,L4: Starting to corner
-1652956561,L5: Past first desk
-1652956632,L5: Past first desk
-1652956744,L6: Past second desk
-1652956755,L6: Past second desk
-1652956947,L5: Past first desk
-1652957043,L5: Past first desk
-1652957154,L5: Past first desk
-1652957190,L4: Starting to corner
-1652957231,L4: Starting to corner
-1652957285,L4: Starting to corner
-1652957406,L3: Within first room
-1652958616,L4: Starting to corner
-1652959220,L2: Up to food trays
-1652959805,L1: Within kitchen
-1652959834,L1: Within kitchen
-1652959864,L0: Virtually empty
-1652960956,L3: Within first room
-1652961523,L5: Past first desk
-1652961527,L5: Past first desk
-1652961529,L5: Past first desk
-1652961530,L5: Past first desk
-1653033737,L0: Virtually empty
-1653041249,L1: Within kitchen
-1653041707,L1: Within kitchen
-1653042605,L3: Within first room
-1653042663,L3: Within first room
-1653042744,L2: Up to food trays
-1653043036,L1: Within kitchen
-1653044355,L0: Virtually empty
-1653297459,L0: Virtually empty
-1653297474,L0: Virtually empty
-1653300288,L1: Within kitchen
-1653300543,L2: Up to food trays
-1653301212,L1: Within kitchen
-1653301223,L1: Within kitchen
-1653301469,L0: Virtually empty
-1653302007,L0: Virtually empty
-1653302512,L3: Within first room
-1653302550,L3: Within first room
-1653302560,L3: Within first room
-1653302780,L3: Within first room
-1653303396,L3: Within first room
-1653306227,L0: Virtually empty
-1653384116,L0: Virtually empty
-1653386711,L4: Starting to corner
-1653387989,L1: Within kitchen
-1653388040,L1: Within kitchen
-1653388520,L3: Within first room
-1653388527,L3: Within first room
-1653388558,L3: Within first room
-1653388574,L3: Within first room
-1653388623,L3: Within first room
-1653388648,L3: Within first room
-1653388697,L3: Within first room
-1653388745,L4: Starting to corner
-1653388778,L3: Within first room
-1653388887,L3: Within first room
-1653388889,L3: Within first room
-1653388889,L3: Within first room
-1653388890,L3: Within first room
-1653388890,L3: Within first room
-1653388890,L3: Within first room
-1653388890,L3: Within first room
-1653388890,L3: Within first room
-1653388890,L3: Within first room
-1653388891,L3: Within first room
-1653388891,L3: Within first room
-1653388891,L3: Within first room
-1653388891,L3: Within first room
-1653388892,L3: Within first room
-1653388892,L3: Within first room
-1653388892,L3: Within first room
-1653388893,L3: Within first room
-1653388893,L3: Within first room
-1653388893,L3: Within first room
-1653388893,L3: Within first room
-1653388893,L3: Within first room
-1653388894,L3: Within first room
-1653388894,L3: Within first room
-1653388894,L3: Within first room
-1653388894,L3: Within first room
-1653388895,L3: Within first room
-1653388895,L3: Within first room
-1653388895,L3: Within first room
-1653389030,L4: Starting to corner
-1653389317,L3: Within first room
-1653389707,L3: Within first room
-1653390900,L0: Virtually empty
-1653392950,L2: Up to food trays
-1653473481,L0: Virtually empty
-1653474263,L0: Virtually empty
-1653474881,L3: Within first room
-1653475191,L3: Within first room
-1653475286,L3: Within first room
-1653475395,L2: Up to food trays
-1653475499,L2: Up to food trays
-1653476179,L1: Within kitchen
-1653478485,L1: Within kitchen
-1653903249,L2: Up to food trays
-1653905040,L0: Virtually empty
-1653905041,L0: Virtually empty
-1653905048,L1: Within kitchen
-1653905687,L2: Up to food trays
-1653905928,L1: Within kitchen
-1653905948,L1: Within kitchen
-1653905957,L1: Within kitchen
-1653906449,L0: Virtually empty
-1653906620,L0: Virtually empty
-1653906905,L1: Within kitchen
-1653907011,L1: Within kitchen
-1653907118,L2: Up to food trays
-1653907317,L3: Within first room
-1653907749,L2: Up to food trays
-1653991147,L7: Up to stairs
-1653992192,L6: Past second desk
-1653992510,L5: Past first desk
-1653992866,L4: Starting to corner
-1653993012,L4: Starting to corner
-1653993159,L3: Within first room
-1653993278,L4: Starting to corner
-1653993431,L5: Past first desk
-1653993469,L5: Past first desk
-1653993487,L5: Past first desk
-1653993554,L7: Up to stairs
-1653993582,L7: Up to stairs
-1653993593,L7: Up to stairs
-1653993597,L8: Even longer
-1653993623,L7: Up to stairs
-1653993712,L6: Past second desk
-1653993723,L7: Up to stairs
-1653993730,L6: Past second desk
-1653993845,L6: Past second desk
-1653993876,L6: Past second desk
-1653993958,L6: Past second desk
-1653994107,L7: Up to stairs
-1653994536,L5: Past first desk
-1653994660,L4: Starting to corner
-1653994670,L4: Starting to corner
-1654076818,L7: Up to stairs
-1654078683,L0: Virtually empty
-1654079405,L1: Within kitchen
-1654079864,L2: Up to food trays
-1654079988,L3: Within first room
-1654080152,L3: Within first room
-1654080219,L2: Up to food trays
-1654161640,L0: Virtually empty
-1654161642,L0: Virtually empty
-1654165023,L0: Virtually empty
-1654165886,L2: Up to food trays
-1654166075,L1: Within kitchen
-1654166188,L1: Within kitchen
-1654166372,L0: Virtually empty
-1654166509,L2: Up to food trays
-1654167084,L2: Up to food trays
-1654247743,L0: Virtually empty
-1654247757,L0: Virtually empty
-1654251091,L1: Within kitchen
-1654251343,L0: Virtually empty
-1654251626,L0: Virtually empty
-1654593150,L0: Virtually empty
-1654596644,L1: Within kitchen
-1654597745,L1: Within kitchen
-1654598406,L2: Up to food trays
-1654598406,L2: Up to food trays
-1654598423,L2: Up to food trays
-1654598623,L4: Starting to corner
-1654682707,L2: Up to food trays
-1654684488,L0: Virtually empty
-1654685290,L0: Virtually empty
-1654768325,L4: Starting to corner
-1654769617,L3: Within first room
-1654770036,L2: Up to food trays
-1654770122,L3: Within first room
-1654770356,L3: Within first room
-1654770472,L4: Starting to corner
-1654771095,L2: Up to food trays
-1654771115,L1: Within kitchen
-1654771141,L1: Within kitchen
-1654771191,L2: Up to food trays
-1654771219,L3: Within first room
-1654771259,L4: Starting to corner
-1654771336,L4: Starting to corner
-1654771536,L3: Within first room
-1654771608,L4: Starting to corner
-1654854564,L0: Virtually empty
-1654858335,L0: Virtually empty
-1654858972,L0: Virtually empty
-1655113948,L4: Starting to corner
-1655114190,L5: Past first desk
-1655114512,L4: Starting to corner
-1655116241,L0: Virtually empty
-1655116253,L0: Virtually empty
-1655118358,L0: Virtually empty
-1655118566,L0: Virtually empty
-1655118629,L1: Within kitchen
-1655201713,L4: Starting to corner
-1655202087,L4: Starting to corner
-1655202138,L3: Within first room
-1655202452,L3: Within first room
-1655202546,L3: Within first room
-1655203010,L4: Starting to corner
-1655286741,L4: Starting to corner
-1655288031,L3: Within first room
-1655288099,L5: Past first desk
-1655288797,L7: Up to stairs
-1655288875,L6: Past second desk
-1655289003,L7: Up to stairs
-1655289054,L8: Even longer
-1655289104,L7: Up to stairs
-1655289941,L5: Past first desk
-1655289987,L7: Up to stairs
-1655290281,L3: Within first room
-1655290418,L3: Within first room
-1655291701,L0: Virtually empty
-1655374658,L2: Up to food trays
-1655374706,L3: Within first room
-1655374844,L1: Within kitchen
-1655375971,L2: Up to food trays
-1655376141,L2: Up to food trays
-1655377060,L1: Within kitchen
-1655460778,L1: Within kitchen
-1655461637,L0: Virtually empty
-1655717665,L0: Virtually empty
-1655719488,L0: Virtually empty
-1655720487,L0: Virtually empty
-1655723229,L0: Virtually empty
-1655806522,L5: Past first desk
-1655806594,L6: Past second desk
-1655806596,L6: Past second desk
-1655807376,L3: Within first room
-1655807384,L2: Up to food trays
-1655807615,L2: Up to food trays
-1655807796,L3: Within first room
-1655807834,L5: Past first desk
-1655807924,L4: Starting to corner
-1655808241,L4: Starting to corner
-1655808504,L5: Past first desk
-1655809156,L2: Up to food trays
-1655809180,L2: Up to food trays
-1655809657,L1: Within kitchen
-1655812249,L2: Up to food trays
-1655892850,L1: Within kitchen
-1655893904,L2: Up to food trays
-1655894488,L4: Starting to corner
-1655894525,L4: Starting to corner
-1655894731,L4: Starting to corner
-1655894808,L3: Within first room
-1655894907,L2: Up to food trays
-1655895366,L0: Virtually empty
-1655902543,L2: Up to food trays
-1655977242,L0: Virtually empty
-1655979974,L0: Virtually empty
-1655980787,L1: Within kitchen
-1655981817,L0: Virtually empty
-1655983095,L0: Virtually empty
-1656064450,L0: Virtually empty
-1656065887,L0: Virtually empty
-1656067124,L1: Within kitchen
-1656067140,L0: Virtually empty
+1652090544,"L1: Within kitchen"
+1652091929,"L0: Virtually empty"
+1652091955,"L0: Virtually empty"
+1652092401,"L0: Virtually empty"
+1652093004,"L1: Within kitchen"
+1652093012,"L3: Within first room"
+1652095403,"L0: Virtually empty"
+1652124577,"L0: Virtually empty"
+1652125194,"L0: Virtually empty"
+1652127964,"L8: Even longer"
+1652127975,"L0: Virtually empty"
+1652129535,"L0: Virtually empty"
+1652130106,"L0: Virtually empty"
+1652135810,"L0: Virtually empty"
+1652158785,"L0: Virtually empty"
+1652175610,"L0: Virtually empty"
+1652175871,"L5: Past first desk"
+1652175950,"L7: Up to stairs"
+1652177032,"L7: Up to stairs"
+1652177100,"L6: Past second desk"
+1652177153,"L7: Up to stairs"
+1652177190,"L7: Up to stairs"
+1652177245,"L6: Past second desk"
+1652177674,"L6: Past second desk"
+1652177734,"L6: Past second desk"
+1652177736,"L6: Past second desk"
+1652177834,"L5: Past first desk"
+1652177921,"L6: Past second desk"
+1652178227,"L4: Starting to corner"
+1652178240,"L0: Virtually empty"
+1652178512,"L5: Past first desk"
+1652178544,"L4: Starting to corner"
+1652178656,"L8: Even longer"
+1652178737,"L3: Within first room"
+1652178793,"L4: Starting to corner"
+1652178832,"L4: Starting to corner"
+1652178845,"L4: Starting to corner"
+1652178854,"L4: Starting to corner"
+1652178857,"L4: Starting to corner"
+1652178861,"L4: Starting to corner"
+1652178871,"L4: Starting to corner"
+1652178872,"L4: Starting to corner"
+1652178873,"L4: Starting to corner"
+1652178873,"L4: Starting to corner"
+1652178873,"L4: Starting to corner"
+1652178873,"L4: Starting to corner"
+1652178873,"L4: Starting to corner"
+1652178874,"L4: Starting to corner"
+1652178874,"L4: Starting to corner"
+1652178874,"L4: Starting to corner"
+1652178875,"L4: Starting to corner"
+1652178875,"L4: Starting to corner"
+1652178875,"L4: Starting to corner"
+1652178875,"L4: Starting to corner"
+1652178876,"L4: Starting to corner"
+1652178876,"L4: Starting to corner"
+1652178876,"L4: Starting to corner"
+1652178876,"L4: Starting to corner"
+1652178876,"L4: Starting to corner"
+1652178876,"L4: Starting to corner"
+1652178877,"L4: Starting to corner"
+1652178877,"L4: Starting to corner"
+1652178877,"L4: Starting to corner"
+1652178877,"L4: Starting to corner"
+1652178878,"L4: Starting to corner"
+1652178893,"L5: Past first desk"
+1652178910,"L4: Starting to corner"
+1652178994,"L5: Past first desk"
+1652179021,"L5: Past first desk"
+1652179036,"L5: Past first desk"
+1652179060,"L4: Starting to corner"
+1652179094,"L4: Starting to corner"
+1652179155,"L8: Even longer"
+1652179155,"L8: Even longer"
+1652179155,"L8: Even longer"
+1652179166,"L4: Starting to corner"
+1652179166,"L4: Starting to corner"
+1652179180,"L0: Virtually empty"
+1652179181,"L5: Past first desk"
+1652179191,"L8: Even longer"
+1652179194,"L3: Within first room"
+1652179197,"L4: Starting to corner"
+1652179438,"L5: Past first desk"
+1652179658,"L5: Past first desk"
+1652179807,"L5: Past first desk"
+1652179969,"L3: Within first room"
+1652179993,"L3: Within first room"
+1652179996,"L3: Within first room"
+1652180046,"L3: Within first room"
+1652180298,"L2: Up to food trays"
+1652180737,"L1: Within kitchen"
+1652181047,"L0: Virtually empty"
+1652181144,"L1: Within kitchen"
+1652181633,"L0: Virtually empty"
+1652181975,"L4: Starting to corner"
+1652181993,"L1: Within kitchen"
+1652182150,"L7: Up to stairs"
+1652182175,"L0: Virtually empty"
+1652193733,"L0: Virtually empty"
+1652196066,"L0: Virtually empty"
+1652259981,"L0: Virtually empty"
+1652262289,"L1: Within kitchen"
+1652262860,"L6: Past second desk"
+1652263542,"L4: Starting to corner"
+1652263569,"L4: Starting to corner"
+1652263782,"L2: Up to food trays"
+1652263812,"L2: Up to food trays"
+1652264164,"L1: Within kitchen"
+1652264670,"L1: Within kitchen"
+1652264692,"L1: Within kitchen"
+1652265253,"L1: Within kitchen"
+1652265276,"L3: Within first room"
+1652265304,"L2: Up to food trays"
+1652265305,"L3: Within first room"
+1652265316,"L3: Within first room"
+1652265358,"L1: Within kitchen"
+1652265367,"L3: Within first room"
+1652265467,"L3: Within first room"
+1652265495,"L4: Starting to corner"
+1652265639,"L3: Within first room"
+1652266063,"L1: Within kitchen"
+1652266724,"L1: Within kitchen"
+1652267423,"L0: Virtually empty"
+1652270830,"L0: Virtually empty"
+1652347372,"L0: Virtually empty"
+1652347385,"L0: Virtually empty"
+1652349691,"L4: Starting to corner"
+1652349758,"L4: Starting to corner"
+1652349780,"L5: Past first desk"
+1652349783,"L4: Starting to corner"
+1652350358,"L4: Starting to corner"
+1652350812,"L3: Within first room"
+1652350953,"L3: Within first room"
+1652351061,"L2: Up to food trays"
+1652351061,"L2: Up to food trays"
+1652351084,"L3: Within first room"
+1652351087,"L3: Within first room"
+1652351117,"L3: Within first room"
+1652351220,"L2: Up to food trays"
+1652351271,"L3: Within first room"
+1652351285,"L3: Within first room"
+1652351433,"L0: Virtually empty"
+1652351527,"L3: Within first room"
+1652351529,"L3: Within first room"
+1652351550,"L0: Virtually empty"
+1652351553,"L3: Within first room"
+1652351556,"L0: Virtually empty"
+1652351560,"L3: Within first room"
+1652351562,"L0: Virtually empty"
+1652351582,"L3: Within first room"
+1652351586,"L0: Virtually empty"
+1652351616,"L3: Within first room"
+1652351630,"L3: Within first room"
+1652351680,"L3: Within first room"
+1652351696,"L2: Up to food trays"
+1652351712,"L3: Within first room"
+1652351737,"L3: Within first room"
+1652351953,"L3: Within first room"
+1652351979,"L3: Within first room"
+1652352001,"L3: Within first room"
+1652352238,"L1: Within kitchen"
+1652352362,"L2: Up to food trays"
+1652352727,"L0: Virtually empty"
+1652353334,"L0: Virtually empty"
+1652354203,"L1: Within kitchen"
+1652435259,"L0: Virtually empty"
+1652435722,"L3: Within first room"
+1652435741,"L3: Within first room"
+1652436083,"L2: Up to food trays"
+1652436277,"L1: Within kitchen"
+1652436604,"L1: Within kitchen"
+1652437421,"L0: Virtually empty"
+1652437837,"L0: Virtually empty"
+1652437967,"L1: Within kitchen"
+1652438185,"L8: Even longer"
+1652438302,"L4: Starting to corner"
+1652438378,"L1: Within kitchen"
+1652438598,"L1: Within kitchen"
+1652439011,"L0: Virtually empty"
+1652439011,"L0: Virtually empty"
+1652439147,"L1: Within kitchen"
+1652439285,"L0: Virtually empty"
+1652439550,"L0: Virtually empty"
+1652466979,"L0: Virtually empty"
+1652467000,"L8: Even longer"
+1652467001,"L8: Even longer"
+1652467004,"L8: Even longer"
+1652467005,"L8: Even longer"
+1652467006,"L8: Even longer"
+1652467007,"L8: Even longer"
+1652467008,"L8: Even longer"
+1652467009,"L8: Even longer"
+1652467022,"L5: Past first desk"
+1652467038,"L8: Even longer"
+1652467038,"L8: Even longer"
+1652467039,"L8: Even longer"
+1652467039,"L8: Even longer"
+1652467040,"L8: Even longer"
+1652467040,"L8: Even longer"
+1652467040,"L8: Even longer"
+1652467041,"L8: Even longer"
+1652467041,"L8: Even longer"
+1652467041,"L8: Even longer"
+1652467042,"L8: Even longer"
+1652467042,"L8: Even longer"
+1652467042,"L8: Even longer"
+1652467043,"L8: Even longer"
+1652467043,"L8: Even longer"
+1652467049,"L8: Even longer"
+1652467049,"L8: Even longer"
+1652467049,"L8: Even longer"
+1652467055,"L8: Even longer"
+1652467055,"L8: Even longer"
+1652467056,"L8: Even longer"
+1652467056,"L8: Even longer"
+1652467056,"L8: Even longer"
+1652467057,"L8: Even longer"
+1652467057,"L8: Even longer"
+1652467057,"L8: Even longer"
+1652467058,"L8: Even longer"
+1652486562,"L1: Within kitchen"
+1652692409,"L0: Virtually empty"
+1652692513,"L0: Virtually empty"
+1652695392,"L1: Within kitchen"
+1652695796,"L3: Within first room"
+1652695829,"L3: Within first room"
+1652695920,"L3: Within first room"
+1652696304,"L1: Within kitchen"
+1652697153,"L1: Within kitchen"
+1652697169,"L1: Within kitchen"
+1652697256,"L1: Within kitchen"
+1652697278,"L1: Within kitchen"
+1652697402,"L3: Within first room"
+1652697529,"L4: Starting to corner"
+1652697643,"L4: Starting to corner"
+1652697650,"L5: Past first desk"
+1652697652,"L5: Past first desk"
+1652697657,"L5: Past first desk"
+1652697873,"L5: Past first desk"
+1652698264,"L4: Starting to corner"
+1652698522,"L5: Past first desk"
+1652698522,"L5: Past first desk"
+1652698563,"L5: Past first desk"
+1652698836,"L4: Starting to corner"
+1652699085,"L3: Within first room"
+1652699496,"L4: Starting to corner"
+1652703620,"L0: Virtually empty"
+1652780913,"L7: Up to stairs"
+1652781088,"L8: Even longer"
+1652781192,"L8: Even longer"
+1652783544,"L4: Starting to corner"
+1652783551,"L4: Starting to corner"
+1652783555,"L8: Even longer"
+1652783580,"L7: Up to stairs"
+1652783638,"L7: Up to stairs"
+1652783639,"L8: Even longer"
+1652783642,"L8: Even longer"
+1652783644,"L8: Even longer"
+1652783658,"L8: Even longer"
+1652783724,"L8: Even longer"
+1652783744,"L8: Even longer"
+1652783750,"L7: Up to stairs"
+1652783751,"L0: Virtually empty"
+1652783755,"L8: Even longer"
+1652783781,"L7: Up to stairs"
+1652783975,"L7: Up to stairs"
+1652784109,"L6: Past second desk"
+1652784146,"L6: Past second desk"
+1652784168,"L6: Past second desk"
+1652784211,"L6: Past second desk"
+1652784414,"L7: Up to stairs"
+1652785621,"L3: Within first room"
+1652785904,"L2: Up to food trays"
+1652786486,"L0: Virtually empty"
+1652786793,"L6: Past second desk"
+1652866966,"L3: Within first room"
+1652867458,"L5: Past first desk"
+1652867570,"L5: Past first desk"
+1652867635,"L6: Past second desk"
+1652867791,"L6: Past second desk"
+1652867793,"L7: Up to stairs"
+1652867918,"L6: Past second desk"
+1652868022,"L5: Past first desk"
+1652868349,"L6: Past second desk"
+1652868351,"L6: Past second desk"
+1652868552,"L6: Past second desk"
+1652868585,"L6: Past second desk"
+1652869000,"L4: Starting to corner"
+1652869003,"L4: Starting to corner"
+1652869025,"L5: Past first desk"
+1652869042,"L0: Virtually empty"
+1652869050,"L5: Past first desk"
+1652869585,"L4: Starting to corner"
+1652869819,"L5: Past first desk"
+1652869852,"L4: Starting to corner"
+1652869991,"L4: Starting to corner"
+1652870021,"L5: Past first desk"
+1652870037,"L5: Past first desk"
+1652870046,"L5: Past first desk"
+1652870130,"L5: Past first desk"
+1652870134,"L5: Past first desk"
+1652870288,"L6: Past second desk"
+1652870321,"L7: Up to stairs"
+1652870329,"L8: Even longer"
+1652870523,"L7: Up to stairs"
+1652870740,"L7: Up to stairs"
+1652870833,"L6: Past second desk"
+1652870991,"L4: Starting to corner"
+1652871158,"L5: Past first desk"
+1652871898,"L3: Within first room"
+1652872158,"L3: Within first room"
+1652872353,"L2: Up to food trays"
+1652880540,"L8: Even longer"
+1652880540,"L8: Even longer"
+1652880541,"L8: Even longer"
+1652880541,"L8: Even longer"
+1652880541,"L8: Even longer"
+1652880542,"L8: Even longer"
+1652880542,"L8: Even longer"
+1652880543,"L8: Even longer"
+1652880543,"L8: Even longer"
+1652880543,"L8: Even longer"
+1652880543,"L8: Even longer"
+1652880544,"L8: Even longer"
+1652951448,"L0: Virtually empty"
+1652954090,"L5: Past first desk"
+1652954561,"L4: Starting to corner"
+1652954628,"L4: Starting to corner"
+1652954973,"L3: Within first room"
+1652955206,"L3: Within first room"
+1652955350,"L4: Starting to corner"
+1652955354,"L4: Starting to corner"
+1652955467,"L4: Starting to corner"
+1652955655,"L4: Starting to corner"
+1652955746,"L5: Past first desk"
+1652956109,"L3: Within first room"
+1652956128,"L3: Within first room"
+1652956465,"L4: Starting to corner"
+1652956483,"L4: Starting to corner"
+1652956553,"L5: Past first desk"
+1652956553,"L4: Starting to corner"
+1652956561,"L5: Past first desk"
+1652956632,"L5: Past first desk"
+1652956744,"L6: Past second desk"
+1652956755,"L6: Past second desk"
+1652956947,"L5: Past first desk"
+1652957043,"L5: Past first desk"
+1652957154,"L5: Past first desk"
+1652957190,"L4: Starting to corner"
+1652957231,"L4: Starting to corner"
+1652957285,"L4: Starting to corner"
+1652957406,"L3: Within first room"
+1652958616,"L4: Starting to corner"
+1652959220,"L2: Up to food trays"
+1652959805,"L1: Within kitchen"
+1652959834,"L1: Within kitchen"
+1652959864,"L0: Virtually empty"
+1652960956,"L3: Within first room"
+1652961523,"L5: Past first desk"
+1652961527,"L5: Past first desk"
+1652961529,"L5: Past first desk"
+1652961530,"L5: Past first desk"
+1653033737,"L0: Virtually empty"
+1653041249,"L1: Within kitchen"
+1653041707,"L1: Within kitchen"
+1653042605,"L3: Within first room"
+1653042663,"L3: Within first room"
+1653042744,"L2: Up to food trays"
+1653043036,"L1: Within kitchen"
+1653044355,"L0: Virtually empty"
+1653297459,"L0: Virtually empty"
+1653297474,"L0: Virtually empty"
+1653300288,"L1: Within kitchen"
+1653300543,"L2: Up to food trays"
+1653301212,"L1: Within kitchen"
+1653301223,"L1: Within kitchen"
+1653301469,"L0: Virtually empty"
+1653302007,"L0: Virtually empty"
+1653302512,"L3: Within first room"
+1653302550,"L3: Within first room"
+1653302560,"L3: Within first room"
+1653302780,"L3: Within first room"
+1653303396,"L3: Within first room"
+1653306227,"L0: Virtually empty"
+1653384116,"L0: Virtually empty"
+1653386711,"L4: Starting to corner"
+1653387989,"L1: Within kitchen"
+1653388040,"L1: Within kitchen"
+1653388520,"L3: Within first room"
+1653388527,"L3: Within first room"
+1653388558,"L3: Within first room"
+1653388574,"L3: Within first room"
+1653388623,"L3: Within first room"
+1653388648,"L3: Within first room"
+1653388697,"L3: Within first room"
+1653388745,"L4: Starting to corner"
+1653388778,"L3: Within first room"
+1653388887,"L3: Within first room"
+1653388889,"L3: Within first room"
+1653388889,"L3: Within first room"
+1653388890,"L3: Within first room"
+1653388890,"L3: Within first room"
+1653388890,"L3: Within first room"
+1653388890,"L3: Within first room"
+1653388890,"L3: Within first room"
+1653388890,"L3: Within first room"
+1653388891,"L3: Within first room"
+1653388891,"L3: Within first room"
+1653388891,"L3: Within first room"
+1653388891,"L3: Within first room"
+1653388892,"L3: Within first room"
+1653388892,"L3: Within first room"
+1653388892,"L3: Within first room"
+1653388893,"L3: Within first room"
+1653388893,"L3: Within first room"
+1653388893,"L3: Within first room"
+1653388893,"L3: Within first room"
+1653388893,"L3: Within first room"
+1653388894,"L3: Within first room"
+1653388894,"L3: Within first room"
+1653388894,"L3: Within first room"
+1653388894,"L3: Within first room"
+1653388895,"L3: Within first room"
+1653388895,"L3: Within first room"
+1653388895,"L3: Within first room"
+1653389030,"L4: Starting to corner"
+1653389317,"L3: Within first room"
+1653389707,"L3: Within first room"
+1653390900,"L0: Virtually empty"
+1653392950,"L2: Up to food trays"
+1653473481,"L0: Virtually empty"
+1653474263,"L0: Virtually empty"
+1653474881,"L3: Within first room"
+1653475191,"L3: Within first room"
+1653475286,"L3: Within first room"
+1653475395,"L2: Up to food trays"
+1653475499,"L2: Up to food trays"
+1653476179,"L1: Within kitchen"
+1653478485,"L1: Within kitchen"
+1653903249,"L2: Up to food trays"
+1653905040,"L0: Virtually empty"
+1653905041,"L0: Virtually empty"
+1653905048,"L1: Within kitchen"
+1653905687,"L2: Up to food trays"
+1653905928,"L1: Within kitchen"
+1653905948,"L1: Within kitchen"
+1653905957,"L1: Within kitchen"
+1653906449,"L0: Virtually empty"
+1653906620,"L0: Virtually empty"
+1653906905,"L1: Within kitchen"
+1653907011,"L1: Within kitchen"
+1653907118,"L2: Up to food trays"
+1653907317,"L3: Within first room"
+1653907749,"L2: Up to food trays"
+1653991147,"L7: Up to stairs"
+1653992192,"L6: Past second desk"
+1653992510,"L5: Past first desk"
+1653992866,"L4: Starting to corner"
+1653993012,"L4: Starting to corner"
+1653993159,"L3: Within first room"
+1653993278,"L4: Starting to corner"
+1653993431,"L5: Past first desk"
+1653993469,"L5: Past first desk"
+1653993487,"L5: Past first desk"
+1653993554,"L7: Up to stairs"
+1653993582,"L7: Up to stairs"
+1653993593,"L7: Up to stairs"
+1653993597,"L8: Even longer"
+1653993623,"L7: Up to stairs"
+1653993712,"L6: Past second desk"
+1653993723,"L7: Up to stairs"
+1653993730,"L6: Past second desk"
+1653993845,"L6: Past second desk"
+1653993876,"L6: Past second desk"
+1653993958,"L6: Past second desk"
+1653994107,"L7: Up to stairs"
+1653994536,"L5: Past first desk"
+1653994660,"L4: Starting to corner"
+1653994670,"L4: Starting to corner"
+1654076818,"L7: Up to stairs"
+1654078683,"L0: Virtually empty"
+1654079405,"L1: Within kitchen"
+1654079864,"L2: Up to food trays"
+1654079988,"L3: Within first room"
+1654080152,"L3: Within first room"
+1654080219,"L2: Up to food trays"
+1654161640,"L0: Virtually empty"
+1654161642,"L0: Virtually empty"
+1654165023,"L0: Virtually empty"
+1654165886,"L2: Up to food trays"
+1654166075,"L1: Within kitchen"
+1654166188,"L1: Within kitchen"
+1654166372,"L0: Virtually empty"
+1654166509,"L2: Up to food trays"
+1654167084,"L2: Up to food trays"
+1654247743,"L0: Virtually empty"
+1654247757,"L0: Virtually empty"
+1654251091,"L1: Within kitchen"
+1654251343,"L0: Virtually empty"
+1654251626,"L0: Virtually empty"
+1654593150,"L0: Virtually empty"
+1654596644,"L1: Within kitchen"
+1654597745,"L1: Within kitchen"
+1654598406,"L2: Up to food trays"
+1654598406,"L2: Up to food trays"
+1654598423,"L2: Up to food trays"
+1654598623,"L4: Starting to corner"
+1654682707,"L2: Up to food trays"
+1654684488,"L0: Virtually empty"
+1654685290,"L0: Virtually empty"
+1654768325,"L4: Starting to corner"
+1654769617,"L3: Within first room"
+1654770036,"L2: Up to food trays"
+1654770122,"L3: Within first room"
+1654770356,"L3: Within first room"
+1654770472,"L4: Starting to corner"
+1654771095,"L2: Up to food trays"
+1654771115,"L1: Within kitchen"
+1654771141,"L1: Within kitchen"
+1654771191,"L2: Up to food trays"
+1654771219,"L3: Within first room"
+1654771259,"L4: Starting to corner"
+1654771336,"L4: Starting to corner"
+1654771536,"L3: Within first room"
+1654771608,"L4: Starting to corner"
+1654854564,"L0: Virtually empty"
+1654858335,"L0: Virtually empty"
+1654858972,"L0: Virtually empty"
+1655113948,"L4: Starting to corner"
+1655114190,"L5: Past first desk"
+1655114512,"L4: Starting to corner"
+1655116241,"L0: Virtually empty"
+1655116253,"L0: Virtually empty"
+1655118358,"L0: Virtually empty"
+1655118566,"L0: Virtually empty"
+1655118629,"L1: Within kitchen"
+1655201713,"L4: Starting to corner"
+1655202087,"L4: Starting to corner"
+1655202138,"L3: Within first room"
+1655202452,"L3: Within first room"
+1655202546,"L3: Within first room"
+1655203010,"L4: Starting to corner"
+1655286741,"L4: Starting to corner"
+1655288031,"L3: Within first room"
+1655288099,"L5: Past first desk"
+1655288797,"L7: Up to stairs"
+1655288875,"L6: Past second desk"
+1655289003,"L7: Up to stairs"
+1655289054,"L8: Even longer"
+1655289104,"L7: Up to stairs"
+1655289941,"L5: Past first desk"
+1655289987,"L7: Up to stairs"
+1655290281,"L3: Within first room"
+1655290418,"L3: Within first room"
+1655291701,"L0: Virtually empty"
+1655374658,"L2: Up to food trays"
+1655374706,"L3: Within first room"
+1655374844,"L1: Within kitchen"
+1655375971,"L2: Up to food trays"
+1655376141,"L2: Up to food trays"
+1655377060,"L1: Within kitchen"
+1655460778,"L1: Within kitchen"
+1655461637,"L0: Virtually empty"
+1655717665,"L0: Virtually empty"
+1655719488,"L0: Virtually empty"
+1655720487,"L0: Virtually empty"
+1655723229,"L0: Virtually empty"
+1655806522,"L5: Past first desk"
+1655806594,"L6: Past second desk"
+1655806596,"L6: Past second desk"
+1655807376,"L3: Within first room"
+1655807384,"L2: Up to food trays"
+1655807615,"L2: Up to food trays"
+1655807796,"L3: Within first room"
+1655807834,"L5: Past first desk"
+1655807924,"L4: Starting to corner"
+1655808241,"L4: Starting to corner"
+1655808504,"L5: Past first desk"
+1655809156,"L2: Up to food trays"
+1655809180,"L2: Up to food trays"
+1655809657,"L1: Within kitchen"
+1655812249,"L2: Up to food trays"
+1655892850,"L1: Within kitchen"
+1655893904,"L2: Up to food trays"
+1655894488,"L4: Starting to corner"
+1655894525,"L4: Starting to corner"
+1655894731,"L4: Starting to corner"
+1655894808,"L3: Within first room"
+1655894907,"L2: Up to food trays"
+1655895366,"L0: Virtually empty"
+1655902543,"L2: Up to food trays"
+1655977242,"L0: Virtually empty"
+1655979974,"L0: Virtually empty"
+1655980787,"L1: Within kitchen"
+1655981817,"L0: Virtually empty"
+1655983095,"L0: Virtually empty"
+1656064450,"L0: Virtually empty"
+1656065887,"L0: Virtually empty"
+1656067124,"L1: Within kitchen"
+1656067140,"L0: Virtually empty"
+1656322212,"L1: Within kitchen"
+1656322515,"L1: Within kitchen"
+1656324479,"L3: Within first room"
+1656325375,"L1: Within kitchen"
+1656326350,"L1: Within kitchen"
+1656326590,"L2: Up to food trays"
+1656411110,"L3: Within first room"
+1656412444,"L0: Virtually empty"
+1656412800,"L0: Virtually empty"
+1656412822,"L3: Within first room"
+1656412947,"L3: Within first room"
+1656413249,"L5: Past first desk"
+1656413251,"L5: Past first desk"
+1656413255,"L5: Past first desk"
+1656413423,"L4: Starting to corner"
+1656413726,"L2: Up to food trays"
+1656498820,"L0: Virtually empty"
+1656498862,"L1: Within kitchen"
+1656499026,"L2: Up to food trays"
+1656499447,"L1: Within kitchen"
+1656583739,"L1: Within kitchen"
+1656584068,"L1: Within kitchen"
+1656585527,"L2: Up to food trays"
+1656585702,"L1: Within kitchen"
+1656586076,"L1: Within kitchen"
+1656588918,"L1: Within kitchen"
+1656672012,"L0: Virtually empty"
+1656929175,"L1: Within kitchen"
+1656929208,"L1: Within kitchen"
+1656930110,"L0: Virtually empty"
+1656931054,"L1: Within kitchen"
+1656933025,"L0: Virtually empty"
+1657016170,"L1: Within kitchen"
+1657017378,"L1: Within kitchen"
+1657017967,"L0: Virtually empty"
+1657017997,"L3: Within first room"
+1657103800,"L2: Up to food trays"
+1657103834,"L3: Within first room"
+1657104150,"L4: Starting to corner"
+1657105521,"L0: Virtually empty"
+1657106783,"L3: Within first room"
+1657190145,"L0: Virtually empty"
+1657191800,"L1: Within kitchen"
+1657191801,"L0: Virtually empty"
+1657276336,"L0: Virtually empty"
+1657277421,"L0: Virtually empty"
+1657535202,"L1: Within kitchen"
+1657535846,"L0: Virtually empty"
+1657536970,"L0: Virtually empty"
+1657619304,"L5: Past first desk"
+1657622102,"L1: Within kitchen"
+1657622145,"L2: Up to food trays"
+1657622497,"L3: Within first room"
+1657622695,"L4: Starting to corner"
+1657622711,"L4: Starting to corner"
+1657622735,"L3: Within first room"
+1657623494,"L0: Virtually empty"
+1657624108,"L0: Virtually empty"
+1657706881,"L0: Virtually empty"
+1657707887,"L4: Starting to corner"
+1657708137,"L3: Within first room"
+1657708177,"L4: Starting to corner"
+1657708606,"L5: Past first desk"
+1657708624,"L4: Starting to corner"
+1657708742,"L5: Past first desk"
+1657708795,"L5: Past first desk"
+1657708883,"L5: Past first desk"
+1657709322,"L4: Starting to corner"
+1657709542,"L3: Within first room"
+1657710476,"L0: Virtually empty"
+1657711096,"L0: Virtually empty"
+1657793350,"L2: Up to food trays"
+1657793577,"L2: Up to food trays"
+1657793614,"L3: Within first room"
+1657793805,"L3: Within first room"
+1657794742,"L0: Virtually empty"
+1657794798,"L1: Within kitchen"
+1657794841,"L2: Up to food trays"
+1657795150,"L3: Within first room"
+1657795160,"L3: Within first room"
+1657798578,"L0: Virtually empty"
+1657798645,"L1: Within kitchen"
+1657881373,"L2: Up to food trays"
+1657882592,"L0: Virtually empty"
+1658138534,"L0: Virtually empty"
+1658138831,"L0: Virtually empty"
+1658139590,"L0: Virtually empty"
+1658139984,"L1: Within kitchen"
+1658140498,"L0: Virtually empty"
+1658142600,"L0: Virtually empty"
+1658226283,"L3: Within first room"
+1658226776,"L3: Within first room"
+1658227048,"L2: Up to food trays"
+1658227305,"L2: Up to food trays"
+1658229233,"L1: Within kitchen"
+1658229809,"L0: Virtually empty"
+1658314788,"L0: Virtually empty"
+1658399893,"L2: Up to food trays"
+1658400148,"L2: Up to food trays"
+1658400184,"L2: Up to food trays"
+1658401023,"L0: Virtually empty"
+1658485051,"L0: Virtually empty"
+1658492075,"L0: Virtually empty"
+1658745256,"L0: Virtually empty"
+1658745303,"L1: Within kitchen"
+1658745393,"L0: Virtually empty"
+1658745611,"L1: Within kitchen"
+1658745748,"L1: Within kitchen"
+1658753983,"L8: Even longer"
+1658753985,"L0: Virtually empty"
+1658831442,"L1: Within kitchen"
+1658831454,"L1: Within kitchen"
+1658831750,"L0: Virtually empty"
+1658831760,"L1: Within kitchen"
+1658831804,"L2: Up to food trays"
+1658831804,"L2: Up to food trays"
+1658832320,"L2: Up to food trays"
+1658917156,"L2: Up to food trays"
+1658917825,"L1: Within kitchen"
+1658923882,"L0: Virtually empty"
+1659004164,"L1: Within kitchen"
+1659004775,"L0: Virtually empty"
+1659090191,"L0: Virtually empty"
+1659349700,"L0: Virtually empty"
+1659435152,"L0: Virtually empty"
+1659435887,"L1: Within kitchen"
+1659436592,"L0: Virtually empty"
+1659444952,"L8: Even longer"
+1659444967,"L0: Virtually empty"
+1659512737,"L0: Virtually empty"
+1659514870,"L0: Virtually empty"
+1659521129,"L2: Up to food trays"
+1659522367,"L0: Virtually empty"
+1659531026,"L0: Virtually empty"
+1659531405,"L0: Virtually empty"
+1659531408,"L0: Virtually empty"
+1659531408,"L0: Virtually empty"
+1659531409,"L0: Virtually empty"
+1659531410,"L0: Virtually empty"
+1659531410,"L0: Virtually empty"
+1659531411,"L0: Virtually empty"
+1659531411,"L0: Virtually empty"
+1659531411,"L0: Virtually empty"
+1659531412,"L0: Virtually empty"
+1659531412,"L0: Virtually empty"
+1659531412,"L0: Virtually empty"
+1659531413,"L0: Virtually empty"
+1659531413,"L0: Virtually empty"
+1659531413,"L0: Virtually empty"
+1659531413,"L0: Virtually empty"
+1659531413,"L0: Virtually empty"
+1659531414,"L0: Virtually empty"
+1659531414,"L0: Virtually empty"
+1659531414,"L0: Virtually empty"
+1659531414,"L0: Virtually empty"
+1659531415,"L0: Virtually empty"
+1659531415,"L0: Virtually empty"
+1659531415,"L0: Virtually empty"
+1659531415,"L0: Virtually empty"
+1659531416,"L0: Virtually empty"
+1659531416,"L0: Virtually empty"
+1659531417,"L0: Virtually empty"
+1659531417,"L0: Virtually empty"
+1659531417,"L0: Virtually empty"
+1659531418,"L0: Virtually empty"
+1659531418,"L0: Virtually empty"
+1659531418,"L0: Virtually empty"
+1659531418,"L0: Virtually empty"
+1659531419,"L0: Virtually empty"
+1659531419,"L0: Virtually empty"
+1659531419,"L0: Virtually empty"
+1659531419,"L0: Virtually empty"
+1659531420,"L0: Virtually empty"
+1659531420,"L0: Virtually empty"
+1659531420,"L0: Virtually empty"
+1659531420,"L0: Virtually empty"
+1659531420,"L0: Virtually empty"
+1659531421,"L0: Virtually empty"
+1659531421,"L0: Virtually empty"
+1659531421,"L0: Virtually empty"
+1659531421,"L0: Virtually empty"
+1659531422,"L0: Virtually empty"
+1659531422,"L0: Virtually empty"
+1659531422,"L0: Virtually empty"
+1659531423,"L0: Virtually empty"
+1659531423,"L0: Virtually empty"
+1659531423,"L0: Virtually empty"
+1659531423,"L0: Virtually empty"
+1659531424,"L0: Virtually empty"
+1659531424,"L0: Virtually empty"
+1659531424,"L0: Virtually empty"
+1659531424,"L0: Virtually empty"
+1659531425,"L0: Virtually empty"
+1659531425,"L0: Virtually empty"
+1659531425,"L0: Virtually empty"
+1659531425,"L0: Virtually empty"
+1659531426,"L0: Virtually empty"
+1659531426,"L0: Virtually empty"
+1659531426,"L0: Virtually empty"
+1659531427,"L0: Virtually empty"
+1659531427,"L0: Virtually empty"
+1659531427,"L0: Virtually empty"
+1659531427,"L0: Virtually empty"
+1659531428,"L0: Virtually empty"
+1659531428,"L0: Virtually empty"
+1659531428,"L0: Virtually empty"
+1659531428,"L0: Virtually empty"
+1659531428,"L0: Virtually empty"
+1659531429,"L0: Virtually empty"
+1659531429,"L0: Virtually empty"
+1659531429,"L0: Virtually empty"
+1659531429,"L0: Virtually empty"
+1659531429,"L0: Virtually empty"
+1659531430,"L0: Virtually empty"
+1659531430,"L0: Virtually empty"
+1659531430,"L0: Virtually empty"
+1659531430,"L0: Virtually empty"
+1659531431,"L0: Virtually empty"
+1659531431,"L0: Virtually empty"
+1659531431,"L0: Virtually empty"
+1659531432,"L0: Virtually empty"
+1659531432,"L0: Virtually empty"
+1659531432,"L0: Virtually empty"
+1659531432,"L0: Virtually empty"
+1659531432,"L0: Virtually empty"
+1659531432,"L0: Virtually empty"
+1659531445,"L0: Virtually empty"
+1659531446,"L0: Virtually empty"
+1659531447,"L0: Virtually empty"
+1659531448,"L0: Virtually empty"
+1659531448,"L0: Virtually empty"
+1659599583,"L0: Virtually empty"
+1659600134,"L0: Virtually empty"
+1659600258,"L0: Virtually empty"
+1659693688,"L0: Virtually empty"
+1659695890,"L0: Virtually empty"
+1660042872,"L0: Virtually empty"
+1660127940,"L0: Virtually empty"
+1660204030,"L0: Virtually empty"
+1660214264,"L0: Virtually empty"
+1660300541,"L2: Up to food trays"
+1660300779,"L1: Within kitchen"
+1660558591,"L4: Starting to corner"
+1660559682,"L4: Starting to corner"
+1660559807,"L4: Starting to corner"
+1660560044,"L4: Starting to corner"
+1660644937,"L4: Starting to corner"
+1660644952,"L3: Within first room"
+1660645329,"L3: Within first room"
+1660645589,"L3: Within first room"
+1660645991,"L2: Up to food trays"
+1660731992,"L0: Virtually empty"
+1660733118,"L2: Up to food trays"
+1660733139,"L2: Up to food trays"
+1660733139,"L2: Up to food trays"
+1660904618,"L1: Within kitchen"
+1661855123,"L0: Virtually empty"
+1661857253,"L8: Even longer"
+1661857631,"L8: Even longer"
+1661858601,"L6: Past second desk"
+1661858828,"L5: Past first desk"
+1661859026,"L4: Starting to corner"
+1661859205,"L3: Within first room"
+1661945928,"L0: Virtually empty"
+1662374739,"L8: Even longer"
+1662376308,"L5: Past first desk"
+1662462683,"L4: Starting to corner"
+1662544695,"L8: Even longer"
+1662544699,"L8: Even longer"
+1662545979,"L7: Up to stairs"
+1662547552,"L8: Even longer"
+1662547566,"L8: Even longer"
+1662547567,"L8: Even longer"
+1662547568,"L8: Even longer"
+1662550821,"L0: Virtually empty"
+1662979810,"L3: Within first room"
+1663063881,"L3: Within first room"
+1663063892,"L3: Within first room"
+1663066395,"L2: Up to food trays"
+1663151268,"L0: Virtually empty"
+1663237532,"L2: Up to food trays"
+1663238033,"L1: Within kitchen"
+1663238966,"L3: Within first room"
+1663668008,"L0: Virtually empty"
+1663672825,"L3: Within first room"
+1663931387,"L3: Within first room"
+1663931612,"L3: Within first room"
