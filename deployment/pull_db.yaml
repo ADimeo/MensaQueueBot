@@ -1,32 +1,16 @@
 ---
-- name: Mensaqueuebot Data download playbook
+- name: Mensaqueuebot database download playbook
   # Run with -K to ask for password
   hosts: SOME_TODO_IP
   tasks:
-      - name: Gather the package facts
-        ansible.builtin.package_facts:
-          manager: auto
-      
-      - name: Test for sqlite3 install
-        debug:
-            msg: "Error expected: sqlite3 is not installed"
-        when: "'sqlite3' not in ansible_facts.packages"
-
-
-
       - name: Copy DB from location within docker to main env
         become: yes
         ansible.builtin.command:
-            # Remember that this runs as root, so ~ may return an unexpected value
-            cmd: cp /var/lib/docker/volumes/deployment_db_data/_data/queue_database.db /home/user/databases/{{ ansible_date_time.date }}.db 
+            cmd: cp /var/lib/docker/volumes/deployment_db_data/_data/queue_database.db /home/USER/databases/{{ ansible_date_time.date }}.db
       
-      - name: Extract publishable reports from DB
-        ansible.builtin.shell:
-            cmd: sqlite3 -header -csv ~/databases/{{ ansible_date_time.date }}.db "select time, queueLength from queueReports" > ~/databases/queueReports.csv
-
-      - name: Copy DB from remote system to local
+      - name: Copy database from remote system to local
         ansible.builtin.fetch:
-            src: ~/databases/queueReports.csv
+            src: /home/USER/databases/{{ ansible_date_time.date }}.db
             dest: ../analysis/data/
             flat: yes
 
