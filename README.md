@@ -42,6 +42,22 @@ This is a minimalist telegram bot written in go that allows you to record the cu
         - A `deploy-mensa-queue.yaml` file for use with [ansible](https://www.ansible.com/), because I'm supposed to be learning that right now
 
 
+# Development setup
+The following steps can be taken to run a fully functional MensaQueueBot locally. Feel free to replace steps where you are more comfortable with alternative solutions
+1. Install go
+2. Create a new telegram bot as described by [telegram documentation](https://core.telegram.org/bots/features#botfather)
+3. Install a proxy service such as [ngrok](https://ngrok.com/)
+4. Set the following environment variables in a shell via `export`
+    - `MENSA_QUEUE_BOT_DB_PATH` to any path, it's where the DB for reports wil lbe
+    - `MENSA_QUEUE_BOT_PERSONAL_TOKEN` to an arbitrary string. This string hides the endpoint which accepts requests from telegrams servers. It's a security feature that doesn't need to be user for a development deployment
+    - `MENSA_QUEUE_BOT_TELEGRAM_TOKEN` to the token you received when creating your bot
+5. Allow telegrams servers to connect to your development server by telling them where you are
+    - Start the proxy service, e.g. with `ngrok http 8080` in a second shell
+    - Tell telegrams servers with `curl -F "url=[url ngrok displays to you]/[string you set as MENSA_QUEUE_BOT_PERSONAL_TOKEN/"  "https://api.telegram.org/bot[your MENSA_QUEUE_BOT_PERSONAL_TOKEN/setWebhook"`
+        - So if your token is `ABCDE` the final request is to `https://api.telegram.org/botABCDE/setWebhook`
+6. In the same shell where you set the environment variables run `go run main.go telegram_connector.go db_connector.go storage.go changelog_db_connector.go db_utilities.go internetpoints_db_connector.go`
+
+
 ## Deployment
 1. `mv deployment/.env-template deployment/.env` and modify all variables within it
 2. Advise telegram where your bot will be hosted, e.g. via `curl -F "url=https://your.url.example.com/long-random-string-defined-as-MENSA_QUEUE_BOT_PERSONAL_TOKEN/"  "https://api.telegram.org/bot<telegram-token-provided-by-botfather>/setWebhook"`
