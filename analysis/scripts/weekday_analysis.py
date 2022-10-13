@@ -10,6 +10,18 @@ import matplotlib.pyplot as plt
 
 
 CSV_FILE_PATH = "../data/queueReports.csv"
+RELEVANT_SEMESTER = "WS22/23"
+SEMESTER_START_DATES = {
+        "SS22": "2022-04-19 +0200",
+        "WS22/23": "2022-10-17 +0200",
+        }
+
+SEMESTER_END_DATES = {
+        "SS22": "2022-07-29 +0200",
+        "WS22/23": "2023-02-10 +0200",
+        }
+
+
 
 
 def load_csv():
@@ -27,6 +39,33 @@ def load_csv():
     return array_of_measurements
 
 
+def filter_for_semester(array_of_measurements, semester_key):
+    """For the given list of measurements returns a list which only contains
+    those measurements that were taken within a semester.
+
+    Which semester is used is defined by the key passed into this function.
+    Key needs to correspond to keys used in SEMESTER_START_DATES and
+    SEMESTER_END_DATES."""
+
+    # Equivalent to Potsdam time, or close enough to not matter: We don't expect
+    # any reports in the night
+    semester_start_date_string = SEMESTER_START_DATES[semester_key]
+    semester_end_date_string = SEMESTER_END_DATES[semester_key]
+
+
+    # Take this information from https://www.uni-potsdam.de/de/studium/termine/semestertermine
+    semester_start_date = datetime.strptime(semester_start_date_string, "%Y-%m-%d %z")
+    # One day after to catch last day)
+    semester_end_date = datetime.strptime(semester_end_date_string, "%Y-%m-%d %z")
+
+
+    return list(filter(lambda x: \
+            semester_start_date \
+            <= datetime.fromtimestamp(x[0], tz=pytz.timezone('Europe/Berlin')) \
+            <= semester_end_date, array_of_measurements))
+
+
+
 def sort_into_weekdays(array_of_measurements):
     """Expects a list of all measurements made.
     Returns a list with seven elements, each representing a weekday,
@@ -40,7 +79,7 @@ def sort_into_weekdays(array_of_measurements):
 
 
     for measurement in array_of_measurements:
-        timestamp = datetime.fromtimestamp(measurement[0])
+        timestamp = datetime.fromtimestamp(measurement[0], tz=pytz.timezone('Europe/Berlin'))
         weekday_of_measurement = timestamp.weekday() # weekdays are from 0 to 6
         day_buckets[weekday_of_measurement].append(measurement)
 
@@ -50,7 +89,7 @@ def sort_into_weekdays(array_of_measurements):
 def normalize_measurement_tuple(m_tuple):
     """Given a tuple of (timestamp, string), this
     normalizes the timestamp to include just time, not date, and the
-    string to an int.
+    string to an int. \
     All timestamps returned by this function keep their time,
     but now happen on the same day.
     For the labels each LX value is converted to the appropriate X"""
@@ -82,13 +121,15 @@ def get_day_of_week_string_from_measurement(measurement):
     return days[weekday_number]
 
 
-def illustrate_single_weekday(list_of_measurement_tuples):
+def illustrate_single_weekday(list_of_measurement_tuples, active_semester):
     """Gets a list of touples containing measurements of a single
     day. Creates a graph for those measurements"""
 
     tuples_to_illustrate = []
     x_axis_points = []
     y_axis_points = []
+
+
     day_of_week = get_day_of_week_string_from_measurement(list_of_measurement_tuples[0])
 
     # Normalize all measurements
@@ -128,7 +169,7 @@ def illustrate_single_weekday(list_of_measurement_tuples):
     axe.plot(x_axis_points, y_axis_points)
 
     # plt.show()
-    plt.title(day_of_week)
+    plt.title(active_semester + ": " + day_of_week)
     plt.tight_layout()
     plt.savefig(day_of_week + ".png", format='png', dpi=200)
 
@@ -140,9 +181,15 @@ def main():
     """Reads the csv defined at the top and
     generates five .png in this folder"""
     all_measurements = load_csv()
-    grouped_by_weekday = sort_into_weekdays(all_measurements)
+    measurements_in_current_semester = filter_for_semester(all_measurements, RELEVANT_SEMESTER)
+
+    if len(measurements_in_current_semester) == 0:
+        print("No measurements to display")
+        return
+
+    grouped_by_weekday = sort_into_weekdays(measurements_in_current_semester)
     for i in range(5):
-        illustrate_single_weekday(grouped_by_weekday[i])
+        illustrate_single_weekday(grouped_by_weekday[i], RELEVANT_SEMESTER)
 
 
 if __name__=="__main__":
