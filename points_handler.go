@@ -13,7 +13,7 @@ func sendPointsHelpMessages(chatID int) {
 		"Here at MensaQueueBot, we try to minimize the data we collect. Right now all your reports are anonymized. Your reports will stay anonymous regardless of whether you collect points or not, but if you opt in we'll need to store additional information, specifically how many reports you've made. Just wanted to let you know that.",
 		"Right now points don't do anything except prove to everybody what a great reporter you are, but we have plans for the future! (Maybe!)",
 		`To start collecting points send /points_track`,
-		`To stop colletcing points and delete all data related to point collection send /points_delete`,
+		`To stop collecting points and delete all data related to point collection send /points_delete`,
 		`To see your points send /points`,
 	}
 	for i := 0; i < len(messageArray); i++ {
