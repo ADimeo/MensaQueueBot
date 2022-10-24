@@ -81,20 +81,6 @@ func GetLocalLocation() *time.Location {
 	return potsdamLocation
 }
 
-func GetMensaOpeningTime() time.Time {
-	var today = time.Now()
-	// Mensa opens at 08:00
-	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, 0, 0, GetLocalLocation())
-	return openingTime
-}
-
-func GetMensaClosingTime() time.Time {
-	var today = time.Now()
-	// Mensa closes at 15:00
-	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, GetLocalLocation())
-	return closingTime
-}
-
 /*
    Reads the personal token from environment variables.
    The personal token is part of the url path, and tries to prevent non-authorized users from accessing our webhooks, and therefore spamming our users.

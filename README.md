@@ -28,14 +28,22 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 - `emoji_list` contains selective non-aggressive emoji that can be used for whatever
 - `changelog.psv` is a csv (except with pipes as a separator) that defines messages to be sent to users. Pleaes keep IDs incrementing one by one
 
+
 - `db_utilities.go` implements a number of base functions that can be useful for all db related tasks
 - `db_connector.go` implements database logic related to storing actual queue length reports
 - `changelog_db_connector.go` implements database logic related to tracking which users are aware of which changes, and what changelogs should still be sent out
 - `internetpoints_db_connector.go` implements database logic related to users collecting internetpoints
 
-- `telegram_connecor.go` implements most of the telegram-interaction related logic
-- `main.go` implements the rest
+
+- `points_handler.go` handles all requests that relate to point collection, e.g. signup, explanation, and number of points
+- `reports_handler.go` handles all requests that relate to reporting of queue length
+- `requests_handler.go` handles all requests that relate to requesting the queue length
+
+- `telegram_connector.go` implements most of the telegram-interaction related logic
+
 - `storage.go` contains functions that either act as static variables, or have encoded some knowledge that really should be stored somewhere else in a proper program. Basically, a catchall for functions that are hacky
+- `main.go` implements the rest
+
 - `deployment` folder contains
         - A `Caddyfile` tht defines [web server](https://caddyserver.com/) configuration
         - A `docker-compose` file that allows for relatively simple deployment of a server + reverse proxy setup
