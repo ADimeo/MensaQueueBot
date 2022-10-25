@@ -1,3 +1,5 @@
+/*Implements database logic related to storing and retrieving actual queue length reports
+ */
 package main
 
 import (

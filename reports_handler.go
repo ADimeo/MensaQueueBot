@@ -59,6 +59,10 @@ func saveQueueLength(queueLength string, unixTimestamp int, chatID int) error {
 
 func reportAppearsValid(reportText string) bool {
 	// Checking time: It's not on the weekend
+	if IsInDebugMode() {
+		zap.S().Info("Running in Debug mode, skipping report validity check")
+		return true
+	}
 	var today = time.Now()
 
 	if today.Weekday() == 0 || today.Weekday() == 6 {

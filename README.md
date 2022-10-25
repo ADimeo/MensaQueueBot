@@ -30,7 +30,7 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 
 
 - `db_utilities.go` implements a number of base functions that can be useful for all db related tasks
-- `db_connector.go` implements database logic related to storing actual queue length reports
+- `db_connector.go` implements database logic related to storing and retrieving actual queue length reports
 - `changelog_db_connector.go` implements database logic related to tracking which users are aware of which changes, and what changelogs should still be sent out
 - `internetpoints_db_connector.go` implements database logic related to users collecting internetpoints
 
@@ -59,6 +59,7 @@ The following steps can be taken to run a fully functional MensaQueueBot locally
     - `MENSA_QUEUE_BOT_DB_PATH` to any path, it's where the DB for reports wil lbe
     - `MENSA_QUEUE_BOT_PERSONAL_TOKEN` to an arbitrary string. This string hides the endpoint which accepts requests from telegrams servers. It's a security feature that doesn't need to be user for a development deployment
     - `MENSA_QUEUE_BOT_TELEGRAM_TOKEN` to the token you received when creating your bot
+    - `MENSA_QUEUE_BOT_DEBUG_MODE` can optionally be set to any value. If it is set a couple of things work differently, e.g. you can report mensa lengths at any time
 5. Allow telegrams servers to connect to your development server by telling them where you are
     - Start the proxy service, e.g. with `ngrok http 8080` in a second shell
     - Tell telegrams servers with `curl -F "url=[url ngrok displays to you]/[string you set as MENSA_QUEUE_BOT_PERSONAL_TOKEN/"  "https://api.telegram.org/bot[your MENSA_QUEUE_BOT_PERSONAL_TOKEN/setWebhook"`

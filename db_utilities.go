@@ -1,3 +1,7 @@
+/*
+Utility functions that are useful to all entities that interact with the DB.
+Notaby, implements the DB handle
+*/
 package main
 
 import (
@@ -8,14 +12,12 @@ import (
 	"go.uber.org/zap"
 )
 
-/*
-Utility functions that are useful to all entities that interact with the DB
-*/
-
 const KEY_DB_BASE_PATH string = "MENSA_QUEUE_BOT_DB_PATH"
 const DB_NAME string = "queue_database.db"
 
 var globalDBHandle *sql.DB = nil
+
+// Needs to be used by all outside functions that request a DB handle
 var DBMutex sync.Mutex
 
 func GetDBHandle() *sql.DB {

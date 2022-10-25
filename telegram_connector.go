@@ -124,8 +124,7 @@ func prepareMultipartForUpload(pathToFile string, chatID int, caption string) (*
 	}
 	writer := multipart.NewWriter(requestBody)
 	defer writer.Close()
-	pathToFile.Base
-	part, err := writer.CreateFormFile("photo", filepath.Base(filename))
+	part, err := writer.CreateFormFile("photo", filepath.Base(pathToFile))
 	if err != nil {
 		zap.S().Errorf("Can't CreateFormFile for /jetze report: %s", pathToFile)
 		return nil, "", err
