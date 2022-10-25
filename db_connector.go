@@ -71,6 +71,48 @@ func GetLatestQueueLengthReport() (int, string) {
 	return retrievedReportTime, retrievedQueueLength
 }
 
+/*
+GetAllQueueLengthReportsInTimeframe returns all length reports that
+were made in the last timeFrameSizeInSeconds seconds.
+Returns two slices: One with the report queue lengths,
+one with the times. Returns an err if no reports are
+available for that timeframe
+*/
+func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string, []int, error) {
+	nowTimeStamp := time.Now().Unix()
+	lowerLimit := nowTimeStamp - timeFrameSizeInSeconds
+
+	queryString := "SELECT queueLength, time FROM queueReports WHERE time > ? ORDER BY time ASC"
+	var queueLengths []string
+	var times []int
+
+	zap.S().Infow("Querying for reports in timeframe",
+		"interval", timeFrameSizeInSeconds)
+	db := GetDBHandle()
+
+	rows, err := db.Query(queryString, lowerLimit)
+	if err != nil {
+		zap.S().Errorw("Error while querying for reports in timeframe", err)
+		return queueLengths, times, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var length string
+		var time int
+		if err := rows.Scan(&length, &time); err != nil {
+			queueLengths = append(queueLengths, length)
+			times = append(times, time)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		zap.S().Errorw("Error while scanning for reports in timeframe", err)
+		return queueLengths, times, err
+	}
+
+	zap.S().Infof("Queried %d reports in timeframe %d", len(queueLengths), timeFrameSizeInSeconds)
+	return queueLengths, times, nil
+}
+
 func WriteReportToDB(reporter string, time int, queueLength string) error {
 	anonymizedReporter := pseudonymizeReporter(reporter)
 
