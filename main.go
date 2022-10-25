@@ -85,7 +85,7 @@ func sendChangelogIfNecessary(chatID int) {
 func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
 	for _, mensaLocation := range mensaLocationArray {
-		err := SendPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
+		err := SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
 		if err != nil {
 			zap.S().Error("Error while sending help message photographs.", err)
 		}
@@ -134,6 +134,11 @@ func reactToRequest(ginContext *gin.Context) {
 			SendQueueLengthReport(chatID, time, reportedQueueLength)
 			sendChangelogIfNecessary(chatID)
 		}
+	case sentMessage == "/test":
+		{
+			zap.S().Infof("Received a /test request")
+			GenerateAndSendGraphicQueueLengthReport(chatID)
+		}
 	case sentMessage == "/jetze@MensaQueueBot":
 		zap.S().Infof("Received a /jetze request, but in a group")
 		time, reportedQueueLength := GetLatestQueueLengthReport()
@@ -149,7 +154,7 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/platypus":
 		{
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
-			SendPhoto(chatID, url, "So cute ❤️")
+			SendStaticWebPhoto(chatID, url, "So cute ❤️")
 		}
 	default:
 		{

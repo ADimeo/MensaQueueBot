@@ -48,5 +48,33 @@ func SendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 	if err != nil {
 		zap.S().Error("Error while sending queue length report", err)
 	}
+}
+
+func GenerateGraphOfMensaTrend() string {
+	// TODO check locally (or in DB) for latest cache
+	// Do not regenerate more often than once every 60 TBD seconds
+
+	/* Query data options:
+	   - Get all reports for last 20 TBD minutes
+	   - if it's less than 3 reports don't illustrate
+	   - Otherwise draw line with all reports
+	   - (But only note down some specific points, pls be pretty)
+	*/
+
+	// After graph generation: Return the file up
+	return "/home/antonio/IT/go/mensa_queue_bot/profile_picture.jpg"
+
+}
+
+func GenerateAndSendGraphicQueueLengthReport(chatID int) {
+	photoFilePath := GenerateGraphOfMensaTrend()
+	SendDynamicPhoto(chatID, photoFilePath, "TEST IMAGE")
+
+	// Get data for
+	// generate graph for now how we get data depends on that ones API
+
+	// Upload graph to telegram
+
+	// Send actual message to user
 
 }

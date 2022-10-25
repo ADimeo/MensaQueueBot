@@ -98,7 +98,7 @@ func GetPersonalToken() string {
 func SendTopViewOfMensa(chatID int) error {
 	const linkToTopView = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
 	const topViewText = "I'm an artist"
-	err := SendPhoto(chatID, TOP_VIEW_URL, topViewText)
+	err := SendStaticWebPhoto(chatID, TOP_VIEW_URL, topViewText)
 	return err
 }
 
@@ -122,7 +122,7 @@ func SendWelcomeMessage(chatID int) {
 	}
 
 	// Send single photo for illustration
-	err = SendPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description)
+	err = SendStaticWebPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description)
 	if err != nil {
 		zap.S().Error("Error while sending first welcome messages.", err)
 	}
