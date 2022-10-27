@@ -78,13 +78,18 @@ Returns two slices: One with the report queue lengths,
 one with the times. Returns an err if no reports are
 available for that timeframe
 */
-func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string, []int, error) {
+func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string, []time.Time, error) {
+	// Note: Scanning into either ints or time.Time returns 0 values.
+	// More specifically, ints never worked, and time.Time worked yesterday,
+	// but now doesn't.
+	// As a workaround we ad as a string, and parse later.
+	// TODO
 	nowTimeStamp := time.Now().Unix()
 	lowerLimit := nowTimeStamp - timeFrameSizeInSeconds
 
 	queryString := "SELECT queueLength, time FROM queueReports WHERE time > ? ORDER BY time ASC"
 	var queueLengths []string
-	var times []int
+	var times []time.Time
 
 	zap.S().Infow("Querying for reports in timeframe",
 		"interval", timeFrameSizeInSeconds)
@@ -98,11 +103,12 @@ func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string
 	defer rows.Close()
 	for rows.Next() {
 		var length string
-		var time int
+		var time time.Time
 		if err := rows.Scan(&length, &time); err != nil {
-			queueLengths = append(queueLengths, length)
-			times = append(times, time)
+			zap.S().Errorw("Error scanning for reports in timeframe, likely data type mismatch", err)
 		}
+		queueLengths = append(queueLengths, length)
+		times = append(times, time)
 	}
 	if err = rows.Err(); err != nil {
 		zap.S().Errorw("Error while scanning for reports in timeframe", err)
