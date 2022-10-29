@@ -2,9 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 	"time"
@@ -103,11 +105,10 @@ func shouldGenerateNewGraph() bool {
 options we want to use for our chart. For details see
 https://echarts.apache.org/en/option.html
 */
-func createEchartOptions() []charts.GlobalOpts {
+func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 	echartOptionsSlice := make([]charts.GlobalOpts, 0)
 
 	// Title
-	currentTime := time.Now()
 	currentTimeString := currentTime.Format("15:04")
 
 	title := charts.WithTitleOpts(opts.Title{
@@ -188,7 +189,7 @@ func createEchartXDataAndDataSeries(graphTimeFrameInSeconds int64) ([]string, []
 	// creat data series
 	yData := queueLengthsAsStringSlice
 
-	seriesData := make([]opts.LineData, len(yData))
+	seriesData := make([]opts.LineData, 0)
 	for i := 0; i < len(yData); i++ {
 		seriesData = append(seriesData, opts.LineData{
 			Value: []string{xData[i], yData[i]}})
@@ -200,11 +201,10 @@ func createEchartXDataAndDataSeries(graphTimeFrameInSeconds int64) ([]string, []
 for a specific timeframe. Writes the graph to a html file
 Returns err if it can't generate a report due to lack of data
 */
-func generateGraphOfMensaTrendAsHTML() (string, error) {
-	graphTimeFrameInSeconds := int64(30 * 60) // 30 Minutes
+func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSeconds int64) (string, error) {
 
 	line := charts.NewLine()
-	globalOptions := createEchartOptions()
+	globalOptions := createEchartOptions(graphEndTime)
 	line.SetGlobalOptions(globalOptions...)
 
 	xData, seriesData, err := createEchartXDataAndDataSeries(graphTimeFrameInSeconds)
@@ -215,25 +215,36 @@ func generateGraphOfMensaTrendAsHTML() (string, error) {
 	line.SetXAxis(xData).
 		AddSeries("Mensa Queue Lengths", seriesData)
 
-	pathToHtmlFile := "/tmp/mensa_queue_bot_length_graph.html"
+	fileName := "mensa_queue_bot_length_graph.html"
+	f, _ := os.Create("/tmp/" + fileName)
 
-	f, _ := os.Create(pathToHtmlFile)
 	line.Render(f)
-	// After graph generation: Return the file up
-	return "file://" + pathToHtmlFile, nil
+	// Return in the format a browser would expect
+	absoluteFilepath, _ := filepath.Abs(f.Name())
+	return "file:///" + absoluteFilepath, nil
 
 }
 
 /* renderHTMLGraphToPNG does exactly what it says. It expects
-a path to a html file, and returns a b64 string representing
-the png.
+a path to a html file, and writes it to a specific file.
+Returns path to that file.
 */
-func renderHTMLGraphToPNG(pathToGraphHTML string) string {
+func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
 	page := rod.New().MustConnect().MustPage(pathToGraphHTML).MustWaitLoad()
 	renderCommand := "() =>{return echarts.getInstanceByDom(document.getElementsByTagName('div')[1]).getDataURL()}" // this is called with javascripts .apply
-	graphAsB64PNG := page.MustEval(renderCommand).Str()
+	// Data is in the format data:image/png;base64,iVBORw0KGgoAAAANSUhEU...
+	commandJson := page.MustEval(renderCommand)
 
-	return graphAsB64PNG
+	graphAsB64PNG := commandJson.Str()
+	// So cut away the first 22 symbols, and b64decode the rest
+	decodedPngData, err := base64.StdEncoding.DecodeString(graphAsB64PNG[22:])
+	if err != nil {
+		return "", err
+	}
+	pathToPng := "/tmp/mensa_queue_bot_length_graph.png"
+	os.WriteFile(pathToPng, []byte(decodedPngData), 0666) //Read and write permissions
+
+	return pathToPng, nil
 }
 
 func GenerateAndSendGraphicQueueLengthReport(chatID int) {
@@ -243,21 +254,26 @@ func GenerateAndSendGraphicQueueLengthReport(chatID int) {
 		// shouldGenerateNewGraph should also check whether we're currently regenerating, or something like that
 		return
 	}
-	graph_filepath, err := generateGraphOfMensaTrendAsHTML()
-	graphAsB64 := renderHTMLGraphToPNG(graph_filepath)
-	zap.S().Debugw("NEW GRAPH GENERATED!", "b64", graphAsB64)
+	graphTimeFrameInSeconds := int64(30 * 60) // 30 Minutes
+	graphEndTime := time.Now()
+	graphFilepath, err := generateGraphOfMensaTrendAsHTML(graphEndTime, graphTimeFrameInSeconds)
 	if err != nil {
-		return
+		// Likely lack of data
+		// TODO fallback to /jetze command
 	}
-	// TODO handle not-enough-data case: Fall back to non-fancy graph
-	// SendDynamicPhoto(chatID, photoFilePath, "TEST IMAGE")
+	pathToPng, err := renderHTMLGraphToPNG(graphFilepath)
+	if err != nil {
+		zap.S().Error("Couldn't render /jetze html to png", err)
+		// Likely lack of data
+		// TODO fallback to /jetze command
+	}
+
+	currentTimeString := graphEndTime.Format("15:04")
+	SendDynamicPhoto(chatID, pathToPng, fmt.Sprintf("Mensa queue length at %s", currentTimeString))
+
 	// TODO preload rod browser
 
-	// Get data for
-	// generate graph for now how we get data depends on that ones API
-
-	// Upload graph to telegram
-
 	// Send actual message to user
+	// TODO log all the things
 
 }
