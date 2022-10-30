@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 	"go.uber.org/zap"
 )
 
@@ -187,9 +188,10 @@ func initDatabases() {
 	InitNewDB()
 	InitNewChangelogDB()
 	InitNewInternetPointsDB()
-	// We also init rod, which downloads a
-	// browser on first boot
-	rod.New().MustConnect().MustPage("https://google.com").MustWaitLoad()
+	// We also init rod, which makes sure that the
+	// browser interaction works
+	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()
+	rod.New().ControlURL(u).MustConnect().MustPage("https://google.com").MustWaitLoad()
 }
 
 /*IsInDebugMode can be used to change behaviour

@@ -13,6 +13,7 @@ import (
 	"github.com/adimeo/go-echarts/v2/charts" // Custom dependency because we need features from their master that aren't published yet
 	"github.com/adimeo/go-echarts/v2/opts"
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 	"go.uber.org/zap"
 )
 
@@ -297,7 +298,8 @@ Rendering happens via an external browser. Extraction to PNG via
 echarts getDataURL method
 */
 func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
-	page := rod.New().MustConnect().MustPage(pathToGraphHTML).MustWaitLoad()
+	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()
+	page := rod.New().ControlURL(u).MustConnect().MustPage(pathToGraphHTML).MustWaitLoad()
 	renderCommand := "() =>{return echarts.getInstanceByDom(document.getElementsByTagName('div')[1]).getDataURL()}" // this is called with javascripts .apply
 	commandJsonResponse := page.MustEval(renderCommand)
 
