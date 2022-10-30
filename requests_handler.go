@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/opts"
+	"github.com/adimeo/go-echarts/v2/charts" // Custom dependency because we need features from master
+	"github.com/adimeo/go-echarts/v2/opts"
 	"github.com/go-rod/rod"
 	"go.uber.org/zap"
 )
@@ -150,6 +150,12 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 	})
 	echartOptionsSlice = append(echartOptionsSlice, title)
 
+	// Grid - fix for labels being cut off
+	grid := charts.WithGridOpts(opts.Grid{
+		ContainLabel: true})
+
+	echartOptionsSlice = append(echartOptionsSlice, grid)
+
 	// yAxis Options
 	mensaLocationObjects := GetMensaLocationSlice()
 	var yAxiLabelStringSlice []string
@@ -165,6 +171,7 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 			Interval:     "0",
 			ShowMinLabel: true,
 			ShowMaxLabel: true,
+			Show:         true,
 		},
 		SplitLine: &opts.SplitLine{
 			Show: true,
@@ -181,6 +188,7 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 		AxisLabel: &opts.AxisLabel{
 			ShowMaxLabel: true,
 			Formatter:    opts.FuncOpts(getXAxisLabels()),
+			Show:         true,
 		},
 	})
 
@@ -246,7 +254,7 @@ func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSec
 		return "", err
 	}
 	line.SetXAxis(xData).
-		AddSeries("Mensa Queue Lengths", seriesData)
+		AddSeries("Mensa Queue Lengths", seriesData, charts.WithLineChartOpts(opts.LineChart{ShowSymbol: true})) // This isn't working, I think
 
 	fileName := "mensa_queue_bot_length_graph.html"
 	f, _ := os.Create("/tmp/" + fileName)
