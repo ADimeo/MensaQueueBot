@@ -1,6 +1,6 @@
 # Mensa Queue Bot
 
-This is a minimalist telegram bot written in go that allows you to record the current length of the Griebnitzsee mensa queue.
+This is a telegram bot written in go that allows you to record the current length of the Griebnitzsee mensa queue.
 
 > Oh shit. Oh shit. Oh shit.
 >
@@ -9,10 +9,11 @@ This is a minimalist telegram bot written in go that allows you to record the cu
 
 ## Features
 - Allows users to report current queue length
-	- Stores these reports without allowing direct inference of who reported it
-	- Reports are stored in a sqlite database
+    - Stores these reports without allowing direct inference of who reported it
+    - Reports are stored in a sqlite database
         - Users can collect internetpoints for their reports
 - Allows users to request the current queue length
+    - Reports to users are graphic
 - Allows to define messages that should be sent to users the next time they interact with the bot
     - In praxis, this is mostly used for changelogs
     - To define a new message to be sent, edit `changelog.psv`

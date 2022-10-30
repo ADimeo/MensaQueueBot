@@ -10,13 +10,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/adimeo/go-echarts/v2/charts" // Custom dependency because we need features from master
+	"github.com/adimeo/go-echarts/v2/charts" // Custom dependency because we need features from their master that aren't published yet
 	"github.com/adimeo/go-echarts/v2/opts"
 	"github.com/go-rod/rod"
 	"go.uber.org/zap"
 )
 
-// Used to store information about the last graph we generated/send
+// Used to store information about the last graph we generated/sent
 // to telegram. We don't need cross-reboot persistence,
 // and the alternative would be storing this in the DB
 var globalLatestGraphDetails graphDetails
@@ -81,7 +81,7 @@ func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 /*
 getXAxisLabels returns a javascript function that converts
 unix timestamps into hh:mm strings, which is the
-format we want to have or labels displayed in
+format we want to have our labels displayed in
 */
 func getXAxisLabels() string {
 	return `function (value) {
@@ -92,15 +92,32 @@ func getXAxisLabels() string {
     }`
 }
 
+/*
+getTimeOfLastGraph returns when the currently active graph
+was generated
+*/
 func getTimeOfLastGraph() time.Time {
 	return globalLatestGraphDetails.Timestamp
 }
 
+/*
+getIdentifierOfLastGraph returns a string that
+we can send to telegram which it will interpret
+as this graph image
+*/
 func getIdentifierOfLastGraph() string {
 	return globalLatestGraphDetails.TelegramAssignedID
 }
 
+/*
+updateGlobalLatestGraphDetails is used to keep the active
+graph details up to date
+*/
 func updateGlobalLatestGraphDetails(time time.Time, newTelegramIdentifier string) {
+	zap.S().Debugf("Updated currently active graph from %s to %s",
+		globalLatestGraphDetails.Timestamp.Format("15:04:05"),
+		time.Format("15:04:05"))
+
 	globalLatestGraphDetails.Timestamp = time
 	globalLatestGraphDetails.TelegramAssignedID = newTelegramIdentifier
 }
@@ -151,6 +168,8 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 	echartOptionsSlice = append(echartOptionsSlice, title)
 
 	// Grid - fix for labels being cut off
+	// This is what requires our custom dependency:
+	// It's not supported in echarts v2.2.4
 	grid := charts.WithGridOpts(opts.Grid{
 		ContainLabel: true})
 
@@ -166,7 +185,7 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 	yAxis := charts.WithYAxisOpts(opts.YAxis{
 		Type: "category",
 		Data: yAxiLabelStringSlice,
-		// BoundaryGap: false,// TODO not supported?
+		// BoundaryGap: false,// I'd like this option, but it's currently not supported in echarts master
 		AxisLabel: &opts.AxisLabel{
 			Interval:     "0",
 			ShowMinLabel: true,
@@ -208,7 +227,8 @@ func convertTimesSliceToTimestampsSlice(timesSlice []time.Time) []string {
 	return timestampsSlice
 }
 
-/* createEchartDataSeries returns the actual data series
+/*
+createEchartDataSeries returns the actual data series
 that echart visualizes
 */
 func createEchartXDataAndDataSeries(graphTimeFrameInSeconds int64) ([]string, []opts.LineData, error) {
@@ -243,7 +263,6 @@ for a specific timeframe. Writes the graph to a html file
 Returns err if it can't generate a report due to lack of data
 */
 func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSeconds int64) (string, error) {
-
 	line := charts.NewLine()
 	globalOptions := createEchartOptions(graphEndTime)
 	line.SetGlobalOptions(globalOptions...)
@@ -251,35 +270,43 @@ func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSec
 	xData, seriesData, err := createEchartXDataAndDataSeries(graphTimeFrameInSeconds)
 	if err != nil {
 		// Likely not enough data
+		zap.S().Debug("Not enough data to create /jetze graph", err)
 		return "", err
 	}
 	line.SetXAxis(xData).
-		AddSeries("Mensa Queue Lengths", seriesData, charts.WithLineChartOpts(opts.LineChart{ShowSymbol: true})) // This isn't working, I think
+		AddSeries("Mensa Queue Lengths", seriesData)
 
 	fileName := "mensa_queue_bot_length_graph.html"
-	f, _ := os.Create("/tmp/" + fileName)
+	f, err := os.Create("/tmp/" + fileName)
+	if err != nil {
+		zap.S().Error("Couldn't create /jetze .html file, even though we have enough data", err)
+		return "", err
+	}
 
 	line.Render(f)
 	// Return in the format a browser would expect
 	absoluteFilepath, _ := filepath.Abs(f.Name())
 	return "file:///" + absoluteFilepath, nil
-
 }
 
 /* renderHTMLGraphToPNG does exactly what it says. It expects
 a path to a html file, and writes it to a specific file.
 Returns path to that file.
+
+Rendering happens via an external browser. Extraction to PNG via
+echarts getDataURL method
 */
 func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
 	page := rod.New().MustConnect().MustPage(pathToGraphHTML).MustWaitLoad()
 	renderCommand := "() =>{return echarts.getInstanceByDom(document.getElementsByTagName('div')[1]).getDataURL()}" // this is called with javascripts .apply
-	// Data is in the format data:image/png;base64,iVBORw0KGgoAAAANSUhEU...
-	commandJson := page.MustEval(renderCommand)
+	commandJsonResponse := page.MustEval(renderCommand)
 
-	graphAsB64PNG := commandJson.Str()
+	graphAsB64PNG := commandJsonResponse.Str()
+	// Data is in the format data:image/png;base64,iVBORw0KGgoAAAANSUhEU...
 	// So cut away the first 22 symbols, and b64decode the rest
 	decodedPngData, err := base64.StdEncoding.DecodeString(graphAsB64PNG[22:])
 	if err != nil {
+		zap.S().Error("Render html->png failed", err)
 		return "", err
 	}
 	pathToPng := "/tmp/mensa_queue_bot_length_graph.png"
@@ -288,6 +315,10 @@ func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
 	return pathToPng, nil
 }
 
+/*
+sendExistingGraphicQueueLengthReport sends the currently active graph
+to our users. That way we don't have to regenerate our graphs on every request
+*/
 func sendExistingGraphicQueueLengthReport(chatID int,
 	timeOfLatestReport int, reportedQueueLength string, oldGraphIdentifier string) error {
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
@@ -295,6 +326,11 @@ func sendExistingGraphicQueueLengthReport(chatID int,
 	return err
 }
 
+/*
+sendNewGraphicQueueLengthReport generates a new graph and sends
+it to the user. Gracefully falls back to string reports if we
+lack data or if errors occur
+*/
 func sendNewGraphicQueueLengthReport(chatID int,
 	timeOfLatestReport int, reportedQueueLength string) error {
 
@@ -304,11 +340,12 @@ func sendNewGraphicQueueLengthReport(chatID int,
 	if err != nil {
 		// Likely lack of data
 		// Fallback to simple report
+		zap.S().Debug("Falling back to sending non-graphic report")
 		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
 	}
 	pathToPng, err := renderHTMLGraphToPNG(graphFilepath)
 	if err != nil {
-		zap.S().Error("Couldn't render /jetze html to png", err)
+		zap.S().Error("Couldn't render /jetze html to png, fallback to text report", err)
 		// Might be a parallelism issue?
 		// Fallback to simple report
 		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
@@ -319,22 +356,29 @@ func sendNewGraphicQueueLengthReport(chatID int,
 	return err
 }
 
+/*
+The handling of a /jetze request. If possible we will try to send a graphic
+report, but fallbacks to text reports exist. Caching exists,
+with the time window of the cache being defined in shouldGenerateNewGraph
+
+*/
 func GenerateAndSendGraphicQueueLengthReport(chatID int) {
 	timeOfLatestReport, reportedQueueLength := GetLatestQueueLengthReport()
 	if !shouldGenerateNewGraph(int64(timeOfLatestReport)) {
 		// Parallelism issue with multiple graphs being generated at the same
 		// time considered unlikely enough not to handle.
+		zap.S().Debug("Sending existing graph for graphic report")
 		oldGraphIdentifier := getIdentifierOfLastGraph()
-		sendExistingGraphicQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength, oldGraphIdentifier)
-		// TODO handle
+		err := sendExistingGraphicQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength, oldGraphIdentifier)
+		if err != nil {
+			zap.S().Error("Something failed while sending an existing report", err)
+		}
 	} else {
-		sendNewGraphicQueueLengthReport(chatID,
+		zap.S().Debug("Creating new graph for graphic report")
+		err := sendNewGraphicQueueLengthReport(chatID,
 			timeOfLatestReport, reportedQueueLength)
-		// TODO handle
+		if err != nil {
+			zap.S().Error("Something failed while sending a new report", err)
+		}
 	}
-
-	// TODO preload rod browser
-
-	// TODO log all the things
-
 }

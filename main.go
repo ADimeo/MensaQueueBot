@@ -192,6 +192,10 @@ func initDatabases() {
 	rod.New().MustConnect().MustPage("https://google.com").MustWaitLoad()
 }
 
+/*IsInDebugMode can be used to change behaviour
+for testing. Currently mostly used to allow
+reports at weird times
+*/
 func IsInDebugMode() bool {
 	_, doesExist := os.LookupEnv(KEY_DEBUG_MODE)
 	if !doesExist {

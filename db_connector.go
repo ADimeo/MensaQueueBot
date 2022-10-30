@@ -79,11 +79,6 @@ one with the times. Returns an err if no reports are
 available for that timeframe
 */
 func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string, []time.Time, error) {
-	// Note: Scanning into either ints or time.Time returns 0 values.
-	// More specifically, ints never worked, and time.Time worked yesterday,
-	// but now doesn't.
-	// As a workaround we ad as a string, and parse later.
-	// TODO
 	nowTimeStamp := time.Now().Unix()
 	lowerLimit := nowTimeStamp - timeFrameSizeInSeconds
 
