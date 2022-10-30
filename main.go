@@ -88,9 +88,12 @@ func sendChangelogIfNecessary(chatID int) {
 func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
 	for _, mensaLocation := range mensaLocationArray {
-		err := SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
-		if err != nil {
-			zap.S().Error("Error while sending help message photographs.", err)
+		if mensaLocation.PhotoUrl != "" {
+			err := SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
+			if err != nil {
+				zap.S().Error("Error while sending help message photographs.", err)
+			}
+
 		}
 	}
 	SendTopViewOfMensa(chatID)

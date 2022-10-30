@@ -30,5 +30,9 @@
     {
         "photo_url": "https://github.com/ADimeo/MensaQueueBot/blob/f9670fd5c57d05152951fc89a5a7cf9174aa8b78/queue_length_illustrations/L07_up_to_stairs.jpg?raw=true",
         "description": "L7: Up to stairs"
+    },
+    {
+        "photo_url": "",
+        "description": "L8: Even longer"
     }
 ]

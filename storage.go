@@ -44,6 +44,7 @@ func getWelcomeMessageArray() [9]string {
    encoded within a mensaLocation struct.
 
    Should be sent together with the texts defined in getWelcomeMessageArray
+   (except for the last queuelength entry "even longer", which doesn't have an image)
    The specific logic of how these two interact is encoded within sendWelcomeMessage
 
    The messages defined for these need to be consistent with the keyboard defined in ./keyboard.json, which is used by telegram_connector.go,
@@ -142,6 +143,7 @@ func SendWelcomeMessage(chatID int) {
 	}
 
 	for i := 5; i < 9; i++ {
+		// We consciously skip the last entry which doesn't have an illstration
 		messageString := messageArray[i]
 		err = SendMessage(chatID, messageString)
 		if err != nil {
