@@ -374,6 +374,7 @@ func GenerateAndSendGraphicQueueLengthReport(chatID int) {
 			zap.S().Error("Something failed while sending an existing report", err)
 		}
 	} else {
+		SendTypingIndicator(chatID)
 		zap.S().Debug("Creating new graph for graphic report")
 		err := sendNewGraphicQueueLengthReport(chatID,
 			timeOfLatestReport, reportedQueueLength)

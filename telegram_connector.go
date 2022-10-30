@@ -35,6 +35,13 @@ type sendMessageRequestBody struct {
 	ReplyKeyboardMarkup ReplyKeyboardMarkupStruct `json:"reply_markup"`
 }
 
+// Used for "typing..." indicators,
+// https://core.telegram.org/bots/api#sendchataction
+type sendChatActionRequestBody struct {
+	ChatID int    `json:"chat_id"`
+	Action string `json:"action"`
+}
+
 type ReplyKeyboardMarkupStruct struct { // https://core.telegram.org/bots/api/#replykeyboardmarkup
 	Keyboard [][]string `json:"keyboard"` // Can be string per https://core.telegram.org/bots/api/#keyboardbutton
 }
@@ -206,6 +213,27 @@ func SendMessage(chatID int, message string) error {
 
 	_, err = http.Post(telegramUrl, "application/json", bytes.NewBuffer(reqBytes))
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/* SendTypingIndicator sets the bots status to "sending image"
+for this specific user*/
+func SendTypingIndicator(chatID int) error {
+	telegramUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendChatAction", GetTelegramToken())
+	indicatorString := "upload_photo"
+	requestBody := &sendChatActionRequestBody{
+		ChatID: chatID,
+		Action: indicatorString,
+	}
+	reqBytes, err := json.Marshal(requestBody)
+	if err != nil {
+		return err
+	}
+	_, err = http.Post(telegramUrl, "application/json", bytes.NewBuffer(reqBytes))
+	if err != nil {
+		zap.S().Error("Failure while sending typing indicator", err)
 		return err
 	}
 	return nil
