@@ -30,14 +30,15 @@ type graphDetails struct {
 	TelegramAssignedID string
 }
 
-/*
-   Sends a message to the specified user, depending on when the last reported queue length was;
+/* generateSimpleLengthReportString generates the text of a report that is sent
+to a user, depending on when the last reported queue length was:
+
    - For reported lengths within the last 5 minutes
    - For reported lengths within the last 59 minutes
    - For reported lengths on the same day
    - For no reported length on the same day
 */
-func SendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength string) {
+func generateSimpleLengthReportString(timeOfReport int, reportedQueueLength string) string {
 	baseMessageReportAvailable := "Current length of mensa queue is %s"
 	baseMessageRelativeReportAvailable := "%d minutes ago the length was %s"
 	baseMessageNoRecentReportAvailable := "No recent report, but today at %s the length was %s"
@@ -53,21 +54,29 @@ func SendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength str
 	timestampNow = timestampNow.In(potsdamLocation)
 	timestampThen = timestampThen.In(potsdamLocation)
 
-	zap.S().Infof("Loading queue length report from %s Europe/Berlin(Current time is %s Europe/Berlin)", timestampThen.Format("15:04"), timestampNow.Format("15:04"))
-
-	var err error
+	zap.S().Infof("Generating queueLengthReport with report from %s Europe/Berlin(Current time is %s Europe/Berlin)", timestampThen.Format("15:04"), timestampNow.Format("15:04"))
 
 	timeSinceLastReport := timestampNow.Sub(timestampThen)
 	if timeSinceLastReport <= acceptableDeltaSinceLastReport {
-		err = SendMessage(chatID, fmt.Sprintf(baseMessageReportAvailable, reportedQueueLength))
+		return fmt.Sprintf(baseMessageReportAvailable, reportedQueueLength)
 	} else if timeSinceLastReport <= timeDeltaForRelativeTimeSinceLastReport {
-		err = SendMessage(chatID, fmt.Sprintf(baseMessageRelativeReportAvailable, int(timeSinceLastReport.Minutes()), reportedQueueLength))
+		return fmt.Sprintf(baseMessageRelativeReportAvailable, int(timeSinceLastReport.Minutes()), reportedQueueLength)
 	} else if timestampNow.YearDay() == timestampThen.YearDay() {
-		err = SendMessage(chatID, fmt.Sprintf(baseMessageNoRecentReportAvailable, timestampThen.Format("15:04"), reportedQueueLength))
+		return fmt.Sprintf(baseMessageNoRecentReportAvailable, timestampThen.Format("15:04"), reportedQueueLength)
 	} else {
-		err = SendMessage(chatID, baseMessageNoReportAvailable)
-
+		return baseMessageNoReportAvailable
 	}
+}
+
+/*
+SendQueueLengthReport sends a message to the specified user, depending on when the last reported queue length was.
+See generateSimpleLengthReportString for message creation logic.
+*/
+func SendQueueLengthReport(chatID int) {
+	timeOfReport, reportedQueueLength := GetLatestQueueLengthReport()
+	reportMessage := generateSimpleLengthReportString(timeOfReport, reportedQueueLength)
+
+	err := SendMessage(chatID, reportMessage)
 	if err != nil {
 		zap.S().Error("Error while sending queue length report", err)
 	}
@@ -248,7 +257,13 @@ func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
 }
 
 func GenerateAndSendGraphicQueueLengthReport(chatID int) {
+	timeOfLatestReport, reportedQueueLength := GetLatestQueueLengthReport()
 	if !shouldGenerateNewGraph() {
+		// TODO if latest report is newer than when we regenerated the graph
+		// regen the graph, or these two might be different
+		// There'll always be _some_ risk or race-condition style inconsistencies,
+		// if a report happens exactly after querying here, and just before
+		// generating the graph, but we accept that edge case
 		// TODO send old graph
 		// TODO make sure there's no parallelism issues here:
 		// shouldGenerateNewGraph should also check whether we're currently regenerating, or something like that
@@ -268,8 +283,8 @@ func GenerateAndSendGraphicQueueLengthReport(chatID int) {
 		// TODO fallback to /jetze command
 	}
 
-	currentTimeString := graphEndTime.Format("15:04")
-	SendDynamicPhoto(chatID, pathToPng, fmt.Sprintf("Mensa queue length at %s", currentTimeString))
+	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
+	SendDynamicPhoto(chatID, pathToPng, stringReport)
 
 	// TODO preload rod browser
 
