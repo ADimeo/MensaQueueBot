@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-rod/rod"
 	"go.uber.org/zap"
 )
 
@@ -188,6 +189,9 @@ func initDatabases() {
 	InitNewDB()
 	InitNewChangelogDB()
 	InitNewInternetPointsDB()
+	// We also init rod, which downloads a
+	// browser on first boot
+	rod.New().MustConnect().MustPage("https://google.com").MustWaitLoad()
 }
 
 func IsInDebugMode() bool {
