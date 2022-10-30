@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
@@ -21,9 +20,6 @@ import (
 // to telegram. We don't need cross-reboot persistence,
 // and the alternative would be storing this in the DB
 var globalLatestGraphDetails graphDetails
-
-// I'm uncertain whether this is necessary, but let's make sure nothing happens
-var graphDetailMutex sync.Mutex
 
 type graphDetails struct {
 	Timestamp          time.Time
@@ -72,14 +68,14 @@ func generateSimpleLengthReportString(timeOfReport int, reportedQueueLength stri
 SendQueueLengthReport sends a message to the specified user, depending on when the last reported queue length was.
 See generateSimpleLengthReportString for message creation logic.
 */
-func SendQueueLengthReport(chatID int) {
-	timeOfReport, reportedQueueLength := GetLatestQueueLengthReport()
+func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength string) error {
 	reportMessage := generateSimpleLengthReportString(timeOfReport, reportedQueueLength)
 
 	err := SendMessage(chatID, reportMessage)
 	if err != nil {
 		zap.S().Error("Error while sending queue length report", err)
 	}
+	return err
 }
 
 /*
@@ -100,12 +96,40 @@ func getTimeOfLastGraph() time.Time {
 	return globalLatestGraphDetails.Timestamp
 }
 
-func shouldGenerateNewGraph() bool {
-	maximalAcceptableTimeDeltaInSeconds := 60.0
+func getIdentifierOfLastGraph() string {
+	return globalLatestGraphDetails.TelegramAssignedID
+}
+
+func updateGlobalLatestGraphDetails(time time.Time, newTelegramIdentifier string) {
+	globalLatestGraphDetails.Timestamp = time
+	globalLatestGraphDetails.TelegramAssignedID = newTelegramIdentifier
+}
+
+/* shouldGenerateNewGraph returns true if we should
+generate a new graph. We should generate a new graph
+if any of these is true:
+- No graph currently exists
+- The latest queue length report is newer than the
+latest grah
+- The latest graph is older than one minute
+
+*/
+func shouldGenerateNewGraph(timeOfReport int64) bool {
 	latestGraphTime := getTimeOfLastGraph()
 	if latestGraphTime.IsZero() {
 		return true
 	}
+	// Check if the latest report is newer than the latest graph
+	// There'll always be _some_ risk or race-condition style inconsistencies,
+	// if a report happens exactly after querying here, and just before
+	// generating the graph, but we accept that edge case
+	latestReportTime := time.Unix(timeOfReport, 0)
+	if latestGraphTime.Before(latestReportTime) {
+		return true
+	}
+
+	// Graph is older than one minute
+	maximalAcceptableTimeDeltaInSeconds := 60.0
 	timeDelta := time.Since(latestGraphTime)
 	return timeDelta.Seconds() > maximalAcceptableTimeDeltaInSeconds
 }
@@ -256,39 +280,53 @@ func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
 	return pathToPng, nil
 }
 
-func GenerateAndSendGraphicQueueLengthReport(chatID int) {
-	timeOfLatestReport, reportedQueueLength := GetLatestQueueLengthReport()
-	if !shouldGenerateNewGraph() {
-		// TODO if latest report is newer than when we regenerated the graph
-		// regen the graph, or these two might be different
-		// There'll always be _some_ risk or race-condition style inconsistencies,
-		// if a report happens exactly after querying here, and just before
-		// generating the graph, but we accept that edge case
-		// TODO send old graph
-		// TODO make sure there's no parallelism issues here:
-		// shouldGenerateNewGraph should also check whether we're currently regenerating, or something like that
-		return
-	}
+func sendExistingGraphicQueueLengthReport(chatID int,
+	timeOfLatestReport int, reportedQueueLength string, oldGraphIdentifier string) error {
+	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
+	err := SendStaticWebPhoto(chatID, oldGraphIdentifier, stringReport)
+	return err
+}
+
+func sendNewGraphicQueueLengthReport(chatID int,
+	timeOfLatestReport int, reportedQueueLength string) error {
+
 	graphTimeFrameInSeconds := int64(30 * 60) // 30 Minutes
 	graphEndTime := time.Now()
 	graphFilepath, err := generateGraphOfMensaTrendAsHTML(graphEndTime, graphTimeFrameInSeconds)
 	if err != nil {
 		// Likely lack of data
-		// TODO fallback to /jetze command
+		// Fallback to simple report
+		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
 	}
 	pathToPng, err := renderHTMLGraphToPNG(graphFilepath)
 	if err != nil {
 		zap.S().Error("Couldn't render /jetze html to png", err)
-		// Likely lack of data
-		// TODO fallback to /jetze command
+		// Might be a parallelism issue?
+		// Fallback to simple report
+		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
 	}
-
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
-	SendDynamicPhoto(chatID, pathToPng, stringReport)
+	newTelegramIdentifier, err := SendDynamicPhoto(chatID, pathToPng, stringReport)
+	updateGlobalLatestGraphDetails(graphEndTime, newTelegramIdentifier)
+	return err
+}
+
+func GenerateAndSendGraphicQueueLengthReport(chatID int) {
+	timeOfLatestReport, reportedQueueLength := GetLatestQueueLengthReport()
+	if !shouldGenerateNewGraph(int64(timeOfLatestReport)) {
+		// Parallelism issue with multiple graphs being generated at the same
+		// time considered unlikely enough not to handle.
+		oldGraphIdentifier := getIdentifierOfLastGraph()
+		sendExistingGraphicQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength, oldGraphIdentifier)
+		// TODO handle
+	} else {
+		sendNewGraphicQueueLengthReport(chatID,
+			timeOfLatestReport, reportedQueueLength)
+		// TODO handle
+	}
 
 	// TODO preload rod browser
 
-	// Send actual message to user
 	// TODO log all the things
 
 }

@@ -132,12 +132,12 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/jetze":
 		{
 			zap.S().Infof("Received a /jetze request")
-			SendQueueLengthReport(chatID)
+			GenerateAndSendGraphicQueueLengthReport(chatID)
 			sendChangelogIfNecessary(chatID)
 		}
 	case sentMessage == "/jetze@MensaQueueBot":
 		zap.S().Infof("Received a /jetze request, but in a group")
-		SendQueueLengthReport(chatID)
+		GenerateAndSendGraphicQueueLengthReport(chatID)
 		sendChangelogIfNecessary(chatID)
 	case sentMessage == "/test":
 		{

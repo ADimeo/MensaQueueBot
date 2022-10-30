@@ -48,6 +48,16 @@ type sendWebPhotoRequestBody struct {
 	Caption string `json:"caption"`
 }
 
+type telegramResponseBodyPhoto struct {
+	FileID string `json:"file_id"` // This is the ID we want to use to re-send this image
+}
+
+type telegramResponseBody struct {
+	Result struct {
+		Photo []telegramResponseBodyPhoto `json:"photo"`
+	} `json:"result"`
+}
+
 // Returns the struct that represents the custom keyboard that should be shown to the user
 func GetReplyKeyboard() *ReplyKeyboardMarkupStruct {
 	var keyboardArray [][]string
@@ -139,33 +149,40 @@ func prepareMultipartForUpload(pathToFile string, chatID int, caption string) (*
 
 /* SendDynamicPhoto sends an image that is stored locally on this machine
 to the user with the given chatID. A description/caption can also be added.
+
+Returns telegram assigned identifier and error, if the request should fail
 */
-func SendDynamicPhoto(chatID int, photoFilePath string, description string) error {
+func SendDynamicPhoto(chatID int, photoFilePath string, description string) (string, error) {
 	telegramUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto", GetTelegramToken())
 
 	requestBody, contentType, err := prepareMultipartForUpload(photoFilePath, chatID, description)
 	if err != nil {
 		zap.S().Errorf("Couldn't build request to send detailed /jetze report")
-		return err
+		return "", err
 	}
 	request, _ := http.NewRequest("POST", telegramUrl, requestBody)
 	request.Header.Add("Content-Type", contentType)
 	client := &http.Client{}
 	response, err := client.Do(request)
+	defer response.Body.Close()
 
 	if err != nil {
 		zap.S().Errorw("Dynamic photo request failed", "error", err)
-		return err
+		return "", err
+	}
+	telegramResponse := &telegramResponseBody{}
+	responseDecoder := json.NewDecoder(response.Body)
+	err = responseDecoder.Decode(telegramResponse)
+
+	if err != nil {
+		return "", err
 	}
 
-	response.Location()
-	return nil
+	// Telegram returns a list of images, in different resolutions
+	// All of them share the same file_id
+	telegramIdentifier := telegramResponse.Result.Photo[0].FileID
 
-	/*
-		// TODO return and store this so we only need to send it once
-		// Multiple photos of different sizes, but all have the same file_id
-		Response.photo[0].file_id
-	*/
+	return telegramIdentifier, nil
 }
 
 /*
