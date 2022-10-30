@@ -143,11 +143,6 @@ func reactToRequest(ginContext *gin.Context) {
 		zap.S().Infof("Received a /jetze request, but in a group")
 		GenerateAndSendGraphicQueueLengthReport(chatID)
 		sendChangelogIfNecessary(chatID)
-	case sentMessage == "/test":
-		{
-			zap.S().Infof("Received a /test request")
-			GenerateAndSendGraphicQueueLengthReport(chatID)
-		}
 	case lengthReportRegex.Match([]byte(sentMessage)):
 		{
 			zap.S().Infof("Received a new report: %s", sentMessage)
