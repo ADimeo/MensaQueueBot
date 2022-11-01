@@ -191,7 +191,9 @@ func initDatabases() {
 	// We also init rod, which makes sure that the
 	// browser interaction works
 	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()
-	rod.New().ControlURL(u).MustConnect().MustPage("https://google.com").MustWaitLoad()
+	browser := rod.New().ControlURL(u).MustConnect()
+	browser.MustPage("https://google.com").MustWaitLoad()
+	browser.MustClose()
 }
 
 /*IsInDebugMode can be used to change behaviour

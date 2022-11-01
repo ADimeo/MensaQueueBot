@@ -299,9 +299,11 @@ echarts getDataURL method
 */
 func renderHTMLGraphToPNG(pathToGraphHTML string) (string, error) {
 	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()
-	page := rod.New().ControlURL(u).MustConnect().MustPage(pathToGraphHTML).MustWaitLoad()
+	browser := rod.New().ControlURL(u).MustConnect()
+	page := browser.MustPage(pathToGraphHTML).MustWaitLoad()
 	renderCommand := "() =>{return echarts.getInstanceByDom(document.getElementsByTagName('div')[1]).getDataURL()}" // this is called with javascripts .apply
 	commandJsonResponse := page.MustEval(renderCommand)
+	browser.MustClose()
 
 	graphAsB64PNG := commandJsonResponse.Str()
 	// Data is in the format data:image/png;base64,iVBORw0KGgoAAAANSUhEU...
