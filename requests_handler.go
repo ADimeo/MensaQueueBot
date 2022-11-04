@@ -241,9 +241,6 @@ func createEchartXDataAndDataSeries(graphTimeFrameInSeconds int64) ([]string, []
 	if len(queueLengthsAsStringSlice) < 3 {
 		return []string{}, []opts.LineData{}, errors.New("Not enough data in timeframe")
 	}
-	if len(timesSlice) < 3 {
-		return []string{}, []opts.LineData{}, errors.New("Not enough data in timeframe")
-	}
 
 	// Create xData
 	xData := convertTimesSliceToTimestampsSlice(timesSlice)
@@ -275,7 +272,16 @@ func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSec
 		return "", err
 	}
 	line.SetXAxis(xData).
-		AddSeries("Mensa Queue Lengths", seriesData)
+		AddSeries("Mensa Queue Lengths", seriesData).
+		SetSeriesOptions(
+			charts.WithMarkLineNameXAxisItemOpts(opts.MarkLineNameXAxisItem{
+				Name:  "Now",
+				XAxis: graphEndTime.Unix(),
+			}),
+			charts.WithMarkLineStyleOpts(opts.MarkLineStyle{
+				Symbol: []string{"none"},
+				Label:  &opts.Label{Formatter: "Now"}}),
+		)
 
 	fileName := "mensa_queue_bot_length_graph.html"
 	f, err := os.Create("/tmp/" + fileName)
