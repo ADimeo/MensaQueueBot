@@ -168,6 +168,13 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 	})
 	echartOptionsSlice = append(echartOptionsSlice, title)
 
+	// Legend
+	legend := charts.WithLegendOpts(opts.Legend{
+		Show: true,
+		Left: "right",
+	})
+	echartOptionsSlice = append(echartOptionsSlice, legend)
+
 	// Grid - fix for labels being cut off
 	// This is what requires our custom dependency:
 	// It's not supported in echarts v2.2.4
