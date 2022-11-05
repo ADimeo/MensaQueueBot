@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/base64"
+	"fmt"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -63,7 +64,7 @@ func GetLatestQueueLengthReport() (int, string) {
 		if err == sql.ErrNoRows {
 			zap.S().Error("No rows returned when querying for latest queue length report")
 		} else {
-			zap.S().Errorw("Error while querying for latest report", err)
+			zap.S().Error("Error while querying for latest report", err)
 		}
 	}
 
@@ -86,32 +87,78 @@ func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string
 	var queueLengths []string
 	var times []time.Time
 
-	zap.S().Infow("Querying for reports in timeframe",
+	zap.S().Infow("Querying for all reports in timeframe",
 		"interval", timeFrameSizeInSeconds)
 	db := GetDBHandle()
 
 	rows, err := db.Query(queryString, lowerLimit)
 	if err != nil {
-		zap.S().Errorw("Error while querying for reports in timeframe", err)
+		zap.S().Errorf("Error while querying for reports in timeframe", err)
 		return queueLengths, times, err
 	}
 	defer rows.Close()
+	return getLengthsAndTimesFromRows(rows)
+}
+
+func getLengthsAndTimesFromRows(rows *sql.Rows) ([]string, []time.Time, error) {
+	var err error
+	var queueLengths []string
+	var times []time.Time
+
 	for rows.Next() {
 		var length string
 		var time time.Time
-		if err := rows.Scan(&length, &time); err != nil {
-			zap.S().Errorw("Error scanning for reports in timeframe, likely data type mismatch", err)
+		if err = rows.Scan(&length, &time); err != nil {
+			zap.S().Errorf("Error scanning for reports in weekday timeframe, likely data type mismatch", err)
 		}
 		queueLengths = append(queueLengths, length)
 		times = append(times, time)
 	}
 	if err = rows.Err(); err != nil {
-		zap.S().Errorw("Error while scanning for reports in timeframe", err)
+		zap.S().Errorf("Error while scanning for reports in timeframe", err)
 		return queueLengths, times, err
 	}
+	zap.S().Infof("Query for reports in timeframe returned  %d reports", len(queueLengths))
+	return queueLengths, times, err
+}
 
-	zap.S().Infof("Queried %d reports in timeframe %d", len(queueLengths), timeFrameSizeInSeconds)
-	return queueLengths, times, nil
+// func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8, weekday time.Weekday, timeframeIntoThePast time.Duration, timeframeIntoTheFuture time.Duration) ([]string, []time.Time, error) {
+func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8, weekday time.Weekday, timeframeIntoThePast time.Duration, timeframeIntoTheFuture time.Duration) ([]string, []time.Time, error) {
+	// TODO document
+
+	// See https://www.sqlite.org/lang_datefunc.html for reference
+	queryString := "SELECT queueLength, time from queueReports " + // Return the usual tuple
+		"WHERE strftime('%s','now') - strftime('%s',queueReports.time, 'unixepoch', CAST(? AS TEXT)) < 0 " + // If it was created within the last 30 days
+		"AND CAST(? AS TEXT) = strftime('%w', queueReports.time, 'unixepoch') " + // On the given weekday
+		"AND time(queueReports.time, 'unixepoch') > CAST(? AS TEXT) " + // Start of times we're interested in
+		"AND time(queueReports.time, 'unixepoch') < CAST(? AS TEXT) " + // End of times we're interested in
+		"AND date(queueReports.time, 'unixepoch') != date();" // Data is not from today
+
+	//Sqlite expects days we add in first strftime to be in NNN format, so let's add leading 0
+	// https://stackoverflow.com/questions/25637440/how-to-pad-a-number-with-zeros-when-printing
+
+	timeFrameInDaysString := fmt.Sprintf("%03d days", daysOfDataToConsider)
+
+	nowTime := time.Now()
+	lowerTimeLimitString := nowTime.Add(-timeframeIntoThePast).Format("15:04:05")
+	upperTimeLimitString := nowTime.Add(timeframeIntoTheFuture).Format("15:04:05")
+
+	var queueLengths []string
+	var times []time.Time
+	zap.S().Infow("Querying for weekdays reports in timeframe",
+		"interval in days", timeFrameInDaysString,
+		"weekday", int(weekday))
+	db := GetDBHandle()
+	//rows, err := db.Query(queryString, timeFrameInDaysString)
+	// rows, err := db.Query(queryString, int(weekday))
+	rows, err := db.Query(queryString, timeFrameInDaysString, int(weekday), lowerTimeLimitString, upperTimeLimitString)
+	//rows, err := db.Query(queryString, timeFrameInDaysString, strconv.Itoa(int(weekday)))
+	if err != nil {
+		zap.S().Errorf("Error while querying for reports in timeframe", err)
+		return queueLengths, times, err
+	}
+	defer rows.Close()
+	return getLengthsAndTimesFromRows(rows)
 }
 
 func WriteReportToDB(reporter string, time int, queueLength string) error {
