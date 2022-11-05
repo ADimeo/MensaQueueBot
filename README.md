@@ -13,7 +13,7 @@ This is a telegram bot written in go that allows you to record the current lengt
     - Reports are stored in a sqlite database
         - Users can collect internetpoints for their reports
 - Allows users to request the current queue length
-    - Reports to users are graphic
+    - Reports to users are graphic, and contain both historical and current data
 - Allows to define messages that should be sent to users the next time they interact with the bot
     - In praxis, this is mostly used for changelogs
     - To define a new message to be sent, edit `changelog.psv`
@@ -49,6 +49,8 @@ This is a telegram bot written in go that allows you to record the current lengt
         - A `Caddyfile` tht defines [web server](https://caddyserver.com/) configuration
         - A `docker-compose` file that allows for relatively simple deployment of a server + reverse proxy setup
         - A `deploy-mensa-queue.yaml` file for use with [ansible](https://www.ansible.com/), because I'm supposed to be learning that right now
+        - A `pull_csv.yaml` and `pull_db.yaml` ansible script, which pull only the reports, or the entitre database respectively, from within the remote docker folder ot the local filesystem
+
 
 
 # Development setup
@@ -65,7 +67,7 @@ The following steps can be taken to run a fully functional MensaQueueBot locally
     - Start the proxy service, e.g. with `ngrok http 8080` in a second shell
     - Tell telegrams servers with `curl -F "url=[url ngrok displays to you]/[string you set as MENSA_QUEUE_BOT_PERSONAL_TOKEN/"  "https://api.telegram.org/bot[your MENSA_QUEUE_BOT_PERSONAL_TOKEN/setWebhook"`
         - So if your token is `ABCDE` the final request is to `https://api.telegram.org/botABCDE/setWebhook`
-6. In the same shell where you set the environment variables run `go run main.go telegram_connector.go db_connector.go storage.go changelog_db_connector.go db_utilities.go internetpoints_db_connector.go`
+6. In the same shell where you set the environment variables run `go run .`
 
 
 ## Deployment

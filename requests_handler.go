@@ -280,7 +280,10 @@ func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSec
 			}),
 			charts.WithMarkLineStyleOpts(opts.MarkLineStyle{
 				Symbol: []string{"none"},
-				Label:  &opts.Label{Formatter: "Now"}}),
+				Label: &opts.Label{
+					Formatter: opts.FuncOpts("function (value){return 'Now'}"),
+					Show:      true,
+				}}),
 		)
 
 	fileName := "mensa_queue_bot_length_graph.html"
