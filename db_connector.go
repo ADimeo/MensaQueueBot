@@ -72,34 +72,9 @@ func GetLatestQueueLengthReport() (int, string) {
 	return retrievedReportTime, retrievedQueueLength
 }
 
-/*
-GetAllQueueLengthReportsInTimeframe returns all length reports that
-were made in the last timeFrameSizeInSeconds seconds.
-Returns two slices: One with the report queue lengths,
-one with the times. Returns an err if no reports are
-available for that timeframe
+/* getLengthsAndTimesFromRows Takes a query that contains (queueLength, times) results,
+and returns them as two arrays, containing the respective data
 */
-func GetAllQueueLengthReportsInTimeframe(timeFrameSizeInSeconds int64) ([]string, []time.Time, error) {
-	nowTimeStamp := time.Now().Unix()
-	lowerLimit := nowTimeStamp - timeFrameSizeInSeconds
-
-	queryString := "SELECT queueLength, time FROM queueReports WHERE time > ? ORDER BY time ASC"
-	var queueLengths []string
-	var times []time.Time
-
-	zap.S().Infow("Querying for all reports in timeframe",
-		"interval", timeFrameSizeInSeconds)
-	db := GetDBHandle()
-
-	rows, err := db.Query(queryString, lowerLimit)
-	if err != nil {
-		zap.S().Errorf("Error while querying for reports in timeframe", err)
-		return queueLengths, times, err
-	}
-	defer rows.Close()
-	return getLengthsAndTimesFromRows(rows)
-}
-
 func getLengthsAndTimesFromRows(rows *sql.Rows) ([]string, []time.Time, error) {
 	var err error
 	var queueLengths []string
@@ -122,37 +97,68 @@ func getLengthsAndTimesFromRows(rows *sql.Rows) ([]string, []time.Time, error) {
 	return queueLengths, times, err
 }
 
-// func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8, weekday time.Weekday, timeframeIntoThePast time.Duration, timeframeIntoTheFuture time.Duration) ([]string, []time.Time, error) {
-func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8, weekday time.Weekday, timeframeIntoThePast time.Duration, timeframeIntoTheFuture time.Duration) ([]string, []time.Time, error) {
-	// TODO document
+/*
+GetAllQueueLengthReportsInTimeframe returns all length reports that
+were made within timeframeIntoPast before now.
+Returns two slices: One with the report queue lengths,
+one with the times. Returns an err if no reports are
+available for that timeframe
+*/
+func GetAllQueueLengthReportsInTimeframe(now time.Time, timeframeIntoPast time.Duration) ([]string, []time.Time, error) {
+	lowerLimit := now.Add(-timeframeIntoPast).Unix()
+
+	queryString := "SELECT queueLength, time FROM queueReports WHERE time > ? ORDER BY time ASC"
+	var queueLengths []string
+	var times []time.Time
+
+	zap.S().Infow("Querying for all reports in timeframe",
+		"interval", timeframeIntoPast)
+	db := GetDBHandle()
+
+	rows, err := db.Query(queryString, lowerLimit)
+	if err != nil {
+		zap.S().Errorf("Error while querying for reports in timeframe", err)
+		return queueLengths, times, err
+	}
+	defer rows.Close()
+	return getLengthsAndTimesFromRows(rows)
+}
+
+/*GetQueueLengthReportsByWeekdayAdndTimeframe returns the following reports:
+- created at most daysOfDataToConsider before nowTime
+- Create at most timeframeIntoPast before noTimes timestamp
+- Create at most timeframeIntoFuture after noTimes timestamp
+- Not created today
+*/
+func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8,
+	nowTimeUTC time.Time,
+	timeframeIntoThePast time.Duration,
+	timeframeIntoTheFuture time.Duration) ([]string, []time.Time, error) {
 
 	// See https://www.sqlite.org/lang_datefunc.html for reference
 	queryString := "SELECT queueLength, time from queueReports " + // Return the usual tuple
 		"WHERE strftime('%s','now') - strftime('%s',queueReports.time, 'unixepoch', CAST(? AS TEXT)) < 0 " + // If it was created within the last 30 days
 		"AND CAST(? AS TEXT) = strftime('%w', queueReports.time, 'unixepoch') " + // On the given weekday
-		"AND time(queueReports.time, 'unixepoch') > CAST(? AS TEXT) " + // Start of times we're interested in
-		"AND time(queueReports.time, 'unixepoch') < CAST(? AS TEXT) " + // End of times we're interested in
+		"AND time(queueReports.time, 'unixepoch', 'utc') > CAST(? AS TEXT) " + // Start of times we're interested in
+		"AND time(queueReports.time, 'unixepoch', 'utc') < CAST(? AS TEXT) " + // End of times we're interested in
 		"AND date(queueReports.time, 'unixepoch') != date();" // Data is not from today
 
 	//Sqlite expects days we add in first strftime to be in NNN format, so let's add leading 0
-	// https://stackoverflow.com/questions/25637440/how-to-pad-a-number-with-zeros-when-printing
-
+	weekday := dateTimeToQueyFor.Weekday()
 	timeFrameInDaysString := fmt.Sprintf("%03d days", daysOfDataToConsider)
 
-	nowTime := time.Now()
-	lowerTimeLimitString := nowTime.Add(-timeframeIntoThePast).Format("15:04:05")
-	upperTimeLimitString := nowTime.Add(timeframeIntoTheFuture).Format("15:04:05")
+	lowerTimeLimitString := nowTimeUTC.Add(-timeframeIntoThePast).Format("15:04:05")
+	upperTimeLimitString := nowTimeUTC.Add(timeframeIntoTheFuture).Format("15:04:05")
 
-	var queueLengths []string
-	var times []time.Time
 	zap.S().Infow("Querying for weekdays reports in timeframe",
 		"interval in days", timeFrameInDaysString,
 		"weekday", int(weekday))
+	var queueLengths []string
+	var times []time.Time
+
 	db := GetDBHandle()
-	//rows, err := db.Query(queryString, timeFrameInDaysString)
-	// rows, err := db.Query(queryString, int(weekday))
 	rows, err := db.Query(queryString, timeFrameInDaysString, int(weekday), lowerTimeLimitString, upperTimeLimitString)
-	//rows, err := db.Query(queryString, timeFrameInDaysString, strconv.Itoa(int(weekday)))
+
 	if err != nil {
 		zap.S().Errorf("Error while querying for reports in timeframe", err)
 		return queueLengths, times, err

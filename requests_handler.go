@@ -235,7 +235,15 @@ func convertTimesSliceToTimestampsSlice(timesSlice []time.Time) []string {
 	return timestampsSlice
 }
 
-// TODO document
+/*normalizeTImesToTodaysTimestamps takes a list of times and
+returns a list of stringified uix timestamps, one per time.
+These unix timestamps
+- represent the time of the original time
+- But their date is set to today
+
+This is usefu to display at what times events that stretch
+over multiple days happened.
+*/
 func normalizeTimesToTodaysTimestamps(timesSlice []time.Time) []string {
 	today := time.Now()
 	var timestampsSlice []string
@@ -244,16 +252,15 @@ func normalizeTimesToTodaysTimestamps(timesSlice []time.Time) []string {
 		timestampsSlice = append(timestampsSlice, strconv.FormatInt(normalizedTime.Unix(), 10))
 	}
 	return timestampsSlice
-
 }
 
 /*
-createEchartDataSeries returns the actual data series
+createEchartDataSeries returns the actual data series for todays report
 that echart visualizes
 */
-func createEchartXDataAndDataSeries(graphTimeFrameInSeconds int64) ([]string, []opts.LineData, error) {
+func createEchartXDataAndDataSeries(now time.Time, dataTimeframe time.Duration) ([]string, []opts.LineData, error) {
 	// Get data
-	queueLengthsAsStringSlice, timesSlice, err := GetAllQueueLengthReportsInTimeframe(graphTimeFrameInSeconds)
+	queueLengthsAsStringSlice, timesSlice, err := GetAllQueueLengthReportsInTimeframe(now, dataTimeframe)
 	if err == sql.ErrNoRows {
 		return []string{}, []opts.LineData{}, errors.New("Not enough data in timeframe")
 	}
@@ -275,12 +282,18 @@ func createEchartXDataAndDataSeries(graphTimeFrameInSeconds int64) ([]string, []
 	return xData, seriesData, nil
 }
 
+/*
+getHistoricalSeriesForToday returns an array of datapoints that can be used to create a scatterchart.
+Each datapoint contains a timestamp for today, and a queue length report string. The array contains data that
+
+- Was generated within the last 30 days (Variable within function decides this length)
+- created in the time between now - timeIntoPast and now.timeIntoFuture, but on all days within the inverval
+*/
 func getHistoricalSeriesForToday(timeIntoPast time.Duration, timeIntoFuture time.Duration) ([]opts.ScatterData, error) {
-	// TODO document
-	todayWeekday := time.Now().Weekday()
+	todayUTC := time.Now().UTC()
 	historicalGraphTimeFrameInDays := int8(30)
 
-	queueLengthsAsStringSlice, timesSlice, err := GetQueueLengthReportsByWeekdayAndTimeframe(historicalGraphTimeFrameInDays, todayWeekday, timeIntoPast, timeIntoFuture)
+	queueLengthsAsStringSlice, timesSlice, err := GetQueueLengthReportsByWeekdayAndTimeframe(historicalGraphTimeFrameInDays, todayUTC, timeIntoPast, timeIntoFuture)
 	if err == sql.ErrNoRows {
 		return []opts.ScatterData{}, errors.New("No historical data found")
 	}
@@ -299,27 +312,30 @@ func getHistoricalSeriesForToday(timeIntoPast time.Duration, timeIntoFuture time
 
 }
 
-func buildHistoricalScatterChart(timeIntoPast time.Duration, timeIntoFuture time.Duration) *charts.Scatter {
+/* buildHistoricalScatterChart returns an echartsScatterchars of historical reports within the
+given intervals (with the now moment being in the middle of the two vlaues
+*/
+func buildHistoricalScatterChart(timeIntoPast time.Duration, timeIntoFuture time.Duration) (*charts.Scatter, error) {
 	scatter := charts.NewScatter()
 
 	historicalSeries, err := getHistoricalSeriesForToday(timeIntoPast, timeIntoFuture)
 	if err != nil {
-		// TODO error handling
+		return scatter, err
 	}
 	scatter.AddSeries("Reports from last month", historicalSeries)
-	return scatter
+	return scatter, nil
 }
 
 /* generateGraphOfMensaTrendAsHTML generates a graph out of the reports
 for a specific timeframe. Writes the graph to a html file
 Returns err if it can't generate a report due to lack of data
 */
-func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSeconds int64, historicalTimeIntoPast time.Duration, historicalTimeIntoFuture time.Duration) (string, error) {
+func generateGraphOfMensaTrendAsHTML(graphCenterTime time.Time, timeIntoPast time.Duration, timeIntoFuture time.Duration) (string, error) {
 	line := charts.NewLine()
-	globalOptions := createEchartOptions(graphEndTime)
+	globalOptions := createEchartOptions(graphCenterTime)
 	line.SetGlobalOptions(globalOptions...)
 
-	xData, seriesData, err := createEchartXDataAndDataSeries(graphTimeFrameInSeconds)
+	xData, seriesData, err := createEchartXDataAndDataSeries(graphCenterTime, timeIntoPast)
 	if err != nil {
 		// Likely not enough data
 		zap.S().Debug("Not enough data to create /jetze graph", err)
@@ -330,7 +346,7 @@ func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSec
 		SetSeriesOptions(
 			charts.WithMarkLineNameXAxisItemOpts(opts.MarkLineNameXAxisItem{
 				Name:  "Now",
-				XAxis: graphEndTime.Unix(),
+				XAxis: graphCenterTime.Unix(),
 			}),
 			charts.WithMarkLineStyleOpts(opts.MarkLineStyle{
 				Symbol: []string{"none"},
@@ -347,7 +363,12 @@ func generateGraphOfMensaTrendAsHTML(graphEndTime time.Time, graphTimeFrameInSec
 		return "", err
 	}
 	// Add historical data
-	line.Overlap(buildHistoricalScatterChart(historicalTimeIntoPast, historicalTimeIntoFuture))
+	historicalScatterChart, err := buildHistoricalScatterChart(timeIntoPast, timeIntoFuture)
+	if err != nil {
+		zap.S().Error("Couldn't scatter chart with historical data, displaying only todays reports", err)
+	} else {
+		line.Overlap(historicalScatterChart)
+	}
 
 	line.Render(f)
 	// Return in the format a browser would expect
@@ -403,17 +424,18 @@ lack data or if errors occur
 func sendNewGraphicQueueLengthReport(chatID int,
 	timeOfLatestReport int, reportedQueueLength string) error {
 
-	graphTimeFrameInSeconds := int64(60 * 60) // 60 Minutes
-	graphEndTime := time.Now()
-	graphTimeHistoricalIntoPast, _ := time.ParseDuration("60m")
-	graphTimeHistoricalIntoFuture, _ := time.ParseDuration("30m")
-	graphFilepath, err := generateGraphOfMensaTrendAsHTML(graphEndTime, graphTimeFrameInSeconds, graphTimeHistoricalIntoPast, graphTimeHistoricalIntoFuture)
+	graphNowLine := time.Now()
+	graphTimeframeIntoPast, _ := time.ParseDuration("60m")
+	graphTimeframeIntoFuture, _ := time.ParseDuration("30m")
+
+	graphFilepath, err := generateGraphOfMensaTrendAsHTML(graphNowLine, graphTimeframeIntoPast, graphTimeframeIntoFuture)
 	if err != nil {
 		// Likely lack of data
 		// Fallback to simple report
 		zap.S().Debug("Falling back to sending non-graphic report")
 		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
 	}
+
 	pathToPng, err := renderHTMLGraphToPNG(graphFilepath)
 	if err != nil {
 		zap.S().Error("Couldn't render /jetze html to png, fallback to text report", err)
@@ -423,7 +445,7 @@ func sendNewGraphicQueueLengthReport(chatID int,
 	}
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
 	newTelegramIdentifier, err := SendDynamicPhoto(chatID, pathToPng, stringReport)
-	updateGlobalLatestGraphDetails(graphEndTime, newTelegramIdentifier)
+	updateGlobalLatestGraphDetails(graphNowLine, newTelegramIdentifier)
 	return err
 }
 
