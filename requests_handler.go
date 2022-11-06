@@ -264,9 +264,6 @@ func createEchartXDataAndDataSeries(now time.Time, dataTimeframe time.Duration) 
 	if err == sql.ErrNoRows {
 		return []string{}, []opts.LineData{}, errors.New("Not enough data in timeframe")
 	}
-	if len(queueLengthsAsStringSlice) < 3 {
-		return []string{}, []opts.LineData{}, errors.New("Not enough data in timeframe")
-	}
 
 	// Create xData
 	xData := convertTimesSliceToTimestampsSlice(timesSlice)
@@ -339,7 +336,6 @@ func generateGraphOfMensaTrendAsHTML(graphCenterTime time.Time, timeIntoPast tim
 	if err != nil {
 		// Likely not enough data
 		zap.S().Debug("Not enough data to create /jetze graph", err)
-		return "", err
 	}
 	line.SetXAxis(xData).
 		AddSeries("Mensa Queue Lengths", seriesData).
