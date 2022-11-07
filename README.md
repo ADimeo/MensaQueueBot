@@ -62,7 +62,7 @@ The following steps can be taken to run a fully functional MensaQueueBot locally
     - `MENSA_QUEUE_BOT_DB_PATH` to any path, it's where the DB for reports wil lbe
     - `MENSA_QUEUE_BOT_PERSONAL_TOKEN` to an arbitrary string. This string hides the endpoint which accepts requests from telegrams servers. It's a security feature that doesn't need to be user for a development deployment
     - `MENSA_QUEUE_BOT_TELEGRAM_TOKEN` to the token you received when creating your bot
-    - `MENSA_QUEUE_BOT_DEBUG_MODE` can optionally be set to any value. If it is set a couple of things work differently, e.g. you can report mensa lengths at any time
+    - `MENSA_QUEUE_BOT_DEBUG_MODE` can optionally be set to any value. If it is set a couple of things work differently, e.g. you can report mensa lengths at any time. Also used during testing to define the telegram ID of the dev that wants to receive debug messages.
 5. Allow telegrams servers to connect to your development server by telling them where you are
     - Start the proxy service, e.g. with `ngrok http 8080` in a second shell
     - Tell telegrams servers with `curl -F "url=[url ngrok displays to you]/[string you set as MENSA_QUEUE_BOT_PERSONAL_TOKEN/"  "https://api.telegram.org/bot[your MENSA_QUEUE_BOT_PERSONAL_TOKEN/setWebhook"`
