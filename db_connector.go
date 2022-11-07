@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"time"
 
@@ -131,16 +132,82 @@ func GetAllQueueLengthReportsInTimeframe(nowUTC time.Time, timeframeIntoPast tim
 	return getLengthsAndTimesFromRows(rows)
 }
 
+/* timeObjectsIsInIntervalInCEST checks whether te given time is within the given
+time interval, as defined by the intervalStart and intervalEnd. This comparison
+happens in CEST, and not UTC, which makes it DST aware for for Germany.
+*/
+func timeObjectIsInIntervalInCEST(intervalStart time.Time,
+	intervalEnd time.Time,
+	timeToCheckInUTC time.Time) (bool, error) {
+	if intervalStart.Year() != intervalEnd.Year() || intervalStart.YearDay() != intervalEnd.YearDay() {
+		zap.S().Error("Caller is trying to use start/endtimes from different dates. Technically possible, likely unintended")
+		return false, errors.New("intervalStart and intervalEnd have different dates!")
+	}
+
+	location := GetLocalLocation()
+	timezoneAwareElement := timeToCheckInUTC.In(location)
+	normalizedTime := time.Date(intervalStart.Year(), intervalStart.Month(), intervalStart.Day(),
+		timezoneAwareElement.Hour(), timezoneAwareElement.Minute(), timezoneAwareElement.Second(), 0, location)
+
+	return normalizedTime.After(intervalStart) && normalizedTime.Before(intervalEnd), nil
+}
+
+/* removeDataOutsideOfIntervalInCEST takes a list of queue lengths and
+times, and removes all elements whose time is farther away from nowTimeUTC
+than the given timeframes. This comparison happens in CEST, which
+makes this function DST aware for Germany
+*/
+func removeDataOutsideOfIntervalInCEST(nowTimeUTC time.Time,
+	timeframeIntoPast time.Duration,
+	timeframeIntoFuture time.Duration,
+	queueLengths []string,
+	times []time.Time) ([]string, []time.Time) {
+
+	location := GetLocalLocation()
+	nowTimeLocal := nowTimeUTC.In(location)
+	intervalStartTime := nowTimeLocal.Add(-timeframeIntoPast)
+	intervalEndTime := nowTimeLocal.Add(timeframeIntoFuture)
+
+	var filteredLengths []string
+	var filteredTimes []time.Time
+
+	for i, element := range times {
+		isInInterval, err := timeObjectIsInIntervalInCEST(intervalStartTime, intervalEndTime, element)
+		if err != nil {
+			// Something went wrong, but we can't really handle this.
+			// let's still add the data, the error is being logged for future
+			filteredLengths = append(filteredLengths, queueLengths[i])
+			filteredTimes = append(filteredTimes, times[i])
+		}
+		if isInInterval {
+			filteredLengths = append(filteredLengths, queueLengths[i])
+			filteredTimes = append(filteredTimes, times[i])
+		}
+	}
+	return filteredLengths, filteredTimes
+}
+
 /*GetQueueLengthReportsByWeekdayAdndTimeframe returns the following reports:
 - created at most daysOfDataToConsider before nowTime
 - Create at most timeframeIntoPast before noTimes timestamp
 - Create at most timeframeIntoFuture after noTimes timestamp
 - Not created today
+
+This function is DST aware: All data that falls into the given interval
+in CEST is returned even if it would be outside of the given interval
+in a pure UTC implementation.
 */
 func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8,
 	nowTimeUTC time.Time,
-	timeframeIntoThePast time.Duration,
-	timeframeIntoTheFuture time.Duration) ([]string, []time.Time, error) {
+	timeframeIntoPast time.Duration,
+	timeframeIntoFuture time.Duration) ([]string, []time.Time, error) {
+	// If daylight saving time changes 12:00 CEST can be
+	// represented by 11:00 UTC or 10:00 UTC. SQLITE lacks
+	// the awareness/information/built ins to have that distinction
+	// in the DB. So we always query in intervals that include 2 extra
+	// hours of data (one in each direction) and filter out the unnecessary
+	// times in go, which is timezone/dst aware
+	dstEqualizer, _ := time.ParseDuration("1h")
 
 	// See https://www.sqlite.org/lang_datefunc.html for reference
 	queryString := "SELECT queueLength, time from queueReports " + // Return the usual tuple
@@ -149,18 +216,15 @@ func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8,
 		"AND time(queueReports.time, 'unixepoch') > CAST(? AS TEXT) " + // Start of times we're interested in
 		"AND time(queueReports.time, 'unixepoch') < CAST(? AS TEXT) " + // End of times we're interested in
 		"AND date(queueReports.time, 'unixepoch') != CAST(? AS TEXT) " + // Data is not from today
-		"AND strftime ('%s', queueReports.time, 'unixepoch') < strftime('%s', ?, 'unixepoch');" // Data is not from the future, important for testing
-	/*
-		queryString := "SELECT queueLength, time from queueReports WHERE strftime('%s', '2022-11-02T16:45:00') - strftime('%s',queueReports.time, 'unixepoch', '030 days') < 0 AND '2' = strftime('%w', queueReports.time, 'unixepoch') AND time(queueReports.time, 'unixepoch', ) > '14:45:00' AND time(queueReports.time, 'unixepoch', ) < '16:15:00' AND date(queueReports.time, 'unixepoch') != '2022-11-02';"
-	*/
+		"AND strftime('%s', queueReports.time, 'unixepoch') < strftime('%s', ?, 'unixepoch');" // Data is not from the future, important for testing
 
 	//Sqlite expects days we add in first strftime to be in NNN format, so let's add leading 0
 	weekday := nowTimeUTC.Weekday()
 	timeFrameInDaysString := fmt.Sprintf("%03d days", daysOfDataToConsider)
 
 	nowTimestamp := nowTimeUTC.Unix()
-	lowerTimeLimitString := nowTimeUTC.Add(-timeframeIntoThePast).Format("15:04:05")
-	upperTimeLimitString := nowTimeUTC.Add(timeframeIntoTheFuture).Format("15:04:05")
+	lowerTimeLimitString := nowTimeUTC.Add(-timeframeIntoPast).Add(-dstEqualizer).Format("15:04:05")
+	upperTimeLimitString := nowTimeUTC.Add(timeframeIntoFuture).Add(dstEqualizer).Format("15:04:05")
 	nowDateUTCString := nowTimeUTC.Format("2006-01-02")
 
 	zap.S().Infow("Querying for weekdays reports in timeframe",
@@ -183,7 +247,12 @@ func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8,
 		return queueLengths, times, err
 	}
 	defer rows.Close()
-	return getLengthsAndTimesFromRows(rows)
+	unfilteredLengths, unfilteredTimes, err := getLengthsAndTimesFromRows(rows)
+	if err != nil {
+		return unfilteredLengths, unfilteredTimes, err
+	}
+	filteredLengths, filteredTimes := removeDataOutsideOfIntervalInCEST(nowTimeUTC, timeframeIntoPast, timeframeIntoFuture, unfilteredLengths, unfilteredTimes)
+	return filteredLengths, filteredTimes, nil
 }
 
 func WriteReportToDB(reporter string, time int, queueLength string) error {
