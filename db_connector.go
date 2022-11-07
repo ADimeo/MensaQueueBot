@@ -252,6 +252,7 @@ func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8,
 		return unfilteredLengths, unfilteredTimes, err
 	}
 	filteredLengths, filteredTimes := removeDataOutsideOfIntervalInCEST(nowTimeUTC, timeframeIntoPast, timeframeIntoFuture, unfilteredLengths, unfilteredTimes)
+	zap.S().Debugf("Filtered query for historical data, %d of %d reports remain", len(filteredTimes), len(unfilteredTimes))
 	return filteredLengths, filteredTimes, nil
 }
 
