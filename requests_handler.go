@@ -236,19 +236,27 @@ func convertTimesSliceToTimestampsSlice(timesSlice []time.Time) []string {
 	return timestampsSlice
 }
 
-/*normalizeTImesToTodaysTimestamps takes a list of times and
-returns a list of stringified uix timestamps, one per time.
+/*normalizeTimesToTodaysTimestamps takes a list of times and
+returns a list of strings with unix timestamps, one per time.
 These unix timestamps
 - represent the time of the original time
 - But their date is set to today
 
-This is usefu to display at what times events that stretch
+Importantly, these unix timestamps are timezone aware for the
+mensa timezone, so if a timestamp showed hh:mm when created,
+it will show the same hh:mm but for the current date
+
+This is useful to display at what times events that stretch
 over multiple days happened.
 */
 func normalizeTimesToTodaysTimestamps(today time.Time, timesSlice []time.Time) []string {
+	// Daylight saving time adds some steps to this...
 	var timestampsSlice []string
 	for _, element := range timesSlice {
-		normalizedTime := time.Date(today.Year(), today.Month(), today.Day(), element.Hour(), element.Minute(), element.Second(), 0, element.Location())
+		timeInMensaTimezone := element.In(GetLocalLocation())
+		normalizedTime := time.Date(today.Year(), today.Month(), today.Day(),
+			timeInMensaTimezone.Hour(), timeInMensaTimezone.Minute(), timeInMensaTimezone.Second(), 0,
+			GetLocalLocation())
 		timestampsSlice = append(timestampsSlice, strconv.FormatInt(normalizedTime.Unix(), 10))
 	}
 	return timestampsSlice
