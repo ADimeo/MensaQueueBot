@@ -104,18 +104,24 @@ Returns two slices: One with the report queue lengths,
 one with the times. Returns an err if no reports are
 available for that timeframe
 */
-func GetAllQueueLengthReportsInTimeframe(now time.Time, timeframeIntoPast time.Duration) ([]string, []time.Time, error) {
-	lowerLimit := now.Add(-timeframeIntoPast).Unix()
+func GetAllQueueLengthReportsInTimeframe(nowUTC time.Time, timeframeIntoPast time.Duration) ([]string, []time.Time, error) {
+	lowerLimit := nowUTC.Add(-timeframeIntoPast).Unix()
 
-	queryString := "SELECT queueLength, time FROM queueReports WHERE time > ? ORDER BY time ASC"
+	queryString := "SELECT queueLength, time FROM queueReports WHERE time > ? " + // Get reports more recent than timeframe
+		"AND strftime ('%s', queueReports.time, 'unixepoch', 'utc') < strftime('%s', CAST(? AS TEXT), 'utc') " + // Data is not from the future, important for testing
+		"ORDER BY time ASC;"
+
 	var queueLengths []string
 	var times []time.Time
 
+	nowTimeString := nowUTC.Format("2006-01-02 15:04:05")
 	zap.S().Infow("Querying for all reports in timeframe",
-		"interval", timeframeIntoPast)
-	db := GetDBHandle()
+		"interval", timeframeIntoPast,
+		"lower limit", lowerLimit,
+		"nowTimeString", nowTimeString)
 
-	rows, err := db.Query(queryString, lowerLimit)
+	db := GetDBHandle()
+	rows, err := db.Query(queryString, lowerLimit, nowTimeString)
 	if err != nil {
 		zap.S().Errorf("Error while querying for reports in timeframe", err)
 		return queueLengths, times, err
@@ -137,27 +143,37 @@ func GetQueueLengthReportsByWeekdayAndTimeframe(daysOfDataToConsider int8,
 
 	// See https://www.sqlite.org/lang_datefunc.html for reference
 	queryString := "SELECT queueLength, time from queueReports " + // Return the usual tuple
-		"WHERE strftime('%s','now') - strftime('%s',queueReports.time, 'unixepoch', CAST(? AS TEXT)) < 0 " + // If it was created within the last 30 days
+		"WHERE strftime('%s',  CAST(? AS TEXT)) - strftime('%s',queueReports.time, 'unixepoch', CAST(? AS TEXT)) < 0 " + // If it was created within the last 30 days
 		"AND CAST(? AS TEXT) = strftime('%w', queueReports.time, 'unixepoch') " + // On the given weekday
 		"AND time(queueReports.time, 'unixepoch', 'utc') > CAST(? AS TEXT) " + // Start of times we're interested in
 		"AND time(queueReports.time, 'unixepoch', 'utc') < CAST(? AS TEXT) " + // End of times we're interested in
-		"AND date(queueReports.time, 'unixepoch') != date();" // Data is not from today
+		"AND date(queueReports.time, 'unixepoch') != CAST(? AS TEXT) " + // Data is not from today
+		"AND strftime ('%s', queueReports.time, 'unixepoch') < strftime('%s', CAST(? AS TEXT));" // Data is not from the future, important for testing
+	/*
+		queryString := "SELECT queueLength, time from queueReports WHERE strftime('%s', '2022-11-02T16:45:00') - strftime('%s',queueReports.time, 'unixepoch', '030 days') < 0 AND '2' = strftime('%w', queueReports.time, 'unixepoch') AND time(queueReports.time, 'unixepoch', 'utc') > '14:45:00' AND time(queueReports.time, 'unixepoch', 'utc') < '16:15:00' AND date(queueReports.time, 'unixepoch') != '2022-11-02';"
+	*/
 
 	//Sqlite expects days we add in first strftime to be in NNN format, so let's add leading 0
-	weekday := dateTimeToQueyFor.Weekday()
+	weekday := nowTimeUTC.Weekday()
 	timeFrameInDaysString := fmt.Sprintf("%03d days", daysOfDataToConsider)
 
+	nowTimeUTCString := nowTimeUTC.Format("2006-01-02 15:04:05")
 	lowerTimeLimitString := nowTimeUTC.Add(-timeframeIntoThePast).Format("15:04:05")
 	upperTimeLimitString := nowTimeUTC.Add(timeframeIntoTheFuture).Format("15:04:05")
+	nowDateUTCString := nowTimeUTC.Format("2006-01-02")
 
 	zap.S().Infow("Querying for weekdays reports in timeframe",
 		"interval in days", timeFrameInDaysString,
-		"weekday", int(weekday))
+		"weekday", int(weekday),
+		"center time", nowTimeUTC,
+		"timeframe into past", timeframeIntoThePast,
+		"timeframe into future", timeframeIntoTheFuture,
+	)
 	var queueLengths []string
 	var times []time.Time
 
 	db := GetDBHandle()
-	rows, err := db.Query(queryString, timeFrameInDaysString, int(weekday), lowerTimeLimitString, upperTimeLimitString)
+	rows, err := db.Query(queryString, nowTimeUTCString, timeFrameInDaysString, int(weekday), lowerTimeLimitString, upperTimeLimitString, nowDateUTCString, nowTimeUTCString)
 
 	if err != nil {
 		zap.S().Errorf("Error while querying for reports in timeframe", err)
