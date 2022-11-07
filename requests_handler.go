@@ -326,7 +326,7 @@ func buildHistoricalScatterChart(todayUTC time.Time, timeIntoPast time.Duration,
 	if err != nil {
 		return scatter, err
 	}
-	scatter.AddSeries("Reports from last month", historicalSeries)
+	scatter.AddSeries("Reports from last 30 days", historicalSeries)
 	return scatter, nil
 }
 
@@ -347,7 +347,7 @@ func generateGraphOfMensaTrendAsHTML(graphCenterTimeUTC time.Time, timeIntoPast 
 		zap.S().Debug("Not enough data to create /jetze graph", err)
 	}
 	line.SetXAxis(xData).
-		AddSeries("Mensa Queue Lengths", seriesData).
+		AddSeries("Reports from today", seriesData).
 		SetSeriesOptions(
 			charts.WithMarkLineNameXAxisItemOpts(opts.MarkLineNameXAxisItem{
 				Name:  "Now",
