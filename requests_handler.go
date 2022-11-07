@@ -155,7 +155,7 @@ func shouldGenerateNewGraph(timeOfReport int64) bool {
 options we want to use for our chart. For details see
 https://echarts.apache.org/en/option.html
 */
-func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
+func createEchartOptions(currentTime time.Time, graphEndTime time.Time, graphStartTime time.Time) []charts.GlobalOpts {
 	echartOptionsSlice := make([]charts.GlobalOpts, 0)
 
 	// Title
@@ -209,7 +209,8 @@ func createEchartOptions(currentTime time.Time) []charts.GlobalOpts {
 
 	//xAxisOptions
 	xAxis := charts.WithXAxisOpts(opts.XAxis{
-		Max:   currentTime.Unix(),
+		Max:   graphEndTime.Unix(),
+		Min:   graphStartTime.Unix(),
 		Scale: true,
 		Type:  "value", // Using the more natural "time" breaks stuff (library bug, https://github.com/go-echarts/go-echarts/issues/194)
 		AxisLabel: &opts.AxisLabel{
@@ -327,7 +328,9 @@ Returns err if it can't generate a report due to lack of data
 */
 func generateGraphOfMensaTrendAsHTML(graphCenterTimeUTC time.Time, timeIntoPast time.Duration, timeIntoFuture time.Duration) (string, error) {
 	line := charts.NewLine()
-	globalOptions := createEchartOptions(graphCenterTimeUTC)
+	globalOptions := createEchartOptions(graphCenterTimeUTC,
+		graphCenterTimeUTC.Add(-timeIntoPast),
+		graphCenterTimeUTC.Add(timeIntoFuture))
 	line.SetGlobalOptions(globalOptions...)
 
 	xData, seriesData, err := createEchartXDataAndDataSeries(graphCenterTimeUTC, timeIntoPast)
