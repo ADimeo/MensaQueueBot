@@ -357,7 +357,7 @@ func generateGraphOfMensaTrendAsHTML(graphCenterTimeUTC time.Time, timeIntoPast 
 		return "", err
 	}
 	// Add historical data
-	historicalScatterChart, err := buildHistoricalScatterChart(timeIntoPast, timeIntoFuture)
+	historicalScatterChart, err := buildHistoricalScatterChart(graphCenterTimeUTC, timeIntoPast, timeIntoFuture)
 	if err != nil {
 		zap.S().Error("Couldn't scatter chart with historical data, displaying only todays reports", err)
 	} else {
