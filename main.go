@@ -151,6 +151,19 @@ func reactToRequest(ginContext *gin.Context) {
 			HandleLengthReport(sentMessage, messageUnixTime, chatID)
 			sendChangelogIfNecessary(chatID)
 		}
+	case sentMessage == "/forgetme":
+		{
+			zap.S().Infof("User requested deletion of their data: %s", sentMessage)
+			err1 := DeleteAllUserPointData(chatID)
+			err2 := DeleteAllUserChangelogData(chatID)
+			if err1 != nil || err2 != nil {
+				zap.S().Infof("Sending error message to user")
+				SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes")
+			} else {
+				SendMessage(chatID, "Who are you again? I have completely forgotten you exist.")
+
+			}
+		}
 	case sentMessage == "/platypus":
 		{
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"

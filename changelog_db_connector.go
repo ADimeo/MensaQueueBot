@@ -100,6 +100,22 @@ func SaveNewChangelogForUser(userID int, changelogID int) error {
 	return nil
 }
 
+func DeleteAllUserChangelogData(userID int) error {
+	queryString := "DELETE FROM changelogMessages WHERE reporterID = ?;"
+	db := GetDBHandle()
+	zap.S().Infof("Deleting changelog info for user %d", userID)
+	DBMutex.Lock()
+	_, err := db.Exec(queryString, userID)
+	DBMutex.Unlock()
+
+	if err != nil {
+		zap.S().Errorf("Error while deleting changelogs of user %s", userID, err)
+		return err
+	}
+
+	return nil
+}
+
 func InitNewChangelogDB() error {
 	/*
 	   - Due to the expected low utility of introducing hashes, but the real associated cost, we decide against it, and store plain user IDs instead.

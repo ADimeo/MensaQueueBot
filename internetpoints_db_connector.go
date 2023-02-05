@@ -67,6 +67,7 @@ func EnableCollectionOfPoints(userID int) error {
 }
 
 func DisableCollectionOfPoints(userID int) error {
+	// Note: If this is changed from deleting all user data also modify DeleteAllUserPointData for compliance
 	queryString := "DELETE FROM internetpoints WHERE reporterID = ?;"
 	db := GetDBHandle()
 
@@ -80,6 +81,11 @@ func DisableCollectionOfPoints(userID int) error {
 		return err
 	}
 	return nil
+}
+
+func DeleteAllUserPointData(userID int) error {
+	// Deleting user data is exactly what happens when we call DisableCollectionOfPoints
+	return DisableCollectionOfPoints(userID)
 }
 
 func InitNewInternetPointsDB() error {
