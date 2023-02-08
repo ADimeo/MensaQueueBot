@@ -10,6 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"go.uber.org/zap"
 )
 
@@ -198,9 +201,27 @@ func runEnvironmentTests() {
 }
 
 func initDatabases() {
-	InitNewDB()
-	InitNewChangelogDB()
-	InitNewInternetPointsDB()
+
+	db_handle := GetDBHandle()
+	driver, err := sqlite3.WithInstance(db_handle, &sqlite3.Config{})
+	if err != nil {
+		zap.S().Panic("Can't get DB driver for migrations:", err)
+	}
+	m, err := migrate.NewWithDatabaseInstance("file://./db/migrations", "sqlite3", driver)
+	if err != nil {
+		zap.S().Panic("Can't get migrate instance: ", err)
+	}
+	version, _, err := m.Version()
+	if err != nil {
+		zap.S().Panic("Can't get DB version! ", err)
+	}
+	if version < DB_VERSION {
+		err = m.Migrate(DB_VERSION)
+		if err != nil {
+			zap.S().Panic("Can't run migrations: ", err)
+		}
+	}
+
 	// We also init rod, which makes sure that the
 	// browser interaction works
 	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()

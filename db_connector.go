@@ -314,22 +314,3 @@ func GenerateRandomString(s int) (string, error) {
 	b, err := GenerateRandomBytes(s)
 	return base64.URLEncoding.EncodeToString(b), err
 }
-
-func InitNewDB() error {
-	const tableCreationString string = `
-  CREATE TABLE IF NOT EXISTS queueReports (
-  id INTEGER NOT NULL PRIMARY KEY,
-  reporter TEXT NOT NULL,
-  time DATETIME NOT NULL,
-  queueLength TEXT NOT NULL
-  );`
-
-	db := GetDBHandle()
-
-	zap.S().Info("Recreating database for queue length tracking...")
-	if _, err := db.Exec(tableCreationString); err != nil {
-		zap.S().Panic("Couldn't create report table")
-		return err
-	}
-	return nil
-}

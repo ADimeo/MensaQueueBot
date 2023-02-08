@@ -87,22 +87,3 @@ func DeleteAllUserPointData(userID int) error {
 	// Deleting user data is exactly what happens when we call DisableCollectionOfPoints
 	return DisableCollectionOfPoints(userID)
 }
-
-func InitNewInternetPointsDB() error {
-	const tableCreationString string = `
-CREATE TABLE IF NOT EXISTS internetpoints (
-id INTEGER NOT NULL PRIMARY KEY,
-reporterID INTEGER UNIQUE NOT NULL,
-points INTEGER NOT NULL
-);`
-
-	db := GetDBHandle()
-
-	zap.S().Info("Recreating database for internetpoints tracking...")
-	if _, err := db.Exec(tableCreationString); err != nil {
-		zap.S().Panicf("Couldn't create internetpoints table", err)
-		return err
-	}
-	return nil
-
-}

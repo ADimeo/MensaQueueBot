@@ -14,6 +14,7 @@ import (
 
 const KEY_DB_BASE_PATH string = "MENSA_QUEUE_BOT_DB_PATH"
 const DB_NAME string = "queue_database.db"
+const DB_VERSION uint = 2
 
 var globalDBHandle *sql.DB = nil
 

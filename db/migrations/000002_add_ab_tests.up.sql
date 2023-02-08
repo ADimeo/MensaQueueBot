@@ -1,0 +1,1 @@
+ALTER TABLE changelogMessages ADD COLUMN ab_tester INTEGER NOT NULL DEFAULT 0;

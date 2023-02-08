@@ -1,5 +1,9 @@
 package main
 
+/*
+   - Due to the expected low utility of introducing hashes, but the real associated cost, we decide against it, and store plain user IDs instead. Since we need to send push messages for the mensa menu functionality I believe this is justified.
+*/
+
 import (
 	"database/sql"
 	"encoding/csv"
@@ -113,34 +117,5 @@ func DeleteAllUserChangelogData(userID int) error {
 		return err
 	}
 
-	return nil
-}
-
-func InitNewChangelogDB() error {
-	/*
-	   - Due to the expected low utility of introducing hashes, but the real associated cost, we decide against it, and store plain user IDs instead.
-
-	   - We have seen some... enthusiastic users, and hashes would need to be calculated on every message that's sent us. Hashing is a relatively expensive operation
-	   - Hashing won't stop attackers from being able to identify whether a certain person is a user: IDs should be considered public
-	   - But would make it harder to go the other way, to identify the users from a breach
-	       - Still, the positive impact is quite limited, due to the low entropy of IDs
-	       - There is no realisitc threat that would be interested in such an attack.
-	   - Not hashing would allow for sending push-messages, which may not be a wanted functionality
-	*/
-
-	const tableCreationString string = `
-  CREATE TABLE IF NOT EXISTS changelogMessages (
-  id INTEGER NOT NULL PRIMARY KEY,
-  reporterID INTEGER UNIQUE NOT NULL, 
-  lastChangelog INTEGER NOT NULL
-  );`
-
-	db := GetDBHandle()
-
-	zap.S().Info("Recreating database for changelog tracking...")
-	if _, err := db.Exec(tableCreationString); err != nil {
-		zap.S().Panicf("Couldn't create changelog table", err)
-		return err
-	}
 	return nil
 }
