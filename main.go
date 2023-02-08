@@ -162,9 +162,21 @@ func reactToRequest(ginContext *gin.Context) {
 			if err1 != nil || err2 != nil {
 				zap.S().Infof("Sending error message to user")
 				SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes")
+				zap.S().Warnf("Error in forgetme: ", err1, err2)
 			} else {
 				SendMessage(chatID, "Who are you again? I have completely forgotten you exist.")
 
+			}
+		}
+	case sentMessage == "/joinABTesters": // In the future reading secret codes might be interesting
+		{
+			zap.S().Infof("User %d is joining test group", chatID)
+			err = MakeUserABTester(chatID, true)
+			if err != nil {
+				SendMessage(chatID, "Something went wrong, please try again later ")
+				zap.S().Warnf("Error in A/B opt in: ", err)
+			} else {
+				SendMessage(chatID, "Welcome to the test crew 🫡")
 			}
 		}
 	case sentMessage == "/platypus":

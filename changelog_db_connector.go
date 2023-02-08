@@ -89,7 +89,7 @@ func GetLatestChangelogSentToUser(userID int) int {
 
 func SaveNewChangelogForUser(userID int, changelogID int) error {
 	// Use UPSERT syntax as defined by https://www.sqlite.org/draft/lang_UPSERT.html
-	queryString := "INSERT INTO changelogMessages VALUES (NULL, ?,?) ON CONFLICT (reporterID) DO UPDATE SET lastChangelog=?;"
+	queryString := "INSERT INTO changelogMessages VALUES (NULL, ?,?, 0) ON CONFLICT (reporterID) DO UPDATE SET lastChangelog=?;"
 	db := GetDBHandle()
 
 	zap.S().Info("Inserting changelog sent into DB") // Don't log which user, that allows correlation with reports
@@ -117,5 +117,41 @@ func DeleteAllUserChangelogData(userID int) error {
 		return err
 	}
 
+	return nil
+}
+
+func GetIsUserABTester(userID int) bool {
+	queryString := "SELECT ab_tester FROM changelogMessages WHERE reporterID = ?"
+	db := GetDBHandle()
+	var isABTester int
+
+	if err := db.QueryRow(queryString, userID).Scan(&isABTester); err != nil {
+		if err == sql.ErrNoRows {
+			zap.S().Info("No state returned, defaulting to false")
+			return false
+		} else {
+			zap.S().Errorw("Error while querying for A/B tester state", err)
+			return false
+		}
+	}
+
+	return isABTester == 1
+}
+
+func MakeUserABTester(userID int, optingIn bool) error {
+	// This assumes that all users that opt into/out of A/B tests already have a profile
+	// But fails gracefully, and just does nothing except return the error if
+	// that's not the case
+	queryString := "UPDATE changelogMessages SET ab_tester = 1 WHERE reporterID = ?"
+	db := GetDBHandle()
+
+	DBMutex.Lock()
+	_, err := db.Exec(queryString, userID)
+	DBMutex.Unlock()
+
+	if err != nil {
+		zap.S().Errorf("Error while changing A/B tester status of user %s", userID, err)
+		return err
+	}
 	return nil
 }
