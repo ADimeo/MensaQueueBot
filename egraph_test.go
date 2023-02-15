@@ -22,6 +22,10 @@ test for. Thus, this.
 Run this with a (copy of a) real DB
 */
 func TestGenerateAWholeBunchOfGraphs(t *testing.T) {
+	// Skip this test as a default - We'll get back to some flag
+	// for running it once testing becomes less ad hoc
+	t.Skip("Skipping manal graph generation test")
+
 	logger, _ := zap.NewDevelopment()
 	zap.ReplaceGlobals(logger)
 	// 9:15, 10:30, 11:45, 13:00, 14:15

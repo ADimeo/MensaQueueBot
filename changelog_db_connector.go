@@ -67,11 +67,16 @@ func GetChangelogByNumber(changelogNumber int) (string, error) {
 
 /*
 Changelogs start at ID 0, and increment one by one, per line.
+Wrapper for testing.
 */
 func GetLatestChangelogSentToUser(userID int) int {
+	db := GetDBHandle()
+	return getLatestChangelogSentToUserWithDB(userID, db)
+}
+
+func getLatestChangelogSentToUserWithDB(userID int, db *sql.DB) int {
 	zap.S().Info("Querying for latest changelog for a user") // Don't log which user, that allows correlation with reports
 	queryString := "SELECT lastChangelog FROM changelogMessages WHERE reporterID = ?"
-	db := GetDBHandle()
 	var retrievedLastChangelog int
 
 	if err := db.QueryRow(queryString, userID).Scan(&retrievedLastChangelog); err != nil {
@@ -88,9 +93,12 @@ func GetLatestChangelogSentToUser(userID int) int {
 }
 
 func SaveNewChangelogForUser(userID int, changelogID int) error {
+	db := GetDBHandle()
+	return saveNewChangelogForUserWithDB(userID, changelogID, db)
+}
+func saveNewChangelogForUserWithDB(userID int, changelogID int, db *sql.DB) error {
 	// Use UPSERT syntax as defined by https://www.sqlite.org/draft/lang_UPSERT.html
 	queryString := "INSERT INTO changelogMessages VALUES (NULL, ?,?, 0) ON CONFLICT (reporterID) DO UPDATE SET lastChangelog=?;"
-	db := GetDBHandle()
 
 	zap.S().Info("Inserting changelog sent into DB") // Don't log which user, that allows correlation with reports
 
@@ -105,8 +113,12 @@ func SaveNewChangelogForUser(userID int, changelogID int) error {
 }
 
 func DeleteAllUserChangelogData(userID int) error {
-	queryString := "DELETE FROM changelogMessages WHERE reporterID = ?;"
 	db := GetDBHandle()
+	return deleteAllUserChangelogDataWithDB(userID, db)
+}
+
+func deleteAllUserChangelogDataWithDB(userID int, db *sql.DB) error {
+	queryString := "DELETE FROM changelogMessages WHERE reporterID = ?;"
 	zap.S().Infof("Deleting changelog info for user %d", userID)
 	DBMutex.Lock()
 	_, err := db.Exec(queryString, userID)
@@ -121,8 +133,12 @@ func DeleteAllUserChangelogData(userID int) error {
 }
 
 func GetIsUserABTester(userID int) bool {
-	queryString := "SELECT ab_tester FROM changelogMessages WHERE reporterID = ?"
 	db := GetDBHandle()
+	return getIsUserABTesterWithDB(userID, db)
+}
+
+func getIsUserABTesterWithDB(userID int, db *sql.DB) bool {
+	queryString := "SELECT ab_tester FROM changelogMessages WHERE reporterID = ?"
 	var isABTester int
 
 	if err := db.QueryRow(queryString, userID).Scan(&isABTester); err != nil {
@@ -139,14 +155,18 @@ func GetIsUserABTester(userID int) bool {
 }
 
 func MakeUserABTester(userID int, optingIn bool) error {
+	db := GetDBHandle()
+	return makeUserABTesterWithDB(userID, optingIn, db)
+}
+
+func makeUserABTesterWithDB(userID int, optingIn bool, db *sql.DB) error {
 	// This assumes that all users that opt into/out of A/B tests already have a profile
 	// But fails gracefully, and just does nothing except return the error if
 	// that's not the case
-	queryString := "UPDATE changelogMessages SET ab_tester = 1 WHERE reporterID = ?"
-	db := GetDBHandle()
+	queryString := "UPDATE changelogMessages SET ab_tester = ? WHERE reporterID = ?"
 
 	DBMutex.Lock()
-	_, err := db.Exec(queryString, userID)
+	_, err := db.Exec(queryString, optingIn, userID)
 	DBMutex.Unlock()
 
 	if err != nil {

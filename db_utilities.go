@@ -40,3 +40,15 @@ func GetDBHandle() *sql.DB {
 	}
 	return globalDBHandle
 }
+
+// A separate DB, used only for testing
+func GetTestDBHandle(dbPath string) *sql.DB {
+	// Unlike with the actual DB, don't use a global handle.
+	// Might want to run tests on different DBs, and we do not
+	// want to touch global state in tests
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		zap.S().Panicf("Couldn't get DB handle with path %s", dbPath)
+	}
+	return db
+}
