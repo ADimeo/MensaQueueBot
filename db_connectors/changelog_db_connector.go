@@ -1,4 +1,4 @@
-package main
+package db_connectors
 
 /*
    - Due to the expected low utility of introducing hashes, but the real associated cost, we decide against it, and store plain user IDs instead. Since we need to send push messages for the mensa menu functionality I believe this is justified.

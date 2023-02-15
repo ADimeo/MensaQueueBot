@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/utils"
 	"github.com/adimeo/go-echarts/v2/charts" // Custom dependency because we need features from their master that aren't published yet
 	"github.com/adimeo/go-echarts/v2/opts"
 	"github.com/go-rod/rod"
@@ -47,7 +49,7 @@ func generateSimpleLengthReportString(timeOfReport int, reportedQueueLength stri
 	timestampNow := time.Now()
 	timestampThen := time.Unix(int64(timeOfReport), 0)
 
-	potsdamLocation := GetLocalLocation()
+	potsdamLocation := utils.GetLocalLocation()
 	timestampNow = timestampNow.In(potsdamLocation)
 	timestampThen = timestampThen.In(potsdamLocation)
 
@@ -253,10 +255,10 @@ func normalizeTimesToTodaysTimestamps(today time.Time, timesSlice []time.Time) [
 	// Daylight saving time adds some steps to this...
 	var timestampsSlice []string
 	for _, element := range timesSlice {
-		timeInMensaTimezone := element.In(GetLocalLocation())
+		timeInMensaTimezone := element.In(utils.GetLocalLocation())
 		normalizedTime := time.Date(today.Year(), today.Month(), today.Day(),
 			timeInMensaTimezone.Hour(), timeInMensaTimezone.Minute(), timeInMensaTimezone.Second(), 0,
-			GetLocalLocation())
+			utils.GetLocalLocation())
 		timestampsSlice = append(timestampsSlice, strconv.FormatInt(normalizedTime.Unix(), 10))
 	}
 	return timestampsSlice
@@ -268,7 +270,7 @@ that echart visualizes
 */
 func createEchartXDataAndDataSeries(nowUTC time.Time, dataTimeframe time.Duration) ([]string, []opts.LineData, error) {
 	// Get data
-	queueLengthsAsStringSlice, timesSlice, err := GetAllQueueLengthReportsInTimeframe(nowUTC, dataTimeframe)
+	queueLengthsAsStringSlice, timesSlice, err := db_connectors.GetAllQueueLengthReportsInTimeframe(nowUTC, dataTimeframe)
 	if err == sql.ErrNoRows {
 		return []string{}, []opts.LineData{}, errors.New("Not enough data in timeframe")
 	}
@@ -297,7 +299,7 @@ Each datapoint contains a timestamp for today, and a queue length report string.
 func getHistoricalSeriesForToday(todayUTC time.Time, timeIntoPast time.Duration, timeIntoFuture time.Duration) ([]opts.ScatterData, error) {
 	historicalGraphTimeFrameInDays := int8(30)
 
-	queueLengthsAsStringSlice, timesSlice, err := GetQueueLengthReportsByWeekdayAndTimeframe(historicalGraphTimeFrameInDays, todayUTC, timeIntoPast, timeIntoFuture)
+	queueLengthsAsStringSlice, timesSlice, err := db_connectors.GetQueueLengthReportsByWeekdayAndTimeframe(historicalGraphTimeFrameInDays, todayUTC, timeIntoPast, timeIntoFuture)
 	if err == sql.ErrNoRows {
 		return []opts.ScatterData{}, errors.New("No historical data found")
 	}
@@ -461,7 +463,7 @@ with the time window of the cache being defined in shouldGenerateNewGraph
 
 */
 func GenerateAndSendGraphicQueueLengthReport(chatID int) {
-	timeOfLatestReport, reportedQueueLength := GetLatestQueueLengthReport()
+	timeOfLatestReport, reportedQueueLength := db_connectors.GetLatestQueueLengthReport()
 	if !shouldGenerateNewGraph(int64(timeOfLatestReport)) {
 		// Parallelism issue with multiple graphs being generated at the same
 		// time considered unlikely enough not to handle.

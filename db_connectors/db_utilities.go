@@ -2,7 +2,7 @@
 Utility functions that are useful to all entities that interact with the DB.
 Notaby, implements the DB handle
 */
-package main
+package db_connectors
 
 import (
 	"database/sql"
@@ -51,4 +51,8 @@ func GetTestDBHandle(dbPath string) *sql.DB {
 		zap.S().Panicf("Couldn't get DB handle with path %s", dbPath)
 	}
 	return db
+}
+
+func GetDBVersion() uint {
+	return DB_VERSION
 }

@@ -5,20 +5,22 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/utils"
 	"go.uber.org/zap"
 )
 
 func getMensaOpeningTime() time.Time {
 	var today = time.Now()
 	// Mensa opens at 08:00
-	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, 0, 0, GetLocalLocation())
+	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, 0, 0, utils.GetLocalLocation())
 	return openingTime
 }
 
 func getMensaClosingTime() time.Time {
 	var today = time.Now()
 	// Mensa closes at 15:00
-	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, GetLocalLocation())
+	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, utils.GetLocalLocation())
 	return closingTime
 }
 
@@ -54,7 +56,7 @@ func sendNoThanksMessage(chatID int, textSentByUser string) {
 */
 func saveQueueLength(queueLength string, unixTimestamp int, chatID int) error {
 	chatIDString := strconv.Itoa(chatID)
-	return WriteReportToDB(chatIDString, unixTimestamp, queueLength)
+	return db_connectors.WriteReportToDB(chatIDString, unixTimestamp, queueLength)
 }
 
 func reportAppearsValid(reportText string) bool {
@@ -85,8 +87,8 @@ func HandleLengthReport(sentMessage string, messageUnixTime int, chatID int) {
 	if reportAppearsValid(sentMessage) {
 		errorWhileSaving := saveQueueLength(sentMessage, messageUnixTime, chatID)
 		if errorWhileSaving == nil {
-			if UserIsCollectingPoints(chatID) {
-				AddInternetPoint(chatID)
+			if db_connectors.UserIsCollectingPoints(chatID) {
+				db_connectors.AddInternetPoint(chatID)
 			}
 			sendThankYouMessage(chatID, sentMessage)
 		}

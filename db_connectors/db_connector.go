@@ -1,6 +1,6 @@
 /*Implements database logic related to storing and retrieving actual queue length reports
  */
-package main
+package db_connectors
 
 import (
 	"crypto/rand"
@@ -13,6 +13,8 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
+
+	"github.com/ADimeo/MensaQueueBot/utils"
 )
 
 var globalPseudonymizationAttribute pseudonymizationAttribute
@@ -144,7 +146,7 @@ func timeObjectIsInIntervalInCEST(intervalStart time.Time,
 		return false, errors.New("intervalStart and intervalEnd have different dates!")
 	}
 
-	location := GetLocalLocation()
+	location := utils.GetLocalLocation()
 	timezoneAwareElement := timeToCheckInUTC.In(location)
 	normalizedTime := time.Date(intervalStart.Year(), intervalStart.Month(), intervalStart.Day(),
 		timezoneAwareElement.Hour(), timezoneAwareElement.Minute(), timezoneAwareElement.Second(), 0, location)
@@ -163,7 +165,7 @@ func removeDataOutsideOfIntervalInCEST(nowTimeUTC time.Time,
 	queueLengths []string,
 	times []time.Time) ([]string, []time.Time) {
 
-	location := GetLocalLocation()
+	location := utils.GetLocalLocation()
 	nowTimeLocal := nowTimeUTC.In(location)
 	intervalStartTime := nowTimeLocal.Add(-timeframeIntoPast)
 	intervalEndTime := nowTimeLocal.Add(timeframeIntoFuture)

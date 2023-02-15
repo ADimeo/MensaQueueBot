@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/ADimeo/MensaQueueBot/db_connectors"
 	"go.uber.org/zap"
 )
 
@@ -73,7 +74,7 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 	var err error
 	zap.S().Info("Sending pointsrequest message.")
 	if currentlyOptedIn {
-		pointsCollected := GetNumberOfPointsByUser(chatID)
+		pointsCollected := db_connectors.GetNumberOfPointsByUser(chatID)
 		encouragementSelector := pointsCollected / 9 // New encouragement message every 9 points
 		if encouragementSelector >= len(encouragements) {
 			encouragementSelector = len(encouragements) - 1
@@ -95,24 +96,24 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 }
 
 func HandlePointsRequest(sentMessage string, chatID int) {
-	userIsCollectingPoints := UserIsCollectingPoints(chatID)
+	userIsCollectingPoints := db_connectors.UserIsCollectingPoints(chatID)
 
 	if sentMessage == "/points" {
 		points := 0
 		if userIsCollectingPoints {
-			points = GetNumberOfPointsByUser(chatID)
+			points = db_connectors.GetNumberOfPointsByUser(chatID)
 		}
 		sendPointsRequestedResponse(chatID, userIsCollectingPoints, points)
 	} else if sentMessage == "/points_track" {
 		if userIsCollectingPoints {
 			// Nothing to do: User is already opted in
 		} else {
-			EnableCollectionOfPoints(chatID)
+			db_connectors.EnableCollectionOfPoints(chatID)
 		}
 		sendPointsOptInResponse(chatID, userIsCollectingPoints)
 	} else if sentMessage == "/points_delete" {
 		if userIsCollectingPoints {
-			DisableCollectionOfPoints(chatID)
+			db_connectors.DisableCollectionOfPoints(chatID)
 		} else {
 			// Nothing to do: User is already opted out
 		}

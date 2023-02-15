@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
@@ -18,7 +20,7 @@ import (
 
 const KEY_DEBUG_MODE string = "MENSA_QUEUE_BOT_DEBUG_MODE"
 
-const KEY_PERSONAL_TOKEN string = "MENSA_QUEUE_BOT_PERSONAL_TOKEN"
+// const KEY_PERSONAL_TOKEN string = "MENSA_QUEUE_BOT_PERSONAL_TOKEN" // Defined in utils/utils.go, here for reference
 
 const MENSA_LOCATION_JSON_LOCATION string = "./mensa_locations.json"
 
@@ -76,13 +78,13 @@ func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
 }
 
 func sendChangelogIfNecessary(chatID int) {
-	numberOfLastSentChangelog := GetLatestChangelogSentToUser(chatID)
-	changelog, noChangelogWithIDError := GetChangelogByNumber(numberOfLastSentChangelog + 1)
+	numberOfLastSentChangelog := db_connectors.GetLatestChangelogSentToUser(chatID)
+	changelog, noChangelogWithIDError := db_connectors.GetChangelogByNumber(numberOfLastSentChangelog + 1)
 
 	if noChangelogWithIDError == nil {
 		sendError := SendMessage(chatID, changelog)
 		if sendError == nil {
-			SaveNewChangelogForUser(chatID, numberOfLastSentChangelog+1)
+			db_connectors.SaveNewChangelogForUser(chatID, numberOfLastSentChangelog+1)
 		} else {
 			zap.S().Error("Got an error while sending changelog to user.", sendError)
 		}
@@ -157,8 +159,8 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/forgetme":
 		{
 			zap.S().Infof("User requested deletion of their data: %s", sentMessage)
-			err1 := DeleteAllUserPointData(chatID)
-			err2 := DeleteAllUserChangelogData(chatID)
+			err1 := db_connectors.DeleteAllUserPointData(chatID)
+			err2 := db_connectors.DeleteAllUserChangelogData(chatID)
 			if err1 != nil || err2 != nil {
 				zap.S().Infof("Sending error message to user")
 				SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes")
@@ -171,7 +173,7 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/joinABTesters": // In the future reading secret codes might be interesting
 		{
 			zap.S().Infof("User %d is joining test group", chatID)
-			err = MakeUserABTester(chatID, true)
+			err = db_connectors.MakeUserABTester(chatID, true)
 			if err != nil {
 				SendMessage(chatID, "Something went wrong, please try again later ")
 				zap.S().Warnf("Error in A/B opt in: ", err)
@@ -208,13 +210,13 @@ func runEnvironmentTests() {
 	GetTelegramToken()
 	GetMensaLocationSlice()
 	GetReplyKeyboard()
-	GetLocalLocation()
-	GetChangelogByNumber(0)
+	utils.GetLocalLocation()
+	db_connectors.GetChangelogByNumber(0)
 }
 
 func initDatabases() {
 
-	db_handle := GetDBHandle()
+	db_handle := db_connectors.GetDBHandle()
 	driver, err := sqlite3.WithInstance(db_handle, &sqlite3.Config{})
 	if err != nil {
 		zap.S().Panic("Can't get DB driver for migrations:", err)
@@ -227,8 +229,8 @@ func initDatabases() {
 	if err != nil {
 		zap.S().Panic("Can't get DB version! ", err)
 	}
-	if version < DB_VERSION {
-		err = m.Migrate(DB_VERSION)
+	if version < db_connectors.GetDBVersion() {
+		err = m.Migrate(db_connectors.GetDBVersion())
 		if err != nil {
 			zap.S().Panic("Can't run migrations: ", err)
 		}
@@ -262,7 +264,7 @@ func main() {
 	// Only used for non-critical operations
 	rand.Seed(time.Now().UnixNano())
 	initDatabases()
-	personalToken := GetPersonalToken()
+	personalToken := utils.GetPersonalToken()
 
 	r := gin.Default()
 	// r.SetTrustedProxies([]string{"172.21.0.2"})
