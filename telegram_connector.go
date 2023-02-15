@@ -42,8 +42,17 @@ type sendChatActionRequestBody struct {
 	Action string `json:"action"`
 }
 
+type WebAppInfo struct {
+	URL string `json:"url"`
+}
+
+type KeyboardButton struct {
+	Text   string      `json:"text"`
+	WebApp *WebAppInfo `json:"web_app,omitempty"`
+}
+
 type ReplyKeyboardMarkupStruct struct { // https://core.telegram.org/bots/api/#replykeyboardmarkup
-	Keyboard [][]string `json:"keyboard"` // Can be string per https://core.telegram.org/bots/api/#keyboardbutton
+	Keyboard [][]KeyboardButton `json:"keyboard"`
 }
 
 // Used for images whose ID or URL we have.
@@ -67,7 +76,7 @@ type telegramResponseBody struct {
 
 // Returns the struct that represents the custom keyboard that should be shown to the user
 func GetReplyKeyboard() *ReplyKeyboardMarkupStruct {
-	var keyboardArray [][]string
+	var keyboardArray [][]KeyboardButton
 
 	jsonFile, err := os.Open(KEYBOARD_FILE_LOCATION)
 	if err != nil {
@@ -79,7 +88,10 @@ func GetReplyKeyboard() *ReplyKeyboardMarkupStruct {
 	if err != nil {
 		zap.S().Panicf("Can't read keyboard json file at %s", KEYBOARD_FILE_LOCATION)
 	}
-	json.Unmarshal(jsonAsBytes, &keyboardArray)
+	err = json.Unmarshal(jsonAsBytes, &keyboardArray)
+	if err != nil {
+		zap.S().Panicf("Keyboard json file not formatted correctly: %s", err)
+	}
 
 	keyboardStruct := ReplyKeyboardMarkupStruct{
 		Keyboard: keyboardArray,
