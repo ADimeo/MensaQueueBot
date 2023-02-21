@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--© 2023 Studentenwerk PotsdamFM: 2NM: 2 - Speiseplan der Mensa Griebnitzsee - Irrtümer und Änderungen vorbehalten - Nutzung ausschließlich durch die Einrichtungen des Studentenwerks Potsdam. (Anfragen zur Nutzung bitte an: info@studentenwerk-potdam.de) -->
+<menu title="Winter 23 KW 08, SpW 7" einrichtung="gs" empfaenger="swp" laufschrift=""><datum wochentag="2" index="21.02.2023">
+      <tageslabels info="Alle Label an diesem Tag - entsprechend der gewünschrten Sortierung">
+        
+          <vegetarisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</label3>
+          </vegetarisch>
+          
+          <vegan>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</label3>
+          </vegan>
+          
+          <regional>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_regional.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_regional.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_regional.png</label3>
+          </regional>
+          
+      </tageslabels><freitagsmodus>
+    <fmwert>2</fmwert>
+    <konf>
+      <screenconf>
+                <index>1</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>2</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>3</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>4</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>5</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>6</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>7</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>8</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf>
+</konf>
+</freitagsmodus><globaleetage><etageog>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_og.png</icon>
+                     </etageog><etageeg>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_eg.png</icon>
+                     </etageeg><screenconf/></globaleetage>
+                    <angebotnr index="2" matrix="3b" laufschrift="">
+                      <titel>Angebot 2</titel>
+                      <beschreibung>Bunte Nudeln mit Sojabolognese und Reibekäse</beschreibung>
+                      <labels><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</icon></label><label name="regional"><icon>https://xml.stw-potsdam.de/images/icons/su_regional.png</icon></label></labels> 
+                      <labels2><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</icon></label><label name="regional"><icon>https://xml.stw-potsdam.de/images/icons/gr_regional.png</icon></label></labels2>
+                      <labels3><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</icon></label><label name="regional"><icon>https://xml.stw-potsdam.de/images/icons/kl_regional.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>9, C, Wei, F, I, G</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">9</ke><be info="Begriffserklärung">mit Süßungsmittel</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Süßstoffe, liefern kaum Nahrungsenergie und werden deshalb u.a. in energiereduzierten Lebensmitteln eingesetzt</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">C</ke><be info="Begriffserklärung">Eier</be><ie info="ist bzw. kann enthalten (sein) in">Mayonnaisen, Remouladen, Teigwaren (Tortellini, Spätzle, Schupfnudeln), Gnocchi, Backwaren, Panaden, geklärte und gebundene Suppen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">I</ke><be info="Begriffserklärung">Sellerie</be><ie info="ist bzw. kann enthalten (sein) in">Gewürzmischungen, Salatsaucenbasis, Instant-Brühen, Fleischwaren, Ketchup, Bratlinge</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">G</ke><be info="Begriffserklärung">Milch</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, vegetarische Bratlinge, Wurstwaren, Dressings und Würzsaucen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>2918</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>50.53</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>89.7</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>11.8</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>2.50</preis_s>
+                      <preis_m>4.80</preis_m>
+                      <preis_g>4.80</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegetarisch"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen>
+                        <els empfaenger="swp">
+                        <angebotshinweis>ToGo-Schale 1,00€/Stk.</angebotshinweis><speciallabel/><overwrite unset="1"><active>0</active></overwrite><splitscreen><linksunten info="2. Version des Angebots"><active>0</active></linksunten><rechtsoben info="anderes Angebot"><active>0</active></rechtsoben><rechtsunten info="2. Version des anderen Angebots"><active>0</active></rechtsunten></splitscreen></els></angebotnr>
+                    <angebotnr index="4" matrix="3d" laufschrift="">
+                      <titel>Angebot 4</titel>
+                      <beschreibung>Mini-Kartoffelklöße in veganem Pesto verde, dazu Grillgemüse, zarter Salatmix und geröstete Sonnenblumenkerne</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>Kas</string>
+                        <additives/>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">Kas</ke><be info="Begriffserklärung">Kaschunüsse und daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">nur in geschälter und gerösteter Form als Snackangebote</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>3372</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>15.14</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>47.8</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>61.6</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>3.50</preis_s>
+                      <preis_m>5.50</preis_m>
+                      <preis_g>5.50</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen>
+                        <els empfaenger="swp">
+                        <angebotshinweis>ToGo-Schale 1,00€/Stk.</angebotshinweis><speciallabel/><overwrite unset="1"><active>0</active></overwrite><splitscreen><linksunten info="2. Version des Angebots"><active>0</active></linksunten><rechtsoben info="anderes Angebot"><active>0</active></rechtsoben><rechtsunten info="2. Version des anderen Angebots"><active>0</active></rechtsunten></splitscreen></els></angebotnr></datum><datum wochentag="3" index="22.02.2023">
+      <tageslabels info="Alle Label an diesem Tag - entsprechend der gewünschrten Sortierung">
+        
+          <vegetarisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</label3>
+          </vegetarisch>
+          
+          <vegan>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</label3>
+          </vegan>
+          
+          <knoblauch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_knoblauch_k.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_knoblauch_k.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_knoblauch_k.png</label3>
+          </knoblauch>
+          
+      </tageslabels><freitagsmodus>
+    <fmwert>2</fmwert>
+    <konf>
+      <screenconf>
+                <index>1</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>2</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>3</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>4</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>5</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>6</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>7</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>8</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf>
+</konf>
+</freitagsmodus><globaleetage><etageog>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_og.png</icon>
+                     </etageog><etageeg>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_eg.png</icon>
+                     </etageeg><screenconf/></globaleetage>
+                    <angebotnr index="1" matrix="5a" laufschrift="">
+                      <titel>Angebot 1</titel>
+                      <beschreibung>Linsen-Dal von gelben Linsen mit Kokos, Spinat, Duftreis und Minze</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label><label name="Knoblauch"><icon>https://xml.stw-potsdam.de/images/icons/su_knoblauch_k.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label><label name="Knoblauch"><icon>https://xml.stw-potsdam.de/images/icons/gr_knoblauch_k.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label><label name="Knoblauch"><icon>https://xml.stw-potsdam.de/images/icons/kl_knoblauch_k.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>KNO, K</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">KNO</ke><be info="Begriffserklärung">mit Knoblauch</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes"/></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">K</ke><be info="Begriffserklärung">Sesam</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, Frühstückscerealien, Brotaufstriche</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>3103</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>25.34</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>99.6</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>24.4</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>1.90</preis_s>
+                      <preis_m>3.80</preis_m>
+                      <preis_g>3.80</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                    <angebotnr index="2" matrix="5b" laufschrift="">
+                      <titel>Angebot 2</titel>
+                      <beschreibung>Gebackene Süßkartoffel mit mexikanischem Gemüse und Frühlingszwiebeln, dazu Kräuterdip und bunter Salat</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label><label name="Knoblauch"><icon>https://xml.stw-potsdam.de/images/icons/su_knoblauch_k.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label><label name="Knoblauch"><icon>https://xml.stw-potsdam.de/images/icons/gr_knoblauch_k.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label><label name="Knoblauch"><icon>https://xml.stw-potsdam.de/images/icons/kl_knoblauch_k.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>KNO, 2, 3, F, J</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">KNO</ke><be info="Begriffserklärung">mit Knoblauch</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes"/></additive><additive info="Zusatzstoff"><ke info="Kennzeichen">2</ke><be info="Begriffserklärung">mit Konservierungsstoff</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Erhaltung bzw. Verlängerung der Genusstauglichkeit des Lebensmittels.</lbz></additive><additive info="Zusatzstoff"><ke info="Kennzeichen">3</ke><be info="Begriffserklärung">mit Antioxidationsmittel</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">wie (1) und (2)</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">J</ke><be info="Begriffserklärung">Senf</be><ie info="ist bzw. kann enthalten (sein) in">Gesäuerte Gemüse, Chutneys, Dressings, Wurstwaren, Bratlinge</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>3620</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>18.80</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>94.0</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>42.8</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>2.50</preis_s>
+                      <preis_m>4.80</preis_m>
+                      <preis_g>4.80</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                    <angebotnr index="3" matrix="5c" laufschrift="">
+                      <titel>Angebot 3</titel>
+                      <beschreibung>Mac and Cheese - mit Brokkoli und Röstzwiebeln, dazu Salatmix und Himbeervinaigrette</beschreibung>
+                      <labels><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</icon></label></labels> 
+                      <labels2><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</icon></label></labels2>
+                      <labels3><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>1, 5, G, L, Wei</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">1</ke><be info="Begriffserklärung">mit Farbstoff</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Optische Aufwertung der wertbestimmenden Zutaten (z.B. höherer Fruchtanteil in der Kaltschale)</lbz></additive><additive info="Zusatzstoff"><ke info="Kennzeichen">5</ke><be info="Begriffserklärung">geschwefelt</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Schwefel dient der Abtötung von unerwünschten Mikroorganismen</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">G</ke><be info="Begriffserklärung">Milch</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, vegetarische Bratlinge, Wurstwaren, Dressings und Würzsaucen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">L</ke><be info="Begriffserklärung">Schwefeldioxid, Sulfite</be><ie info="ist bzw. kann enthalten (sein) in">Wein, weinhaltige Getränke, getrocknete Früchte, Convenience-Produkte (z.B. Bratkartoffel, Instant-Kartoffelpüree), Konserven</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>3290</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>32.50</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>38.4</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>55.6</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>3.00</preis_s>
+                      <preis_m>5.20</preis_m>
+                      <preis_g>5.20</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegetarisch"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                    <angebotnr index="6" matrix="5f" laufschrift="">
+                      <titel>Tagesangebot - Nur solange der Vorrat reicht</titel>
+                      <beschreibung>Tomaten-Kichererbsensuppe mit geröstetem Buchweizen, dazu Ciabattabrot</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>3, I, Wei</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">3</ke><be info="Begriffserklärung">mit Antioxidationsmittel</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">wie (1) und (2)</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">I</ke><be info="Begriffserklärung">Sellerie</be><ie info="ist bzw. kann enthalten (sein) in">Gewürzmischungen, Salatsaucenbasis, Instant-Brühen, Fleischwaren, Ketchup, Bratlinge</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>1270</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>12.06</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>45.5</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>6.4</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>1.90</preis_s>
+                      <preis_m/>
+                      <preis_g>3.80</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr></datum><datum wochentag="4" index="23.02.2023">
+      <tageslabels info="Alle Label an diesem Tag - entsprechend der gewünschrten Sortierung">
+        
+          <schwein>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_schwein_s.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_schwein_s.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_schwein_s.png</label3>
+          </schwein>
+          
+          <vegetarisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</label3>
+          </vegetarisch>
+          
+          <vegan>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</label3>
+          </vegan>
+          
+      </tageslabels><freitagsmodus>
+    <fmwert>2</fmwert>
+    <konf>
+      <screenconf>
+                <index>1</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>2</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>3</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>4</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>5</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>6</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>7</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>8</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf>
+</konf>
+</freitagsmodus><globaleetage><etageog>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_og.png</icon>
+                     </etageog><etageeg>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_eg.png</icon>
+                     </etageeg><screenconf/></globaleetage>
+                    <angebotnr index="1" matrix="7a" laufschrift="">
+                      <titel>Angebot 1</titel>
+                      <beschreibung>Vegane Grießspeise mit  Beerenfrüchten</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>F, Wei</string>
+                        <additives/>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>2490</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>11.50</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>54.7</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>36.3</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>1.90</preis_s>
+                      <preis_m>3.80</preis_m>
+                      <preis_g>3.80</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                    <angebotnr index="3" matrix="7c" laufschrift="">
+                      <titel>Angebot 3</titel>
+                      <beschreibung>Zartweizen-Gemüse-Bowl mit Pilzen, Wirsing und Blumenkohl in einer würzigen Bouillon</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>2, F, Wei</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">2</ke><be info="Begriffserklärung">mit Konservierungsstoff</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Erhaltung bzw. Verlängerung der Genusstauglichkeit des Lebensmittels.</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>1801</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>21.64</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>55.6</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>12.4</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>3.00</preis_s>
+                      <preis_m>5.20</preis_m>
+                      <preis_g>5.20</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                        <angebotnr index="3.1" matrix="8c">
+                          <titel>Angebot 3</titel>
+                          <beschreibung>Frikadelle mit Champignonrahmsauce und Erbsen-Möhren-Gemüse, dazu hausgemachter Kartoffelstampf</beschreibung>
+                          <labels><label name="Schwein"><icon>https://xml.stw-potsdam.de/images/icons/su_schwein_s.png</icon></label></labels> 
+                          <labels2><label name="Schwein"><icon>https://xml.stw-potsdam.de/images/icons/gr_schwein_s.png</icon></label></labels2>
+                          <labels3><label name="Schwein"><icon>https://xml.stw-potsdam.de/images/icons/kl_schwein_s.png</icon></label></labels3>
+                          <additives-allergens>
+                            <string>J, Wei, G</string>
+                            <additives/>
+                            <allergens><allergen info="Allergen"><ke info="Kennzeichen">J</ke><be info="Begriffserklärung">Senf</be><ie info="ist bzw. kann enthalten (sein) in">Gesäuerte Gemüse, Chutneys, Dressings, Wurstwaren, Bratlinge</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">G</ke><be info="Begriffserklärung">Milch</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, vegetarische Bratlinge, Wurstwaren, Dressings und Würzsaucen</ie></allergen></allergens>
+                          </additives-allergens>
+                          <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>4637</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>40.48</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>90.8</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>64.3</wert><einheit>g</einheit></nutrient></nutrients>
+                          <preis_s>3.00</preis_s>
+                          <preis_m>5.20</preis_m>
+                          <preis_g>5.20</preis_g>
+                          <filteroptionen>
+                            <positivfilter/>
+                            <negativfilter><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                          </filteroptionen></angebotnr></datum><datum wochentag="5" index="24.02.2023">
+      <tageslabels info="Alle Label an diesem Tag - entsprechend der gewünschrten Sortierung">
+        
+          <fisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_fisch_f.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_fisch_f.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_fisch_f.png</label3>
+          </fisch>
+          
+          <vegetarisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</label3>
+          </vegetarisch>
+          
+          <vegan>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</label3>
+          </vegan>
+          
+          <alkohol>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_alkohol_a.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_alkohol_a.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_alkohol_a.png</label3>
+          </alkohol>
+          
+      </tageslabels><freitagsmodus>
+    <fmwert>2</fmwert>
+    <konf>
+      <screenconf>
+                <index>1</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>2</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>3</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>4</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>5</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>6</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>7</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>8</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf>
+</konf>
+</freitagsmodus><globaleetage><etageog>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_og.png</icon>
+                     </etageog><etageeg>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_eg.png</icon>
+                     </etageeg><screenconf/></globaleetage>
+                    <angebotnr index="1" matrix="9a" laufschrift="">
+                      <titel>Angebot 1</titel>
+                      <beschreibung>Panierte Jagdwurst mit Tomatensauce und Pasta</beschreibung>
+                      <labels><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</icon></label></labels> 
+                      <labels2><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</icon></label></labels2>
+                      <labels3><label name="vegetarisch"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>Wei, G</string>
+                        <additives/>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">G</ke><be info="Begriffserklärung">Milch</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, vegetarische Bratlinge, Wurstwaren, Dressings und Würzsaucen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>2895</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>24.22</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>98.7</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>20.8</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>1.90</preis_s>
+                      <preis_m>3.80</preis_m>
+                      <preis_g>3.80</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegetarisch"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                    <angebotnr index="3" matrix="9c" laufschrift="">
+                      <titel>Angebot 3</titel>
+                      <beschreibung>Szegediner Tofugulasch mit Kräuterkartoffeln, dazu Wildkräutersalat mit Birnenvinaigrette</beschreibung>
+                      <labels><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/su_vegan_w.png</icon></label><label name="Alkohol"><icon>https://xml.stw-potsdam.de/images/icons/su_alkohol_a.png</icon></label></labels> 
+                      <labels2><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/gr_vegan_w.png</icon></label><label name="Alkohol"><icon>https://xml.stw-potsdam.de/images/icons/gr_alkohol_a.png</icon></label></labels2>
+                      <labels3><label name="vegan"><icon>https://xml.stw-potsdam.de/images/icons/kl_vegan_w.png</icon></label><label name="Alkohol"><icon>https://xml.stw-potsdam.de/images/icons/kl_alkohol_a.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>AL, 5, F, J, L</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">AL</ke><be info="Begriffserklärung">mit Alkohol</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Aroma-gebende Komponente</lbz></additive><additive info="Zusatzstoff"><ke info="Kennzeichen">5</ke><be info="Begriffserklärung">geschwefelt</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Schwefel dient der Abtötung von unerwünschten Mikroorganismen</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">J</ke><be info="Begriffserklärung">Senf</be><ie info="ist bzw. kann enthalten (sein) in">Gesäuerte Gemüse, Chutneys, Dressings, Wurstwaren, Bratlinge</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">L</ke><be info="Begriffserklärung">Schwefeldioxid, Sulfite</be><ie info="ist bzw. kann enthalten (sein) in">Wein, weinhaltige Getränke, getrocknete Früchte, Convenience-Produkte (z.B. Bratkartoffel, Instant-Kartoffelpüree), Konserven</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>3217</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>30.06</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>78.5</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>32.3</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>3.00</preis_s>
+                      <preis_m>5.20</preis_m>
+                      <preis_g>5.20</preis_g>
+                      <filteroptionen>
+                        <positivfilter><filter name="vegan"/></positivfilter>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr>
+                    <angebotnr index="4" matrix="9d" laufschrift="">
+                      <titel>Angebot 4</titel>
+                      <beschreibung>Kabeljaufilet im Backteig mit Grillkartoffeln und Kräuterremoulade, dazu zarter Salatmix und Zitronendressing</beschreibung>
+                      <labels><label name="Fisch"><icon>https://xml.stw-potsdam.de/images/icons/su_fisch_f.png</icon></label></labels> 
+                      <labels2><label name="Fisch"><icon>https://xml.stw-potsdam.de/images/icons/gr_fisch_f.png</icon></label></labels2>
+                      <labels3><label name="Fisch"><icon>https://xml.stw-potsdam.de/images/icons/kl_fisch_f.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>9, D, Wei, C, F, G, J</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">9</ke><be info="Begriffserklärung">mit Süßungsmittel</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Süßstoffe, liefern kaum Nahrungsenergie und werden deshalb u.a. in energiereduzierten Lebensmitteln eingesetzt</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">D</ke><be info="Begriffserklärung">Fisch</be><ie info="ist bzw. kann enthalten (sein) in">Paella, Bouillabaise, Worchester Sauce, asiatische Würzpasten</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">C</ke><be info="Begriffserklärung">Eier</be><ie info="ist bzw. kann enthalten (sein) in">Mayonnaisen, Remouladen, Teigwaren (Tortellini, Spätzle, Schupfnudeln), Gnocchi, Backwaren, Panaden, geklärte und gebundene Suppen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">G</ke><be info="Begriffserklärung">Milch</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, vegetarische Bratlinge, Wurstwaren, Dressings und Würzsaucen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">J</ke><be info="Begriffserklärung">Senf</be><ie info="ist bzw. kann enthalten (sein) in">Gesäuerte Gemüse, Chutneys, Dressings, Wurstwaren, Bratlinge</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>3554</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>30.07</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>53.2</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>59.5</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>3.50</preis_s>
+                      <preis_m>5.50</preis_m>
+                      <preis_g>5.50</preis_g>
+                      <filteroptionen>
+                        <positivfilter/>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr></datum><datum wochentag="6" index="25.02.2023">
+      <tageslabels info="Alle Label an diesem Tag - entsprechend der gewünschrten Sortierung">
+        
+          <fisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_fisch_f.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_fisch_f.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_fisch_f.png</label3>
+          </fisch>
+          
+          <vegetarisch>
+            <label1>https://xml.stw-potsdam.de/images/icons/su_vegetarisch_v.png</label1>
+            <label2>https://xml.stw-potsdam.de/images/icons/gr_vegetarisch_v.png</label2>
+            <label3>https://xml.stw-potsdam.de/images/icons/kl_vegetarisch_v.png</label3>
+          </vegetarisch>
+          
+      </tageslabels><freitagsmodus>
+    <fmwert>2</fmwert>
+    <konf>
+      <screenconf>
+                <index>1</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>2</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>3</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>4</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>5</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>6</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>7</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>8</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf>
+</konf>
+</freitagsmodus><globaleetage><etageog>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_og.png</icon>
+                     </etageog><etageeg>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_eg.png</icon>
+                     </etageeg><screenconf/></globaleetage>
+                    <angebotnr index="6" matrix="11f" laufschrift="">
+                      <titel>Tagesangebot - Nur solange der Vorrat reicht</titel>
+                      <beschreibung>Paniertes Seelachsfilet mit Cocktailsauce und Pommes frites, dazu Blattsalat</beschreibung>
+                      <labels><label name="Fisch"><icon>https://xml.stw-potsdam.de/images/icons/su_fisch_f.png</icon></label></labels> 
+                      <labels2><label name="Fisch"><icon>https://xml.stw-potsdam.de/images/icons/gr_fisch_f.png</icon></label></labels2>
+                      <labels3><label name="Fisch"><icon>https://xml.stw-potsdam.de/images/icons/kl_fisch_f.png</icon></label></labels3>
+                      <additives-allergens>
+                        <string>9, D, Wei, C, F, G</string>
+                        <additives><additive info="Zusatzstoff"><ke info="Kennzeichen">9</ke><be info="Begriffserklärung">mit Süßungsmittel</be><lbz info="Lebensmitteltechnologische Bedeutung des Zusatzstoffes">Süßstoffe, liefern kaum Nahrungsenergie und werden deshalb u.a. in energiereduzierten Lebensmitteln eingesetzt</lbz></additive></additives>
+                        <allergens><allergen info="Allergen"><ke info="Kennzeichen">D</ke><be info="Begriffserklärung">Fisch</be><ie info="ist bzw. kann enthalten (sein) in">Paella, Bouillabaise, Worchester Sauce, asiatische Würzpasten</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">Wei</ke><be info="Begriffserklärung">Weizen-Glutenhaltiges Getreide oder Hybridstämme sowie daraus hergestellte Erzeugnisse</be><ie info="ist bzw. kann enthalten (sein) in">Couscous, Bulgur, Saitan, Puddings, Grießspeisen, Backwaren, als Bindemittel in Dessertzubereitungen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">C</ke><be info="Begriffserklärung">Eier</be><ie info="ist bzw. kann enthalten (sein) in">Mayonnaisen, Remouladen, Teigwaren (Tortellini, Spätzle, Schupfnudeln), Gnocchi, Backwaren, Panaden, geklärte und gebundene Suppen</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">F</ke><be info="Begriffserklärung">Soja</be><ie info="ist bzw. kann enthalten (sein) in">Milch- und Sahneersatz auf Sojabasis, Tofu, Sojasauce, Zusatzstoff in Süsswaren v.a. in Schokolade, Wurst- und Fleischwaren</ie></allergen><allergen info="Allergen"><ke info="Kennzeichen">G</ke><be info="Begriffserklärung">Milch</be><ie info="ist bzw. kann enthalten (sein) in">Backwaren, vegetarische Bratlinge, Wurstwaren, Dressings und Würzsaucen</ie></allergen></allergens>
+                      </additives-allergens>
+                      <nutrients><nutrient><name>Energie (Kilojoule)</name><wert>4666</wert><einheit>kJ</einheit></nutrient><nutrient><name>Eiweiß (Protein)</name><wert>35.10</wert><einheit>g</einheit></nutrient><nutrient><name>Kohlenhydrate, resorbierbar</name><wert>71.1</wert><einheit>g</einheit></nutrient><nutrient><name>Fett</name><wert>101.3</wert><einheit>g</einheit></nutrient></nutrients>
+                      <preis_s>3.00</preis_s>
+                      <preis_m/>
+                      <preis_g>5.20</preis_g>
+                      <filteroptionen>
+                        <positivfilter/>
+                        <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                      </filteroptionen></angebotnr></datum><datum wochentag="7" index="26.02.2023">
+      <tageslabels info="Alle Label an diesem Tag - entsprechend der gewünschrten Sortierung">
+        
+      </tageslabels><freitagsmodus>
+    <fmwert>2</fmwert>
+    <konf>
+      <screenconf>
+                <index>1</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>2</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>3</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>4</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>5</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>6</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>7</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf><screenconf>
+                <index>8</index>
+                <vonscreen/>
+                <angebotemanuell>
+                    <linksoben/>
+                    <linksunten/>
+                    <rechtsoben/>
+                    <rechtsunten/>
+                </angebotemanuell>
+            </screenconf>
+</konf>
+</freitagsmodus><globaleetage><etageog>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_og.png</icon>
+                     </etageog><etageeg>
+                         <icon>https://xml.stw-potsdam.de/images/icons/gr_eg.png</icon>
+                     </etageeg><screenconf/></globaleetage></datum><datum wochentag="1" index="27.02.2023">
+                        <angebotnr index="5" matrix="1e">
+                          <titel>Info</titel>
+                          <beschreibung>Liebe Gäste! Den Speiseplan der laufenden Woche finden Sie immer montags hier.</beschreibung>
+                          <labels/>
+                          <labels2/>
+                          <labels3/>
+                          <additives-allergens>
+                            <string/>
+                            <additives/>
+                            <allergens/>
+                          </additives-allergens>
+                          <nutrients/>
+                          <preis_s/>
+                          <preis_m/>
+                          <preis_g/>
+                          <filteroptionen>
+                            <positivfilter/>
+                            <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                          </filteroptionen>
+                        </angebotnr></datum><datum wochentag="2" index="28.02.2023">
+                        <angebotnr index="5" matrix="3e">
+                          <titel>Info</titel>
+                          <beschreibung>Liebe Gäste! Den Speiseplan der laufenden Woche finden Sie immer montags hier .</beschreibung>
+                          <labels/>
+                          <labels2/>
+                          <labels3/>
+                          <additives-allergens>
+                            <string/>
+                            <additives/>
+                            <allergens/>
+                          </additives-allergens>
+                          <nutrients/>
+                          <preis_s/>
+                          <preis_m/>
+                          <preis_g/>
+                          <filteroptionen>
+                            <positivfilter/>
+                            <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                          </filteroptionen>
+                        </angebotnr></datum><datum wochentag="3" index="01.03.2023">
+                        <angebotnr index="5" matrix="5e">
+                          <titel>Info</titel>
+                          <beschreibung>Liebe Gäste! Den Speiseplan der laufenden Woche finden Sie immer montags hier .</beschreibung>
+                          <labels/>
+                          <labels2/>
+                          <labels3/>
+                          <additives-allergens>
+                            <string/>
+                            <additives/>
+                            <allergens/>
+                          </additives-allergens>
+                          <nutrients/>
+                          <preis_s/>
+                          <preis_m/>
+                          <preis_g/>
+                          <filteroptionen>
+                            <positivfilter/>
+                            <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                          </filteroptionen>
+                        </angebotnr></datum><datum wochentag="4" index="02.03.2023">
+                        <angebotnr index="5" matrix="7e">
+                          <titel>Info</titel>
+                          <beschreibung>Liebe Gäste! Den Speiseplan der laufenden Woche finden Sie immer montags hier .</beschreibung>
+                          <labels/>
+                          <labels2/>
+                          <labels3/>
+                          <additives-allergens>
+                            <string/>
+                            <additives/>
+                            <allergens/>
+                          </additives-allergens>
+                          <nutrients/>
+                          <preis_s/>
+                          <preis_m/>
+                          <preis_g/>
+                          <filteroptionen>
+                            <positivfilter/>
+                            <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                          </filteroptionen>
+                        </angebotnr></datum><datum wochentag="5" index="03.03.2023">
+                        <angebotnr index="5" matrix="9e">
+                          <titel>Info</titel>
+                          <beschreibung>Liebe Gäste! Den Speiseplan der laufenden Woche finden Sie immer montags hier .</beschreibung>
+                          <labels/>
+                          <labels2/>
+                          <labels3/>
+                          <additives-allergens>
+                            <string/>
+                            <additives/>
+                            <allergens/>
+                          </additives-allergens>
+                          <nutrients/>
+                          <preis_s/>
+                          <preis_m/>
+                          <preis_g/>
+                          <filteroptionen>
+                            <positivfilter/>
+                            <negativfilter><filter name="ohne-schweinefleisch"/><filter name="ohne-fisch"/><filter name="ohne-alkohol"/><filter name="ohne-knoblauch"/></negativfilter>
+                          </filteroptionen>
+                        </angebotnr></datum><datum wochentag="6" index="04.03.2023"/><datum wochentag="7" index="05.03.2023"/></menu>
+<!--Dauer - Daten sammeln und Ausgabe generieren: 0,0488 Sek.-->
