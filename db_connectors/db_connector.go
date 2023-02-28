@@ -97,7 +97,7 @@ func getLengthsAndTimesFromRows(rows *sql.Rows) ([]string, []time.Time, error) {
 		zap.S().Errorf("Error while scanning for reports in timeframe", err)
 		return queueLengths, timesUTC, err
 	}
-	zap.S().Infof("Query for reports in timeframe returned  %d reports", len(queueLengths))
+	zap.S().Debugf("Query for reports in timeframe returned  %d reports", len(queueLengths))
 	return queueLengths, timesUTC, err
 }
 
@@ -119,7 +119,7 @@ func GetAllQueueLengthReportsInTimeframe(nowUTC time.Time, timeframeIntoPast tim
 	var times []time.Time
 
 	nowTimeString := nowUTC.Format("2006-01-02 15:04:05")
-	zap.S().Infow("Querying for all reports in timeframe",
+	zap.S().Debugw("Querying for all reports in timeframe",
 		"interval", timeframeIntoPast,
 		"lower limit", lowerLimit,
 		"nowTimeString", nowTimeString)
@@ -263,7 +263,7 @@ func WriteReportToDB(reporter string, time int, queueLength string) error {
 
 	db := GetDBHandle()
 
-	zap.S().Info("Writing new report into DB")
+	zap.S().Debug("Writing new report into DB")
 	DBMutex.Lock()
 	// Nice try
 	_, err := db.Exec("INSERT INTO queueReports VALUES(NULL,?,?,?);", anonymizedReporter, time, queueLength)

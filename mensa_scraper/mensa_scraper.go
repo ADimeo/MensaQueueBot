@@ -2,9 +2,12 @@ package mensa_scraper
 
 import (
 	"encoding/xml"
+	"errors"
 	"io"
 	"net/http"
+	"time"
 
+	"github.com/ADimeo/MensaQueueBot/db_connectors"
 	"go.uber.org/zap"
 )
 
@@ -14,19 +17,119 @@ const MENSA_URL string = "https://xml.stw-potsdam.de/xmldata/gs/xml.php"
 type OfferInformation struct {
 	XMLName     xml.Name `xml:"angebotnr"`
 	Index       string   `xml:"index,attr"`
-	Titel       string   `xml:"titel"`
+	Title       string   `xml:"titel"`
 	Description string   `xml:"beschreibung"`
 }
 
 type DateInformation struct {
 	XMLName xml.Name           `xml:"datum"`
-	Index   string             `xml:"index,attr"`
+	Index   string             `xml:"index,attr"` // Formatted day, in 02.01.2006
 	Offers  []OfferInformation `xml:"angebotnr"`
 }
 
 type MenuRoot struct {
 	XMLName xml.Name          `xml:"menu"`
 	Dates   []DateInformation `xml:"datum"`
+}
+
+func ScheduleScrapeJob() {
+	// TODO schedule the job to run every 10 minutes, within mensa days,
+	// Use Chron
+	// Schedule using Cron expressions
+
+	// Don't need to care about shutdown...
+}
+
+func ScrapeJob() {
+	menu, err := getMensaMenuFromWeb()
+	if err != nil {
+		return
+	}
+	today := time.Now()
+	todaysInformation, err := getDateByDay(menu, today)
+	if err != nil {
+		zap.S().Errorf("Can't find menu for today in MenuRoot", err)
+		return
+	}
+	if isDateInformationFresh(todaysInformation) {
+		// No changes in menu, nothing to insert or do.
+		return
+	}
+
+	insertDateOffersIntoDBWithFreshCounter(today, todaysInformation)
+	// TODO call a "Tell users about changes" function
+}
+
+func insertDateOffersIntoDBWithFreshCounter(scrapeTimestamp time.Time, dateInformation DateInformation) {
+
+	counterValue, err := db_connectors.GetMensaMenuCounter()
+	if err != nil {
+		zap.S().Error("Couldn't insert new menus: Inable to get counter value", err)
+		return
+	}
+
+	for _, downOffer := range dateInformation.Offers {
+		offerToInsert := new(db_connectors.DBOfferInformation)
+		offerToInsert.Counter = counterValue + 1
+		offerToInsert.Title = downOffer.Title
+		offerToInsert.Description = downOffer.Description
+		offerToInsert.Time = scrapeTimestamp
+
+		// Few enough that not batching is fine, I think
+		// But batching this is something we could do
+		db_connectors.InsertMensaMenu(offerToInsert)
+	}
+}
+
+// Return true if the offers within this date information are the same as the
+// ones we last stored in the DB
+func isDateInformationFresh(dateInformation DateInformation) bool {
+	// QUery DB for latest menus
+	dbOffers, err := db_connectors.GetLatestMensaOffers()
+	if err != nil {
+		zap.S().Errorf("Can not determine freshness of queried menu, defaulting to don't insert", err)
+		return true
+
+	}
+	downloadedOffers := dateInformation.Offers
+	if len(downloadedOffers) != len(dbOffers) {
+		return false
+	}
+
+	// Needs to be full of true
+	var comparisonResultsSlice = make([]bool, len(downloadedOffers))
+
+	// This has a runtime of n^2, but for like five elements.
+	// We have duplicate title keys, so it's either that or a bunch of logic
+	// that is more complicated than necessary.
+	for downIndex, downOffer := range downloadedOffers {
+		for dbIndex, dbOffer := range dbOffers {
+			if dbOffer.Title == downOffer.Title &&
+				dbOffer.Description == downOffer.Description {
+				dbDayString := dbOffer.Time.Format("02.01.2006")
+				if dbDayString == dateInformation.Index {
+					// Elements are the same, including dates.
+					// Mark this by marking true/deleting element.
+					// We don't want to delete elements of the array
+					// we are currently iterating, thus the true.
+					// We also don't want a db element that doesn't have a download
+					// partner, thus the deletion
+					// Yes, this is not elegant.
+					comparisonResultsSlice[downIndex] = true
+					dbOffers = append(dbOffers[:dbIndex], dbOffers[dbIndex+1:]...)
+				}
+			}
+		}
+	}
+	if len(dbOffers) != 0 {
+		return false
+	}
+	for _, hasPartner := range comparisonResultsSlice {
+		if !hasPartner {
+			return false
+		}
+	}
+	return true
 }
 
 func parseXML(body []byte) (MenuRoot, error) {
@@ -55,4 +158,17 @@ func getMensaMenuFromWeb() (MenuRoot, error) {
 		return MenuRoot{}, err
 	}
 	return menu, nil
+}
+
+func getDateByDay(menu MenuRoot, day time.Time) (DateInformation, error) {
+	todayString := day.Format("02.01.2006")
+
+	for _, date := range menu.Dates {
+		dayInformation := date.Index
+		if dayInformation == todayString {
+			return date, nil
+		}
+	}
+
+	return DateInformation{}, errors.New("Can't get DateInformation for today from menu")
 }
