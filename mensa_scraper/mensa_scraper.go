@@ -38,9 +38,18 @@ func ScheduleScrapeJob() {
 	// Schedule using Cron expressions
 
 	// Don't need to care about shutdown...
+
 }
 
-func ScrapeJob() {
+func ScrapeAndAdviseUsers() {
+	shouldUsersBeNotified := scrapeAndInsertIfMensaMenuIsOld
+	if shouldUsersBeNotified {
+		SendLatestMenuToInterestedUsers()
+	}
+}
+
+// Returns true if something was inserted
+func scrapeAndInsertIfMensaMenuIsOld() bool {
 	menu, err := getMensaMenuFromWeb()
 	if err != nil {
 		return
@@ -53,11 +62,11 @@ func ScrapeJob() {
 	}
 	if isDateInformationFresh(todaysInformation) {
 		// No changes in menu, nothing to insert or do.
-		return
+		return false
 	}
 
 	insertDateOffersIntoDBWithFreshCounter(today, todaysInformation)
-	// TODO call a "Tell users about changes" function
+	return true
 }
 
 func insertDateOffersIntoDBWithFreshCounter(scrapeTimestamp time.Time, dateInformation DateInformation) {
