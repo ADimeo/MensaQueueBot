@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"go.uber.org/zap"
 )
 
@@ -76,7 +77,7 @@ func GetMensaLocationSlice() *[]mensaLocation {
 func SendTopViewOfMensa(chatID int) error {
 	const linkToTopView = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
 	const topViewText = "I'm an artist"
-	err := SendStaticWebPhoto(chatID, TOP_VIEW_URL, topViewText)
+	err := telegram_connector.SendStaticWebPhoto(chatID, TOP_VIEW_URL, topViewText)
 	return err
 }
 
@@ -92,7 +93,7 @@ func SendWelcomeMessage(chatID int) {
 	// Send first two messages
 	for i := 0; i < 2; i++ {
 		messageString := messageArray[i]
-		err = SendMessage(chatID, messageString)
+		err = telegram_connector.SendMessage(chatID, messageString)
 		if err != nil {
 			zap.S().Error("Error while sending first welcome messages.", err)
 		}
@@ -100,14 +101,14 @@ func SendWelcomeMessage(chatID int) {
 	}
 
 	// Send single photo for illustration
-	err = SendStaticWebPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description)
+	err = telegram_connector.SendStaticWebPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description)
 	if err != nil {
 		zap.S().Error("Error while sending first welcome messages.", err)
 	}
 
 	for i := 2; i < 5; i++ {
 		messageString := messageArray[i]
-		err = SendMessage(chatID, messageString)
+		err = telegram_connector.SendMessage(chatID, messageString)
 		if err != nil {
 			zap.S().Error("Error while sending second welcome messages.", err)
 		}
@@ -122,7 +123,7 @@ func SendWelcomeMessage(chatID int) {
 	for i := 5; i < 9; i++ {
 		// We consciously skip the last entry which doesn't have an illstration
 		messageString := messageArray[i]
-		err = SendMessage(chatID, messageString)
+		err = telegram_connector.SendMessage(chatID, messageString)
 		if err != nil {
 			zap.S().Error("Error while sending final welcome messages.", err)
 		}

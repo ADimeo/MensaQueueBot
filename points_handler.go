@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +20,7 @@ func sendPointsHelpMessages(chatID int) {
 	}
 	for i := 0; i < len(messageArray); i++ {
 		messageString := messageArray[i]
-		err := SendMessage(chatID, messageString)
+		err := telegram_connector.SendMessage(chatID, messageString)
 		if err != nil {
 			zap.S().Error("Error while sending help message for point", err)
 		}
@@ -32,9 +33,9 @@ func sendPointsOptInResponse(chatID int, currentlyOptedIn bool) {
 
 	var err error
 	if currentlyOptedIn {
-		err = SendMessage(chatID, messageDoubleOptIn)
+		err = telegram_connector.SendMessage(chatID, messageDoubleOptIn)
 	} else {
-		err = SendMessage(chatID, messageOptIn)
+		err = telegram_connector.SendMessage(chatID, messageOptIn)
 	}
 	if err != nil {
 		zap.S().Error("Error while sending points opt-in message.", err)
@@ -46,9 +47,9 @@ func sendPointsOptOutResponse(chatID int, currentlyOptedIn bool) {
 
 	var err error
 	if currentlyOptedIn {
-		err = SendMessage(chatID, messageOptOut)
+		err = telegram_connector.SendMessage(chatID, messageOptOut)
 	} else {
-		err = SendMessage(chatID, messageDoubleOptOut)
+		err = telegram_connector.SendMessage(chatID, messageDoubleOptOut)
 	}
 	if err != nil {
 		zap.S().Error("Error while sending points opt-out message.", err)
@@ -82,12 +83,12 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 
 		encouragementMessage := encouragements[encouragementSelector]
 		messageToSend := fmt.Sprintf(baseMessage, pointsCollected, encouragementMessage)
-		err := SendMessage(chatID, messageToSend)
+		err := telegram_connector.SendMessage(chatID, messageToSend)
 		if err != nil {
 			zap.S().Errorf("Error while sending pointsrequest message for %s points", points, err)
 		}
 	} else {
-		err = SendMessage(chatID, explanationMessage)
+		err = telegram_connector.SendMessage(chatID, explanationMessage)
 		if err != nil {
 			zap.S().Error("Error while sending pointsrequest message.", err)
 		}

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"github.com/ADimeo/MensaQueueBot/utils"
 	"github.com/adimeo/go-echarts/v2/charts" // Custom dependency because we need features from their master that aren't published yet
 	"github.com/adimeo/go-echarts/v2/opts"
@@ -74,7 +75,7 @@ See generateSimpleLengthReportString for message creation logic.
 func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength string) error {
 	reportMessage := generateSimpleLengthReportString(timeOfReport, reportedQueueLength)
 
-	err := SendMessage(chatID, reportMessage)
+	err := telegram_connector.SendMessage(chatID, reportMessage)
 	if err != nil {
 		zap.S().Error("Error while sending queue length report", err)
 	}
@@ -419,7 +420,7 @@ to our users. That way we don't have to regenerate our graphs on every request
 func sendExistingGraphicQueueLengthReport(chatID int,
 	timeOfLatestReport int, reportedQueueLength string, oldGraphIdentifier string) error {
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
-	err := SendStaticWebPhoto(chatID, oldGraphIdentifier, stringReport)
+	err := telegram_connector.SendStaticWebPhoto(chatID, oldGraphIdentifier, stringReport)
 	return err
 }
 
@@ -451,7 +452,7 @@ func sendNewGraphicQueueLengthReport(chatID int,
 		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
 	}
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
-	newTelegramIdentifier, err := SendDynamicPhoto(chatID, pathToPng, stringReport)
+	newTelegramIdentifier, err := telegram_connector.SendDynamicPhoto(chatID, pathToPng, stringReport)
 	updateGlobalLatestGraphDetails(graphNowLineUTC, newTelegramIdentifier)
 	return err
 }
@@ -474,7 +475,7 @@ func GenerateAndSendGraphicQueueLengthReport(chatID int) {
 			zap.S().Error("Something failed while sending an existing report", err)
 		}
 	} else {
-		SendTypingIndicator(chatID)
+		telegram_connector.SendTypingIndicator(chatID)
 		zap.S().Debug("Creating new graph for graphic report")
 		err := sendNewGraphicQueueLengthReport(chatID,
 			timeOfLatestReport, reportedQueueLength)

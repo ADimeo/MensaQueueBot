@@ -6,23 +6,10 @@ import (
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"github.com/ADimeo/MensaQueueBot/utils"
 	"go.uber.org/zap"
 )
-
-func getMensaOpeningTime() time.Time {
-	var today = time.Now()
-	// Mensa opens at 08:00
-	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, 0, 0, utils.GetLocalLocation())
-	return openingTime
-}
-
-func getMensaClosingTime() time.Time {
-	var today = time.Now()
-	// Mensa closes at 15:00
-	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, utils.GetLocalLocation())
-	return closingTime
-}
 
 /*
    Sends a thank you message for a report
@@ -33,7 +20,7 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 
 	zap.S().Infof("Sending thank you for %s", textSentByUser)
 
-	err := SendMessage(chatID, fmt.Sprintf(baseMessage, textSentByUser))
+	err := telegram_connector.SendMessage(chatID, fmt.Sprintf(baseMessage, textSentByUser))
 	if err != nil {
 		zap.S().Error("Error while sending thank you message.", err)
 	}
@@ -45,7 +32,7 @@ func sendNoThanksMessage(chatID int, textSentByUser string) {
 
 	zap.S().Infof("Sending no thanks for %s", textSentByUser)
 
-	err := SendMessage(chatID, baseMessage)
+	err := telegram_connector.SendMessage(chatID, baseMessage)
 	if err != nil {
 		zap.S().Error("Error while sending no thanks message.", err)
 	}
@@ -73,8 +60,8 @@ func reportAppearsValid(reportText string) bool {
 		return false
 	}
 
-	if getMensaOpeningTime().After(today) ||
-		getMensaClosingTime().Before(today) {
+	if utils.GetMensaOpeningTime().After(today) ||
+		utils.GetMensaClosingTime().Before(today) {
 		zap.S().Info("Report is outside of mensa hours")
 		// Outside of mensa closing times
 		return false

@@ -1,4 +1,4 @@
-package main
+package telegram_connector
 
 import (
 	"bytes"
@@ -96,6 +96,7 @@ func GetReplyKeyboard() *ReplyKeyboardMarkupStruct {
 	keyboardStruct := ReplyKeyboardMarkupStruct{
 		Keyboard: keyboardArray,
 	}
+	// TODO Hacky temporary reply-keyboard thingy
 
 	return &keyboardStruct
 
@@ -224,6 +225,7 @@ func SendMessage(chatID int, message string) error {
 	}
 
 	_, err = http.Post(telegramUrl, "application/json", bytes.NewBuffer(reqBytes))
+
 	if err != nil {
 		return err
 	}

@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/mensa_scraper"
+	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"github.com/ADimeo/MensaQueueBot/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-rod/rod"
@@ -71,8 +73,8 @@ func GetRandomAcceptableEmoji() rune {
 	return globalEmojiOfTheDay.Emoji
 }
 
-func parseRequest(c *gin.Context) (*WebhookRequestBody, error) {
-	body := &WebhookRequestBody{}
+func parseRequest(c *gin.Context) (*telegram_connector.WebhookRequestBody, error) {
+	body := &telegram_connector.WebhookRequestBody{}
 	err := c.ShouldBind(&body)
 	return body, err
 }
@@ -82,7 +84,7 @@ func sendChangelogIfNecessary(chatID int) {
 	changelog, noChangelogWithIDError := db_connectors.GetChangelogByNumber(numberOfLastSentChangelog + 1)
 
 	if noChangelogWithIDError == nil {
-		sendError := SendMessage(chatID, changelog)
+		sendError := telegram_connector.SendMessage(chatID, changelog)
 		if sendError == nil {
 			db_connectors.SaveNewChangelogForUser(chatID, numberOfLastSentChangelog+1)
 		} else {
@@ -95,7 +97,7 @@ func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
 	for _, mensaLocation := range mensaLocationArray {
 		if mensaLocation.PhotoUrl != "" {
-			err := SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
+			err := telegram_connector.SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
 			if err != nil {
 				zap.S().Error("Error while sending help message photographs.", err)
 			}
@@ -163,10 +165,10 @@ func reactToRequest(ginContext *gin.Context) {
 			err2 := db_connectors.DeleteAllUserChangelogData(chatID)
 			if err1 != nil || err2 != nil {
 				zap.S().Infof("Sending error message to user")
-				SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes")
+				telegram_connector.SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes")
 				zap.S().Warnf("Error in forgetme: ", err1, err2)
 			} else {
-				SendMessage(chatID, "Who are you again? I have completely forgotten you exist.")
+				telegram_connector.SendMessage(chatID, "Who are you again? I have completely forgotten you exist.")
 
 			}
 		}
@@ -175,16 +177,16 @@ func reactToRequest(ginContext *gin.Context) {
 			zap.S().Infof("User %d is joining test group", chatID)
 			err = db_connectors.MakeUserABTester(chatID, true)
 			if err != nil {
-				SendMessage(chatID, "Something went wrong, please try again later ")
+				telegram_connector.SendMessage(chatID, "Something went wrong, please try again later ")
 				zap.S().Warnf("Error in A/B opt in: ", err)
 			} else {
-				SendMessage(chatID, "Welcome to the test crew 🫡")
+				telegram_connector.SendMessage(chatID, "Welcome to the test crew 🫡")
 			}
 		}
 	case sentMessage == "/platypus":
 		{
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
-			SendStaticWebPhoto(chatID, url, "So cute ❤️")
+			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️")
 		}
 	default:
 		{
@@ -207,9 +209,9 @@ func initiateLogger() {
 // if some configuration flaw exists
 // We only call methods that aren't already called directly in main()
 func runEnvironmentTests() {
-	GetTelegramToken()
+	telegram_connector.GetTelegramToken()
 	GetMensaLocationSlice()
-	GetReplyKeyboard()
+	telegram_connector.GetReplyKeyboard()
 	utils.GetLocalLocation()
 	db_connectors.GetChangelogByNumber(0)
 }

@@ -30,3 +30,17 @@ func GetPersonalToken() string {
 	}
 	return personalKey
 }
+
+func GetMensaOpeningTime() time.Time {
+	var today = time.Now()
+	// Mensa opens at 08:00
+	var openingTime = time.Date(today.Year(), today.Month(), today.Day(), 8, 0, 0, 0, GetLocalLocation())
+	return openingTime
+}
+
+func GetMensaClosingTime() time.Time {
+	var today = time.Now()
+	// Mensa closes at 15:00
+	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, GetLocalLocation())
+	return closingTime
+}

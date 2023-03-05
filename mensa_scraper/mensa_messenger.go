@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 )
 
 func Init() {
@@ -33,19 +34,26 @@ func Init() {
 
 }
 
-func SendLatestMenuToInterestedUsers() {
+func SendLatestMenuToInterestedUsers() error {
 	nowInUTC := time.Now().UTC()
 	idsOfInterestedUsers, err := db_connectors.GetUsersToSendMenuToByTimestamp(nowInUTC)
+	if err != nil {
+		return err
+	}
 
-	latestOffersInDB := GetLatestMensaOffers()
+	latestOffersInDB, err := db_connectors.GetLatestMensaOffers()
+	if err != nil {
+		return err
+	}
 	formattedMessage := buildMessageFrom(latestOffersInDB)
 
 	for _, userID := range idsOfInterestedUsers {
-		SendMessage(userID, formattedMessage)
+		telegram_connector.SendMessage(userID, formattedMessage)
 	}
+	return nil
 }
 
-func buildMessageFrom(offerSlice []DBOfferInformation) string {
+func buildMessageFrom(offerSlice []db_connectors.DBOfferInformation) string {
 	if len(offerSlice) == 0 {
 		return "Griebnitzsee updated:\n\nMensa currently offers no menus"
 	}
