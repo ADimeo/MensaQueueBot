@@ -268,6 +268,10 @@ func main() {
 	initDatabases()
 	personalToken := utils.GetPersonalToken()
 
+	mensa_scraper.ScheduleScrapeJob()
+
+	// TODO start "mensa-messenger task"
+
 	r := gin.Default()
 	// r.SetTrustedProxies([]string{"172.21.0.2"})
 	// We trust all proxies, [as is insecure default in gin](https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies)

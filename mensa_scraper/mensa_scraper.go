@@ -3,11 +3,14 @@ package mensa_scraper
 import (
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/utils"
+	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"
 )
 
@@ -33,18 +36,27 @@ type MenuRoot struct {
 }
 
 func ScheduleScrapeJob() {
-	// TODO schedule the job to run every 10 minutes, within mensa days,
-	// Use Chron
-	// Schedule using Cron expressions
+	schedulerInMensaTimezone := gocron.NewScheduler(utils.GetLocalLocation())
+	cronBaseSyntax := "*/10 %d-%d * * 1-5" // Run every 10 minutes, every weekday, between two timestamps
+	// which should be filled in from mensa opening and closing time
 
-	// Don't need to care about shutdown...
+	mensaOpeningHours := utils.GetMensaOpeningTime().Hour()
+	mensaClosingHours := utils.GetMensaClosingTime().Hour()
+	formattedCronString := fmt.Sprintf(cronBaseSyntax, mensaOpeningHours, mensaClosingHours)
+	schedulerInMensaTimezone.Cron(formattedCronString).Do(ScrapeAndAdviseUsers)
+
+	// Don't need to care about shutdown, shutdown happens when the container shuts down,
+	// and startup happens when the container starts up
 
 }
 
 func ScrapeAndAdviseUsers() {
-	shouldUsersBeNotified := scrapeAndInsertIfMensaMenuIsOld
+	shouldUsersBeNotified := scrapeAndInsertIfMensaMenuIsOld()
 	if shouldUsersBeNotified {
-		SendLatestMenuToInterestedUsers()
+		err := SendLatestMenuToInterestedUsers()
+		if err != nil {
+			zap.S().Error("Couldn't send menu to interested users", err)
+		}
 	}
 }
 
@@ -52,13 +64,13 @@ func ScrapeAndAdviseUsers() {
 func scrapeAndInsertIfMensaMenuIsOld() bool {
 	menu, err := getMensaMenuFromWeb()
 	if err != nil {
-		return
+		return false
 	}
 	today := time.Now()
 	todaysInformation, err := getDateByDay(menu, today)
 	if err != nil {
 		zap.S().Errorf("Can't find menu for today in MenuRoot", err)
-		return
+		return false
 	}
 	if isDateInformationFresh(todaysInformation) {
 		// No changes in menu, nothing to insert or do.
