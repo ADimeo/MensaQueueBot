@@ -45,12 +45,14 @@ func ScheduleScrapeJob() {
 	formattedCronString := fmt.Sprintf(cronBaseSyntax, mensaOpeningHours, mensaClosingHours)
 	schedulerInMensaTimezone.Cron(formattedCronString).Do(ScrapeAndAdviseUsers)
 
+	schedulerInMensaTimezone.StartAsync()
 	// Don't need to care about shutdown, shutdown happens when the container shuts down,
 	// and startup happens when the container starts up
 
 }
 
 func ScrapeAndAdviseUsers() {
+	zap.S().Info("Running mensa scrape job")
 	shouldUsersBeNotified := scrapeAndInsertIfMensaMenuIsOld()
 	if shouldUsersBeNotified {
 		err := SendLatestMenuToInterestedUsers()
@@ -66,7 +68,7 @@ func scrapeAndInsertIfMensaMenuIsOld() bool {
 	if err != nil {
 		return false
 	}
-	today := time.Now()
+	today := time.Now().In(utils.GetLocalLocation())
 	todaysInformation, err := getDateByDay(menu, today)
 	if err != nil {
 		zap.S().Errorf("Can't find menu for today in MenuRoot", err)
