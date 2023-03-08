@@ -32,6 +32,7 @@ type WebhookRequestBody struct {
 type sendMessageRequestBody struct {
 	ChatID              int                       `json:"chat_id"`
 	Text                string                    `json:"text"`
+	ParseMode           string                    `json:"parse_mode"`
 	ReplyKeyboardMarkup ReplyKeyboardMarkupStruct `json:"reply_markup"`
 }
 
@@ -216,6 +217,7 @@ func SendMessage(chatID int, message string) error {
 	requestBody := &sendMessageRequestBody{
 		ChatID:              chatID,
 		Text:                message,
+		ParseMode:           "HTML",
 		ReplyKeyboardMarkup: *keyboard,
 	}
 
@@ -224,10 +226,16 @@ func SendMessage(chatID int, message string) error {
 		return err
 	}
 
-	_, err = http.Post(telegramUrl, "application/json", bytes.NewBuffer(reqBytes))
-
+	response, err := http.Post(telegramUrl, "application/json", bytes.NewBuffer(reqBytes))
+	defer response.Body.Close()
 	if err != nil {
 		return err
+	}
+	if response.StatusCode != 200 {
+		body, _ := ioutil.ReadAll(response.Body)
+
+		zap.S().Errorw("Sending message failed:", "Response", body)
+
 	}
 	return nil
 }
