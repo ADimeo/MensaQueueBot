@@ -8,6 +8,7 @@ import (
 )
 
 const KEY_PERSONAL_TOKEN string = "MENSA_QUEUE_BOT_PERSONAL_TOKEN"
+const KEY_DEBUG_MODE string = "MENSA_QUEUE_BOT_DEBUG_MODE"
 
 func GetLocalLocation() *time.Location {
 	potsdamLocation, err := time.LoadLocation("Europe/Berlin")
@@ -43,4 +44,16 @@ func GetMensaClosingTime() time.Time {
 	// Mensa closes at 15:00
 	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, GetLocalLocation())
 	return closingTime
+}
+
+/*IsInDebugMode can be used to change behaviour
+for testing. Currently mostly used to allow
+reports at weird times
+*/
+func IsInDebugMode() bool {
+	_, doesExist := os.LookupEnv(KEY_DEBUG_MODE)
+	if !doesExist {
+		return false
+	}
+	return true
 }

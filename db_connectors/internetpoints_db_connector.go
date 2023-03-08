@@ -47,7 +47,6 @@ func AddInternetPoint(userID int) error {
 		return err
 	}
 	return nil
-
 }
 
 func EnableCollectionOfPoints(userID int) error {

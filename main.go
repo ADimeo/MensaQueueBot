@@ -20,8 +20,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const KEY_DEBUG_MODE string = "MENSA_QUEUE_BOT_DEBUG_MODE"
-
 // const KEY_PERSONAL_TOKEN string = "MENSA_QUEUE_BOT_PERSONAL_TOKEN" // Defined in utils/utils.go, here for reference
 
 const MENSA_LOCATION_JSON_LOCATION string = "./mensa_locations.json"
@@ -176,6 +174,7 @@ func reactToRequest(ginContext *gin.Context) {
 		{
 			zap.S().Infof("User %d is joining test group", chatID)
 			err = db_connectors.MakeUserABTester(chatID, true)
+			ABTestHandler(chatID)
 			if err != nil {
 				telegram_connector.SendMessage(chatID, "Something went wrong, please try again later ")
 				zap.S().Warnf("Error in A/B opt in: ", err)
@@ -244,18 +243,6 @@ func initDatabases() {
 	browser := rod.New().ControlURL(u).MustConnect()
 	browser.MustPage("https://google.com").MustWaitLoad()
 	browser.MustClose()
-}
-
-/*IsInDebugMode can be used to change behaviour
-for testing. Currently mostly used to allow
-reports at weird times
-*/
-func IsInDebugMode() bool {
-	_, doesExist := os.LookupEnv(KEY_DEBUG_MODE)
-	if !doesExist {
-		return false
-	}
-	return true
 }
 
 func main() {

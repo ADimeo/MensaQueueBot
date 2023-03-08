@@ -31,7 +31,6 @@ func Init() {
 	// If it is:
 	//	Get all users with "currently receiving" and without "reported today" flag
 	//	Send them the updated menu
-
 }
 
 func SendLatestMenuToInterestedUsers() error {
@@ -58,7 +57,7 @@ func buildMessageFrom(offerSlice []db_connectors.DBOfferInformation) string {
 		return "Griebnitzsee updated:\n\nMensa currently offers no menus"
 	}
 
-	baseMessage := "<b>Mensa Griebnitzsee Updated:\n</b>"
+	baseMessage := "<b>Mensa Griebnitzsee Updated:</b>\n"
 	baseForSingleOffer := "<i>%s:</i> %s\n"
 
 	actualMessage := "" + baseMessage

@@ -43,6 +43,10 @@ func ScheduleScrapeJob() {
 	mensaOpeningHours := utils.GetMensaOpeningTime().Hour()
 	mensaClosingHours := utils.GetMensaClosingTime().Hour()
 	formattedCronString := fmt.Sprintf(cronBaseSyntax, mensaOpeningHours, mensaClosingHours)
+
+	if utils.IsInDebugMode() {
+		formattedCronString = "*/1 * * * *"
+	}
 	schedulerInMensaTimezone.Cron(formattedCronString).Do(ScrapeAndAdviseUsers)
 
 	schedulerInMensaTimezone.StartAsync()
@@ -66,6 +70,7 @@ func ScrapeAndAdviseUsers() {
 func scrapeAndInsertIfMensaMenuIsOld() bool {
 	menu, err := getMensaMenuFromWeb()
 	if err != nil {
+		zap.S().Errorf("Can't get menu from interweb", err)
 		return false
 	}
 	today := time.Now().In(utils.GetLocalLocation())
@@ -75,11 +80,12 @@ func scrapeAndInsertIfMensaMenuIsOld() bool {
 		return false
 	}
 	if isDateInformationFresh(todaysInformation) {
+		zap.S().Debug("Mensa menu is stale")
 		// No changes in menu, nothing to insert or do.
 		return false
 	}
-
 	insertDateOffersIntoDBWithFreshCounter(today, todaysInformation)
+	zap.S().Debug("Succesfully inserted new menu into DB")
 	return true
 }
 
@@ -166,18 +172,18 @@ func parseXML(body []byte) (MenuRoot, error) {
 func getMensaMenuFromWeb() (MenuRoot, error) {
 	response, err := http.Get(MENSA_URL)
 	if err != nil {
-		zap.S().Warnf("Can't reach mensa XML. Is their service down?", err)
+		zap.S().Warn("Can't reach mensa XML. Is their service down?", err)
 		return MenuRoot{}, err
 	}
 	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		zap.S().Warnf("Can't read mensa xml response body. Is their service working?", err)
+		zap.S().Warn("Can't read mensa xml response body. Is their service working?", err)
 		return MenuRoot{}, err
 	}
 	menu, err := parseXML(body)
 	if err != nil {
-		zap.S().Errorf("Can't parse mensa xml. Did the format change?", err)
+		zap.S().Error("Can't parse mensa xml. Did the format change?", err)
 		return MenuRoot{}, err
 	}
 	return menu, nil

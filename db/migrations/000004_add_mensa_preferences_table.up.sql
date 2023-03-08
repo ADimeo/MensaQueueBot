@@ -4,6 +4,6 @@ reporterID INTEGER UNIQUE NOT NULL,
 wantsMensaMessages INTEGER NOT NULL,
 startTimeInSeconds INTEGER, 
 endTimeInSeconds INTEGER, 
-WeekdayBitmap INTEGER,
+weekdayBitmap INTEGER,
 lastReportDate INTEGER
 );
