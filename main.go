@@ -256,6 +256,7 @@ func main() {
 	personalToken := utils.GetPersonalToken()
 
 	mensa_scraper.ScheduleScrapeJob()
+	mensa_scraper.ScheduleDailyInitialMessageJob()
 
 	// TODO start "mensa-messenger task"
 

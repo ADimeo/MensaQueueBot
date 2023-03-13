@@ -59,7 +59,7 @@ func ScrapeAndAdviseUsers() {
 	zap.S().Info("Running mensa scrape job")
 	shouldUsersBeNotified := scrapeAndInsertIfMensaMenuIsOld()
 	if shouldUsersBeNotified {
-		err := SendLatestMenuToInterestedUsers()
+		err := SendLatestMenuToUsersCurrentlyListening()
 		if err != nil {
 			zap.S().Error("Couldn't send menu to interested users", err)
 		}
