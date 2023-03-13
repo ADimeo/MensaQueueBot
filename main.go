@@ -159,28 +159,12 @@ func reactToRequest(ginContext *gin.Context) {
 	case sentMessage == "/forgetme":
 		{
 			zap.S().Infof("User requested deletion of their data: %s", sentMessage)
-			err1 := db_connectors.DeleteAllUserPointData(chatID)
-			err2 := db_connectors.DeleteAllUserChangelogData(chatID)
-			if err1 != nil || err2 != nil {
-				zap.S().Infof("Sending error message to user")
-				telegram_connector.SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes")
-				zap.S().Warnf("Error in forgetme: ", err1, err2)
-			} else {
-				telegram_connector.SendMessage(chatID, "Who are you again? I have completely forgotten you exist.")
-
-			}
+			HandleAccountDeletion(chatID)
 		}
 	case sentMessage == "/joinABTesters": // In the future reading secret codes might be interesting
 		{
 			zap.S().Infof("User %d is joining test group", chatID)
-			err = db_connectors.MakeUserABTester(chatID, true)
-			ABTestHandler(chatID)
-			if err != nil {
-				telegram_connector.SendMessage(chatID, "Something went wrong, please try again later ")
-				zap.S().Warnf("Error in A/B opt in: ", err)
-			} else {
-				telegram_connector.SendMessage(chatID, "Welcome to the test crew 🫡")
-			}
+			HandleABTestJoining(chatID)
 		}
 	case sentMessage == "/platypus":
 		{
