@@ -18,6 +18,11 @@ import (
 const KEY_TELEGRAM_TOKEN string = "MENSA_QUEUE_BOT_TELEGRAM_TOKEN"
 const KEYBOARD_FILE_LOCATION = "./keyboard.json"
 
+type WebhookRequestBodyWebAppData struct {
+	ButtonText string `json:"button_test"`
+	Data       string `json:"data"`
+}
+
 // Struct definitions taken from https://www.sohamkamani.com/golang/telegram-bot/
 type WebhookRequestBody struct {
 	Message struct {
@@ -25,7 +30,8 @@ type WebhookRequestBody struct {
 		Chat struct {
 			ID int `json:"id"`
 		} `json:"chat"`
-		Date int `json:"date"`
+		Date       int                          `json:"date"`
+		WebAppData WebhookRequestBodyWebAppData `json:"web_app_data"`
 	} `json:"message"`
 }
 

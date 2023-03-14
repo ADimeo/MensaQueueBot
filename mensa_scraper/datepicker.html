@@ -3,6 +3,8 @@
 </head>
 <body>
     <h1>Settings</h1>
+    <label for="atall">
+   <input type="checkbox" id="atall" name="atall" value="yes" checked=true>Do you want to receive mensa messages?
     <h2>On which days do you want to receive menu messages?</h2>
      <div class="flex-container">
     <label for="mon">
@@ -33,6 +35,7 @@
 <script type="text/javascript"> 
     function getData() {
             let settingsObject = {}
+            settingsObject.reportAtall= document.getElementById("atall").checked;
             settingsObject.reportMon = document.getElementById("mon").checked;
             settingsObject.reportTue = document.getElementById("tue").checked;
             settingsObject.reportWed = document.getElementById("wed").checked;

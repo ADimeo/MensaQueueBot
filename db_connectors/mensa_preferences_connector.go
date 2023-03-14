@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/ADimeo/MensaQueueBot/utils"
 	"go.uber.org/zap"
 )
 
@@ -14,15 +15,17 @@ func GetUsersToSendMenuToByTimestamp(nowInUTC time.Time) ([]int, error) {
 	queryString := `SELECT reporterID FROM mensaPreferences
 		WHERE wantsMensaMessages = 1
 		AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
-		AND ? BETWEEN startTimeInUTCMinutes AND endTimeInUTCMinutes
+		AND ? BETWEEN startTimeInCESTMinutes AND endTimeInCESTMinutes
 		AND ? & weekdayBitmap >= 0;`
 
 	currentDate := nowInUTC.Format("2006-01-02")
-	currentUTCMinute := nowInUTC.Hour()*60 + nowInUTC.Minute()
+	currentCESTDate := nowInUTC.In(utils.GetLocalLocation())
+	currentCESTMinute := currentCESTDate.Hour()*60 + currentCESTDate.Minute()
+
 	weekdayBitmap := getBitmapForToday(nowInUTC)
 
 	db := GetDBHandle()
-	rows, err := db.Query(queryString, currentDate, currentUTCMinute, weekdayBitmap)
+	rows, err := db.Query(queryString, currentDate, currentCESTMinute, weekdayBitmap)
 	if err != nil {
 		zap.S().Errorf("Couldn't get users to send menu to", err)
 		return make([]int, 0), err
@@ -44,35 +47,35 @@ func GetUsersToSendMenuToByTimestamp(nowInUTC time.Time) ([]int, error) {
 	return userIDs, nil
 }
 
-func GetUTCMinuteForNextIntroMessage(nowInUTC time.Time, utcMinuteOfLastRun int) (int, error) {
-	queryString := `SELECT startTimeInUTCMinutes FROM mensaPreferences 
-	WHERE startTimeInUTCMinutes > ? 
+func GetCESTMinuteForNextIntroMessage(nowInUTC time.Time, cestMinuteOfLastRun int) (int, error) {
+	queryString := `SELECT startTimeInCESTMinutes FROM mensaPreferences 
+	WHERE startTimeInCESTMinutes > ? 
 	AND wantsMensaMessage = 1
 	AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
 	AND ? & weekdayBitmap >= 0
-	ORDER BY startTimeInUTCMinutes ASC 
+	ORDER BY startTimeInCESTMinutes ASC 
 	LIMIT 1;`
 
 	currentDate := nowInUTC.Format("2006-01-02")
 	weekdayBitmap := getBitmapForToday(nowInUTC)
 
 	db := GetDBHandle()
-	var nextUTCMinute int
+	var nextCESTMinute int
 
-	if err := db.QueryRow(queryString, utcMinuteOfLastRun, currentDate, weekdayBitmap).Scan(&nextUTCMinute); err != nil {
+	if err := db.QueryRow(queryString, cestMinuteOfLastRun, currentDate, weekdayBitmap).Scan(&nextCESTMinute); err != nil {
 		if err == sql.ErrNoRows {
 			zap.S().Debug("No more startTimes scheduled for today")
-			return GetFirstUTCMinuteForIntroMessage()
+			return GetFirstCESTMinuteForIntroMessage()
 		} else {
 			zap.S().Errorw("Error while querying for next mensa report", err)
 			// We default to scheduling the first "welcome" job at 08:00
 			return 8 * 60, nil
 		}
 	}
-	return nextUTCMinute, nil
+	return nextCESTMinute, nil
 }
 
-func GetFirstUTCMinuteForIntroMessage() (int, error) {
+func GetFirstCESTMinuteForIntroMessage() (int, error) {
 	// We ignore the weekday in this query.
 	// _technically_ this is a bug, because it will schedule the job
 	// on hours when there's nothing to run (because the user that would have the
@@ -80,7 +83,7 @@ func GetFirstUTCMinuteForIntroMessage() (int, error) {
 	// But, well, it's invisible to users,
 	// And getting this behaviour cleanly (so wrapping arround the weekday bitmap,
 	// etc.) just doesn't feel worth it at all.
-	queryString := `SELECT MIN(startTimeInUTCMinutes) 
+	queryString := `SELECT MIN(startTimeInCESTMinutes) 
 	WHERE wantsMensaMessage = 1
 	FROM mensaPreferences;`
 	db := GetDBHandle()
@@ -100,20 +103,20 @@ func GetFirstUTCMinuteForIntroMessage() (int, error) {
 	return firstTime, nil
 }
 
-func GetUsersWithInitialMessageInTimeframe(nowInUTC time.Time, lowerBoundUTCMinute int, upperBoundUTCMinute int) ([]int, error) {
+func GetUsersWithInitialMessageInTimeframe(nowInUTC time.Time, lowerBoundCESTMinute int, upperBoundCESTMinute int) ([]int, error) {
 	// +1 in BETWEEN because we don't want to include the lower bound in the interval,
 	// and SQLites BETWEEN statement is inclusive of both upper and lower bound
 	queryString := `SELECT reporterID FROM mensaPreferences
 		WHERE wantsMensaMessages = 1
 		AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
-		AND startTimeInUTCMinutes BETWEEN ? + 1 AND ? 
+		AND startTimeInCESTMinutes BETWEEN ? + 1 AND ? 
 		AND ? & weekdayBitmap >= 0;`
 
 	currentDate := nowInUTC.Format("2006-01-02")
 	weekdayBitmap := getBitmapForToday(nowInUTC)
 
 	db := GetDBHandle()
-	rows, err := db.Query(queryString, currentDate, lowerBoundUTCMinute, upperBoundUTCMinute, weekdayBitmap)
+	rows, err := db.Query(queryString, currentDate, lowerBoundCESTMinute, upperBoundCESTMinute, weekdayBitmap)
 	if err != nil {
 		zap.S().Errorf("Couldn't get users to send menu to", err)
 		return make([]int, 0), err
@@ -135,13 +138,13 @@ func GetUsersWithInitialMessageInTimeframe(nowInUTC time.Time, lowerBoundUTCMinu
 	return userIDs, nil
 }
 
-func UpdateUserPreferences(userID int, wantsMensaMessages bool, startTimeInUTCMinutes int, endTimeInUTCMinutes int, weekdayBitmap int) error {
-	queryString := "INSERT INTO mensaPreferences(reporterID, wantsMensaMessages, startTimeInUTCMinutes, endTimeInUTCMinutes, weekdayBitmap) VALUES (?,?,?,?,?) ON CONFLICT (reporterID) DO UPDATE SET wantsMensaMessages=?, startTimeInUTCMinutes=?, endTimeInUTCMinutes=?,weekdayBitmap=?;"
+func UpdateUserPreferences(userID int, wantsMensaMessages bool, startTimeInCESTMinutes int, endTimeInCESTMinutes int, weekdayBitmap int) error {
+	queryString := "INSERT INTO mensaPreferences(reporterID, wantsMensaMessages, startTimeInCESTinutes, endTimeInCESTMinutes, weekdayBitmap) VALUES (?,?,?,?,?) ON CONFLICT (reporterID) DO UPDATE SET wantsMensaMessages=?, startTimeInCESTMinutes=?, endTimeInCESTMinutes=?,weekdayBitmap=?;"
 	db := GetDBHandle()
 	DBMutex.Lock()
 
-	_, err := db.Exec(queryString, userID, wantsMensaMessages, startTimeInUTCMinutes, endTimeInUTCMinutes, weekdayBitmap,
-		wantsMensaMessages, startTimeInUTCMinutes, endTimeInUTCMinutes, weekdayBitmap)
+	_, err := db.Exec(queryString, userID, wantsMensaMessages, startTimeInCESTMinutes, endTimeInCESTMinutes, weekdayBitmap,
+		wantsMensaMessages, startTimeInCESTMinutes, endTimeInCESTMinutes, weekdayBitmap)
 	DBMutex.Unlock()
 	return err
 }

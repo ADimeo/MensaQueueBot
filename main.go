@@ -166,6 +166,11 @@ func reactToRequest(ginContext *gin.Context) {
 			zap.S().Infof("User %d is joining test group", chatID)
 			HandleABTestJoining(chatID)
 		}
+	case sentMessage == "": // this likely means that user used a keyboard-html-button thingy
+		{
+			zap.S().Debug("User is changing settings")
+			HandleSettingsChange(chatID, bodyAsStruct.Message.WebAppData)
+		}
 	case sentMessage == "/platypus":
 		{
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"

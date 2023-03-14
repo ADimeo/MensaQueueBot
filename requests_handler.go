@@ -162,7 +162,7 @@ func createEchartOptions(currentTime time.Time, graphEndTime time.Time, graphSta
 	echartOptionsSlice := make([]charts.GlobalOpts, 0)
 
 	// Title
-	mensaLocation, _ := time.LoadLocation("Europe/Berlin")
+	mensaLocation := utils.GetLocalLocation()
 	timeInMensaTimezone := currentTime.In(mensaLocation).Format("15:04")
 
 	title := charts.WithTitleOpts(opts.Title{
