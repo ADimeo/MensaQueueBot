@@ -16,7 +16,6 @@ import (
 )
 
 const KEY_TELEGRAM_TOKEN string = "MENSA_QUEUE_BOT_TELEGRAM_TOKEN"
-const KEYBOARD_FILE_LOCATION = "./keyboard.json"
 
 type WebhookRequestBodyWebAppData struct {
 	ButtonText string `json:"button_test"`
@@ -79,34 +78,6 @@ type telegramResponseBody struct {
 	Result struct {
 		Photo []telegramResponseBodyPhoto `json:"photo"`
 	} `json:"result"`
-}
-
-// Returns the struct that represents the custom keyboard that should be shown to the user
-func GetReplyKeyboard() *ReplyKeyboardMarkupStruct {
-	var keyboardArray [][]KeyboardButton
-
-	jsonFile, err := os.Open(KEYBOARD_FILE_LOCATION)
-	if err != nil {
-		zap.S().Panicf("Can't access keyboard json file at %s", KEYBOARD_FILE_LOCATION)
-	}
-	defer jsonFile.Close()
-
-	jsonAsBytes, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		zap.S().Panicf("Can't read keyboard json file at %s", KEYBOARD_FILE_LOCATION)
-	}
-	err = json.Unmarshal(jsonAsBytes, &keyboardArray)
-	if err != nil {
-		zap.S().Panicf("Keyboard json file not formatted correctly: %s", err)
-	}
-
-	keyboardStruct := ReplyKeyboardMarkupStruct{
-		Keyboard: keyboardArray,
-	}
-	// TODO Hacky temporary reply-keyboard thingy
-
-	return &keyboardStruct
-
 }
 
 /*
