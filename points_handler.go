@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func sendPointsHelpMessages(chatID int) {
+func SendPointsHelpMessages(chatID int) {
 	var messageArray = [...]string{
 		"If you want to, you can opt in to collect internetpoints for your reports!",
 		"You get one point for each report, and your points will add up with each report you make",
@@ -120,7 +120,7 @@ func HandlePointsRequest(sentMessage string, chatID int) {
 		}
 		sendPointsOptOutResponse(chatID, userIsCollectingPoints)
 	} else if sentMessage == "/points_help" {
-		sendPointsHelpMessages(chatID)
+		SendPointsHelpMessages(chatID)
 	} else {
 		zap.S().Infof("Usermessage '%s' does not match with any point message", sentMessage)
 	}

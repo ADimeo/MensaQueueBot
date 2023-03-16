@@ -105,23 +105,9 @@ func sendQueueLengthExamples(chatID int) {
 	SendTopViewOfMensa(chatID)
 }
 
-func reactToRequest(ginContext *gin.Context) {
-	// Return some 200 or something
-
-	bodyAsStruct, err := parseRequest(ginContext)
-	if err == nil {
-		ginContext.JSON(200, gin.H{
-			"message": "Thanks nice server",
-		})
-	} else {
-		zap.S().Error("Inbound data from telegram couldn't be parsed", err)
-	}
+func legacyRequestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connector.WebhookRequestBody) {
 	lengthReportRegex := regexp.MustCompile(REPORT_REGEX)
 	pointsRegex := regexp.MustCompile(POINTS_REGEX)
-
-	sentMessage := bodyAsStruct.Message.Text
-	chatID := bodyAsStruct.Message.Chat.ID
-
 	switch {
 	case sentMessage == "/start":
 		{
@@ -173,6 +159,7 @@ func reactToRequest(ginContext *gin.Context) {
 		}
 	case sentMessage == "/platypus":
 		{
+			zap.S().Infof("PLATYPUS!")
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
 			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️")
 		}
@@ -180,6 +167,135 @@ func reactToRequest(ginContext *gin.Context) {
 		{
 			zap.S().Infof("Received unknown message: %s", sentMessage)
 		}
+	}
+}
+
+func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connector.WebookRequestBody) {
+	lengthReportRegex := regexp.MustCompile(REPORT_REGEX)
+	switch {
+	// CASES FROM MAIN KEYBOARD
+	case sentMessage == "Jetze?":
+		{
+			zap.S().Info("Received a 'Jetze?' request")
+			GenerateAndSendGraphicQueueLengthReport(chatID)
+			sendChangelogIfNecessary(chatID)
+		}
+	case sentMessage == "Menu?":
+		{
+			zap.S().Info("Received a 'Menu?' request")
+			mensa_scraper.SendLatestMenuToSingleUser(chatID)
+			sendChangelogIfNecessary(chatID)
+		}
+	case sentMessage == "Report!":
+		{
+			zap.S().Info("Received a 'Report!' request")
+			message := "Great! How is it looking?"
+			telegram_connector.SendMessage(chatID, message)
+		}
+		// CASES FROM REPORT KEYBOARD
+	case lengthReportRegex.Match([]byte(sentMessage)):
+		{
+			zap.S().Info("Received a new report: %s", sentMessage)
+			messageUnixTime := bodyAsStruct.Message.Date
+			HandleLengthReport(sentMessage, messageUnixTime, chatID)
+			sendChangelogIfNecessary(chatID)
+		}
+	case sentMessage == "Can't tell":
+		{
+			zap.S().Info("Received a 'Can't tell' report")
+			message := "Alrighty"
+			telegram_connector.SendMessage(chatID, message)
+			sendChangelogIfNecessary(chatID)
+		}
+		// CASES FROM SETTINGS KEYBOARD
+	case sentMessage == "/settings":
+		{
+			// Let's not forget how to get to the settings screen...
+			// TODO
+			zap.S().Info("Received a '/settings' request")
+
+			message := "TODO PLACEHOLDER SETTINGS REPORT W. POINTS, SETTINGS OVERVIEW, MENSABOT VERSION, WHETHER AB TESTER"
+			telegram_connector.SendMessage(chatID, message)
+		}
+	case sentMessage == "General Help":
+		{
+			// Revamping this is contained within a different issue...
+			zap.S().Info("Received a 'General Help' requets")
+			sendQueueLengthExamples(chatID)
+		}
+	case sentMessage == "Points Help":
+		{
+			zap.S().Info("Received a 'Points Help' requets")
+			SendPointsHelpMessages(chatID)
+		}
+	case sentMessage == "": // this likely means that user used a keyboard-html-button thingy
+		{
+			zap.S().Debug("User is changing settings")
+			HandleSettingsChange(chatID, bodyAsStruct.Message.WebAppData)
+		}
+	case sentMessage == "Account Deletion":
+		{
+			// This is just for info
+			zap.S().Info("Received a 'Account Deletion' request")
+			message := "To delete all data about you from MensaQueueBot type /forgetme in the chat. Be advised that this action is destructive, and nonreversible. If you ever decide to come back you will be an entirely new user."
+			telegram_connector.SendMessage(chatID, message)
+		}
+	case sentMessage == "Back":
+		{
+			zap.S().Info("Received a 'Back' report")
+			message := "Back to my purpose"
+			telegram_connector.SendMessage(chatID, message)
+			sendChangelogIfNecessary(chatID)
+		}
+		// OTHER CASES
+	case sentMessage == "/help":
+		{
+			zap.S().Info("Sending queue length (/help) messages")
+			sendQueueLengthExamples(chatID)
+		}
+	case sentMessage == "/forgetme":
+		{
+			zap.S().Infof("User requested deletion of their data: %s", sentMessage)
+			HandleAccountDeletion(chatID)
+		}
+	case sentMessage == "/joinABTesters": // In the future reading secret codes might be interesting
+		{
+			zap.S().Infof("User %d is joining test group", chatID)
+			HandleABTestJoining(chatID)
+		}
+	case sentMessage == "/platypus":
+		{
+			zap.S().Infof("PLATYPUS!")
+			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
+			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️")
+		}
+	default:
+		{
+			zap.S().Infof("Received unknown message: %s", sentMessage)
+		}
+
+	}
+
+}
+
+func reactToRequest(ginContext *gin.Context) {
+	// Return some 200 or something
+
+	bodyAsStruct, err := parseRequest(ginContext)
+	if err == nil {
+		ginContext.JSON(200, gin.H{
+			"message": "Thanks nice server",
+		})
+	} else {
+		zap.S().Error("Inbound data from telegram couldn't be parsed", err)
+	}
+
+	sentMessage := bodyAsStruct.Message.Text
+	chatID := bodyAsStruct.Message.Chat.ID
+	if db_connectors.IsUserABTester(chatID) {
+		requestSwitch(chatID, sentMessage, bodyAsStruct)
+	} else {
+		legacyRequestSwitch(chatID, sentMessage, bodyAsStruct)
 	}
 }
 
@@ -246,8 +362,6 @@ func main() {
 
 	mensa_scraper.ScheduleScrapeJob()
 	mensa_scraper.ScheduleDailyInitialMessageJob()
-
-	// TODO start "mensa-messenger task"
 
 	r := gin.Default()
 	// r.SetTrustedProxies([]string{"172.21.0.2"})

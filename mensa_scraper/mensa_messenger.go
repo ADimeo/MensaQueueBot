@@ -161,6 +161,11 @@ func SendLatestMenuToUsersCurrentlyListening() error {
 	return sendLatestMenuToUsers(idsOfInterestedUsers)
 }
 
+func SendLatestMenuToSingleUser(userID int) error {
+	sliceOfUserID := []int{userID}
+	return sendLatetMenuToUsers(sliceOfUserID)
+}
+
 func sendLatestMenuToUsers(idsOfInterestedUsers []int) error {
 	latestOffersInDB, err := db_connectors.GetLatestMensaOffers()
 	if err != nil {

@@ -48,6 +48,11 @@ func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookReque
 
 		if err := db_connectors.UpdateUserPreferences(chatID, mensaSettings.ReportAtAll, startCESTMinutes, endCESTMinutes, weekdayBitmap); err != nil {
 			zap.S().Warnw("Can't update user preferences", "chatID", chatID, err)
+			message := "Error saving settings, please try again later"
+			telegram_connector.SendMessage(chatID, message)
+		} else {
+			message := "Successfully saved your settings"
+			telegram_connector.SendMessage(chatID, message)
 		}
 	} else {
 		zap.S().Errorw("Unknown button used to send webhook to us", "Button title", typeOfKeyboard, "Data", webAppData.Data)
