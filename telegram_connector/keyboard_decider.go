@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/ADimeo/MensaQueueBot/db_connectors"
 	"go.uber.org/zap"
 )
 
@@ -20,6 +21,9 @@ const (
 	PREPARE_SETTINGS     UserRequestType = "PREPARE_SETTINGS"
 	SETTINGS_INTERACTION UserRequestType = "SETTINS_INTERACTION"
 	PUSH_MESSAGE         UserRequestType = "PUSH_MESSAGE"
+	TUTORIAL_MESSAGE     UserRequestType = "TUTORIAL_MESSAGE"
+	PREPARE_MAIN         UserRequestType = "PREPARE_MAIN"
+	ACCOUNT_DELETION     UserRequestType = "ACCOUNT_DELETION"
 )
 
 type KeyboardIdentifier int
@@ -30,6 +34,7 @@ const (
 	ReportKeyboard   KeyboardIdentifier = 1
 	MainKeyboard     KeyboardIdentifier = 2
 	SettingsKeyboard KeyboardIdentifier = 3
+	NoKeyboard       KeyboardIdentifier = 4
 )
 
 const LEGACY_KEYBOARD_FILEPATH = "./keyboard.json"
@@ -47,7 +52,7 @@ This function mostly exists to provide some stability for the NilKeyboard case.
 Not having this function would lead to some weird things being encoded in
 the compined GetIdentifierViaRequestType and GetKeyboardFromIdentifier function
 */
-func GetKeyboardFromIdentifier(identifier KeyboardIdentifier) (ReplyKeyboardMarkupStruct, error) {
+func GetKeyboardFromIdentifier(identifier KeyboardIdentifier) (*ReplyKeyboardMarkupStruct, error) {
 	switch identifier {
 	case LegacyKeyboard:
 		{
@@ -56,24 +61,28 @@ func GetKeyboardFromIdentifier(identifier KeyboardIdentifier) (ReplyKeyboardMark
 	case NilKeyboard:
 		{
 			var nilKeyboard ReplyKeyboardMarkupStruct
-			return nilKeyboard, errors.New("Caller requested nil keyboard, should not send keyboard instead")
+			return &nilKeyboard, errors.New("Caller requested nil keyboard, should not send keyboard instead")
+		}
+	case NoKeyboard:
+		{
+			var noKeyboard ReplyKeyboardMarkupStruct
+			return &noKeyboard, errors.New("Caller requested no keyboard, should send different message instead")
 		}
 	case ReportKeyboard:
 		{
 			return getReplyKeyboard(REPORT_KEYBOARD_FILEPATH), nil
-			return get
 		}
 	case MainKeyboard:
 		{
 			return getReplyKeyboard(MAIN_KEYBOARD_FILEPATH), nil
 		}
-	case SetingsKeyboard:
+	case SettingsKeyboard:
 		{
 			return getReplyKeyboard(SETTINGS_KEYBOARD_FILEPATH), nil
 		}
 	}
 	var nilKeyboard ReplyKeyboardMarkupStruct
-	return nilKeyboard, errors.New("Caller requested unknown keyboard type")
+	return &nilKeyboard, errors.New("Caller requested unknown keyboard type")
 }
 
 /* Function that takes a requestType enum and returns a keyboard enum, that is then looked up
@@ -85,40 +94,60 @@ there's now a single point where this new functionality can be added, and no one
 to look up "uuuhhh, which message sent that type again?"
 
 */
-func GetIdentifierViaRequestType(requestType UserRequestType) (KeyboardIdentifier, error) {
+func GetIdentifierViaRequestType(requestType UserRequestType, userID int) KeyboardIdentifier {
+	userIsABTester := db_connectors.GetIsUserABTester(userID)
+	zap.S().Debugf("User is sending us a %s request, returning corresponding keyboard identifier", requestType)
+	if !userIsABTester {
+		zap.S().Debug("Returning legacy keyboard, no AB Tester")
+		return LegacyKeyboard
+	}
 	switch requestType {
 	case LENGTH_REPORT:
 		{
 			// User sent a length report, or declined to report length. Always comes from the REPORT_KEYBOARD, and always leads to MAIN_KEYBOARD
-			return MainKeyboard, nil
+			return MainKeyboard
 		}
 	case PREPARE_REPORT:
 		{
 			// User wants to send a report/navigate to report keyboard. Always comes fom MAIN_KEYBOARD, always leads to REPORT_KEYBOARD
-			return ReportKeyboard, nil
+			return ReportKeyboard
 		}
 	case INFO_REQUEST:
 		{
 			// User requested mensa menu or queue length. Always comes from MAIN_KEYBOARD, always stays at MAIN_KEYBOARD
-			return NilKeyboard, nil
+			return NilKeyboard
 		}
 	case PREPARE_SETTINGS:
 		{
 			// User wants to navigate to settings screen. Always comes from MAIN_KEYBOARD, always leads to SETTINGS_KEYBOARD
-			return SettingsKeyboard, nil
+			return SettingsKeyboard
 		}
 	case SETTINGS_INTERACTION:
 		{
 			// User did something in settings, either change settings, or request help. Always comes from SETTINGS_KEYBOARD, always stays at SETTINGS_KEYBOARD
-			return SettingsKeyboard, nil
+			return SettingsKeyboard
 		}
 	case PUSH_MESSAGE:
 		{
 			// A message the user didn't actively request. Always stays at current keyboard
-			return NilKeyboard, nil
+			return NilKeyboard
 		}
+	case TUTORIAL_MESSAGE:
+		{
+			// User requested help or a tutorial. Always stays at current keyboard
+			return NilKeyboard
+		}
+	case PREPARE_MAIN:
+		{
+			// User wants to navigate to main. Usually starts at settings, always leads to main
+			return MainKeyboard
+		}
+	case ACCOUNT_DELETION:
+		// User deleted their account. Remove keyboard to make them feel like the interaction ended
+		return NoKeyboard
 	}
-	return NilKeyboard, errors.New("Caller provided unknown requestType", requestType)
+	zap.S().Error("Caller requested unknown keyboard type, returning nil keyboard")
+	return NilKeyboard
 }
 
 /*
@@ -182,4 +211,11 @@ func getReplyKeyboard(jsonPath string) *ReplyKeyboardMarkupStruct {
 		Keyboard: keyboardArray,
 	}
 	return &keyboardStruct
+}
+
+func LoadAllKeyboardsForTest() {
+	GetKeyboardFromIdentifier(LegacyKeyboard)
+	GetKeyboardFromIdentifier(ReportKeyboard)
+	GetKeyboardFromIdentifier(MainKeyboard)
+	GetKeyboardFromIdentifier(SettingsKeyboard)
 }

@@ -20,7 +20,8 @@ func SendPointsHelpMessages(chatID int) {
 	}
 	for i := 0; i < len(messageArray); i++ {
 		messageString := messageArray[i]
-		err := telegram_connector.SendMessage(chatID, messageString)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+		err := telegram_connector.SendMessage(chatID, messageString, keyboardIdentifier)
 		if err != nil {
 			zap.S().Error("Error while sending help message for point", err)
 		}
@@ -33,9 +34,11 @@ func sendPointsOptInResponse(chatID int, currentlyOptedIn bool) {
 
 	var err error
 	if currentlyOptedIn {
-		err = telegram_connector.SendMessage(chatID, messageDoubleOptIn)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+		err = telegram_connector.SendMessage(chatID, messageDoubleOptIn, keyboardIdentifier)
 	} else {
-		err = telegram_connector.SendMessage(chatID, messageOptIn)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+		err = telegram_connector.SendMessage(chatID, messageOptIn, keyboardIdentifier)
 	}
 	if err != nil {
 		zap.S().Error("Error while sending points opt-in message.", err)
@@ -47,9 +50,11 @@ func sendPointsOptOutResponse(chatID int, currentlyOptedIn bool) {
 
 	var err error
 	if currentlyOptedIn {
-		err = telegram_connector.SendMessage(chatID, messageOptOut)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+		err = telegram_connector.SendMessage(chatID, messageOptOut, keyboardIdentifier)
 	} else {
-		err = telegram_connector.SendMessage(chatID, messageDoubleOptOut)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+		err = telegram_connector.SendMessage(chatID, messageDoubleOptOut, keyboardIdentifier)
 	}
 	if err != nil {
 		zap.S().Error("Error while sending points opt-out message.", err)
@@ -83,12 +88,14 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 
 		encouragementMessage := encouragements[encouragementSelector]
 		messageToSend := fmt.Sprintf(baseMessage, pointsCollected, encouragementMessage)
-		err := telegram_connector.SendMessage(chatID, messageToSend)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+		err := telegram_connector.SendMessage(chatID, messageToSend, keyboardIdentifier)
 		if err != nil {
 			zap.S().Errorf("Error while sending pointsrequest message for %s points", points, err)
 		}
 	} else {
-		err = telegram_connector.SendMessage(chatID, explanationMessage)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+		err = telegram_connector.SendMessage(chatID, explanationMessage, keyboardIdentifier)
 		if err != nil {
 			zap.S().Error("Error while sending pointsrequest message.", err)
 		}

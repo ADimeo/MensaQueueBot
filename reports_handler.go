@@ -20,7 +20,8 @@ func sendThankYouMessage(chatID int, textSentByUser string) {
 
 	zap.S().Infof("Sending thank you for %s", textSentByUser)
 
-	err := telegram_connector.SendMessage(chatID, fmt.Sprintf(baseMessage, textSentByUser))
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.LENGTH_REPORT, chatID)
+	err := telegram_connector.SendMessage(chatID, fmt.Sprintf(baseMessage, textSentByUser), keyboardIdentifier)
 	if err != nil {
 		zap.S().Error("Error while sending thank you message.", err)
 	}
@@ -32,7 +33,8 @@ func sendNoThanksMessage(chatID int, textSentByUser string) {
 
 	zap.S().Infof("Sending no thanks for %s", textSentByUser)
 
-	err := telegram_connector.SendMessage(chatID, baseMessage)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.LENGTH_REPORT, chatID)
+	err := telegram_connector.SendMessage(chatID, baseMessage, keyboardIdentifier)
 	if err != nil {
 		zap.S().Error("Error while sending no thanks message.", err)
 	}

@@ -75,7 +75,8 @@ See generateSimpleLengthReportString for message creation logic.
 func sendQueueLengthReport(chatID int, timeOfReport int, reportedQueueLength string) error {
 	reportMessage := generateSimpleLengthReportString(timeOfReport, reportedQueueLength)
 
-	err := telegram_connector.SendMessage(chatID, reportMessage)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.INFO_REQUEST, chatID)
+	err := telegram_connector.SendMessage(chatID, reportMessage, keyboardIdentifier)
 	if err != nil {
 		zap.S().Error("Error while sending queue length report", err)
 	}
@@ -420,7 +421,8 @@ to our users. That way we don't have to regenerate our graphs on every request
 func sendExistingGraphicQueueLengthReport(chatID int,
 	timeOfLatestReport int, reportedQueueLength string, oldGraphIdentifier string) error {
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
-	err := telegram_connector.SendStaticWebPhoto(chatID, oldGraphIdentifier, stringReport)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.INFO_REQUEST, chatID)
+	err := telegram_connector.SendStaticWebPhoto(chatID, oldGraphIdentifier, stringReport, keyboardIdentifier)
 	return err
 }
 
@@ -452,7 +454,8 @@ func sendNewGraphicQueueLengthReport(chatID int,
 		return sendQueueLengthReport(chatID, timeOfLatestReport, reportedQueueLength)
 	}
 	stringReport := generateSimpleLengthReportString(timeOfLatestReport, reportedQueueLength)
-	newTelegramIdentifier, err := telegram_connector.SendDynamicPhoto(chatID, pathToPng, stringReport)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.INFO_REQUEST, chatID)
+	newTelegramIdentifier, err := telegram_connector.SendDynamicPhoto(chatID, pathToPng, stringReport, keyboardIdentifier)
 	updateGlobalLatestGraphDetails(graphNowLineUTC, newTelegramIdentifier)
 	return err
 }

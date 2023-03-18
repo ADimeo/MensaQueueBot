@@ -77,7 +77,8 @@ func GetMensaLocationSlice() *[]mensaLocation {
 func SendTopViewOfMensa(chatID int) error {
 	const linkToTopView = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
 	const topViewText = "I'm an artist"
-	err := telegram_connector.SendStaticWebPhoto(chatID, TOP_VIEW_URL, topViewText)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+	err := telegram_connector.SendStaticWebPhoto(chatID, TOP_VIEW_URL, topViewText, keyboardIdentifier)
 	return err
 }
 
@@ -93,7 +94,8 @@ func SendWelcomeMessage(chatID int) {
 	// Send first two messages
 	for i := 0; i < 2; i++ {
 		messageString := messageArray[i]
-		err = telegram_connector.SendMessage(chatID, messageString)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+		err = telegram_connector.SendMessage(chatID, messageString, keyboardIdentifier)
 		if err != nil {
 			zap.S().Error("Error while sending first welcome messages.", err)
 		}
@@ -101,14 +103,16 @@ func SendWelcomeMessage(chatID int) {
 	}
 
 	// Send single photo for illustration
-	err = telegram_connector.SendStaticWebPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+	err = telegram_connector.SendStaticWebPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description, keyboardIdentifier)
 	if err != nil {
 		zap.S().Error("Error while sending first welcome messages.", err)
 	}
 
 	for i := 2; i < 5; i++ {
 		messageString := messageArray[i]
-		err = telegram_connector.SendMessage(chatID, messageString)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+		err = telegram_connector.SendMessage(chatID, messageString, keyboardIdentifier)
 		if err != nil {
 			zap.S().Error("Error while sending second welcome messages.", err)
 		}
@@ -123,7 +127,8 @@ func SendWelcomeMessage(chatID int) {
 	for i := 5; i < 9; i++ {
 		// We consciously skip the last entry which doesn't have an illstration
 		messageString := messageArray[i]
-		err = telegram_connector.SendMessage(chatID, messageString)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+		err = telegram_connector.SendMessage(chatID, messageString, keyboardIdentifier)
 		if err != nil {
 			zap.S().Error("Error while sending final welcome messages.", err)
 		}

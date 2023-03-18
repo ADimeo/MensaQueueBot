@@ -82,7 +82,9 @@ func sendChangelogIfNecessary(chatID int) {
 	changelog, noChangelogWithIDError := db_connectors.GetChangelogByNumber(numberOfLastSentChangelog + 1)
 
 	if noChangelogWithIDError == nil {
-		sendError := telegram_connector.SendMessage(chatID, changelog)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PUSH_MESSAGE, chatID)
+
+		sendError := telegram_connector.SendMessage(chatID, changelog, keyboardIdentifier)
 		if sendError == nil {
 			db_connectors.SaveNewChangelogForUser(chatID, numberOfLastSentChangelog+1)
 		} else {
@@ -95,7 +97,8 @@ func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
 	for _, mensaLocation := range mensaLocationArray {
 		if mensaLocation.PhotoUrl != "" {
-			err := telegram_connector.SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+			err := telegram_connector.SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description, keyboardIdentifier)
 			if err != nil {
 				zap.S().Error("Error while sending help message photographs.", err)
 			}
@@ -161,7 +164,9 @@ func legacyRequestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_
 		{
 			zap.S().Infof("PLATYPUS!")
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
-			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️")
+
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID) // Not technically correct, but eh
+			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️", keyboardIdentifier)
 		}
 	default:
 		{
@@ -170,7 +175,7 @@ func legacyRequestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_
 	}
 }
 
-func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connector.WebookRequestBody) {
+func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connector.WebhookRequestBody) {
 	lengthReportRegex := regexp.MustCompile(REPORT_REGEX)
 	switch {
 	// CASES FROM MAIN KEYBOARD
@@ -195,7 +200,8 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 		{
 			zap.S().Info("Received a 'Report!' request")
 			message := "Great! How is it looking?"
-			telegram_connector.SendMessage(chatID, message)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_REPORT, chatID)
+			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 		}
 		// CASES FROM REPORT KEYBOARD
 	case lengthReportRegex.Match([]byte(sentMessage)):
@@ -209,7 +215,8 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 		{
 			zap.S().Info("Received a 'Can't tell' report")
 			message := "Alrighty"
-			telegram_connector.SendMessage(chatID, message)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.LENGTH_REPORT, chatID)
+			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 			sendChangelogIfNecessary(chatID)
 		}
 		// CASES FROM SETTINGS KEYBOARD
@@ -220,7 +227,8 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 			zap.S().Info("Received a '/settings' request")
 
 			message := "TODO PLACEHOLDER SETTINGS REPORT W. POINTS, SETTINGS OVERVIEW, MENSABOT VERSION, WHETHER AB TESTER"
-			telegram_connector.SendMessage(chatID, message)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
+			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 		}
 	case sentMessage == "General Help":
 		{
@@ -243,13 +251,15 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 			// This is just for info
 			zap.S().Info("Received a 'Account Deletion' request")
 			message := "To delete all data about you from MensaQueueBot type /forgetme in the chat. Be advised that this action is destructive, and nonreversible. If you ever decide to come back you will be an entirely new user."
-			telegram_connector.SendMessage(chatID, message)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 		}
 	case sentMessage == "Back":
 		{
 			zap.S().Info("Received a 'Back' report")
-			message := "Back to my purpose"
-			telegram_connector.SendMessage(chatID, message)
+			message := "Back to my purpose " + string(GetRandomAcceptableEmoji())
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_MAIN, chatID)
+			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 			sendChangelogIfNecessary(chatID)
 		}
 		// OTHER CASES
@@ -272,7 +282,8 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 		{
 			zap.S().Infof("PLATYPUS!")
 			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
-			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️")
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID) // Not technically correct, but eh
+			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️", keyboardIdentifier)
 		}
 	default:
 		{
@@ -297,7 +308,7 @@ func reactToRequest(ginContext *gin.Context) {
 
 	sentMessage := bodyAsStruct.Message.Text
 	chatID := bodyAsStruct.Message.Chat.ID
-	if db_connectors.IsUserABTester(chatID) {
+	if db_connectors.GetIsUserABTester(chatID) {
 		requestSwitch(chatID, sentMessage, bodyAsStruct)
 	} else {
 		legacyRequestSwitch(chatID, sentMessage, bodyAsStruct)
@@ -320,7 +331,7 @@ func initiateLogger() {
 func runEnvironmentTests() {
 	telegram_connector.GetTelegramToken()
 	GetMensaLocationSlice()
-	telegram_connector.GetReplyKeyboard()
+	telegram_connector.LoadAllKeyboardsForTest()
 	utils.GetLocalLocation()
 	db_connectors.GetChangelogByNumber(0)
 }

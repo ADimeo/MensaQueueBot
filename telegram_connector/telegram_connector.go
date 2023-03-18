@@ -34,11 +34,22 @@ type WebhookRequestBody struct {
 	} `json:"message"`
 }
 
-type sendMessageRequestBody struct {
-	ChatID              int                       `json:"chat_id"`
-	Text                string                    `json:"text"`
-	ParseMode           string                    `json:"parse_mode"`
-	ReplyKeyboardMarkup ReplyKeyboardMarkupStruct `json:"reply_markup"`
+// Also see sendMessageRequestDeleteKeyboardRequestBody
+type sendMessageRequestBody struct { // https://core.telegram.org/bots/api#sendmessage
+	ChatID              int                        `json:"chat_id"`
+	Text                string                     `json:"text"`
+	ParseMode           string                     `json:"parse_mode"`
+	ReplyKeyboardMarkup *ReplyKeyboardMarkupStruct `json:"reply_markup,omitempty"`
+}
+
+// Variation of sendMessageRequestBody. ReplyKeyboardMarkup allows multiple different types
+// of values. sendMessageRequestBody is there for setting a keyboard,
+// This is for unsetting it
+type sendMessageRequestDeleteKeyboardRequestBody struct {
+	ChatID              int                        `json:"chat_id"`
+	Text                string                     `json:"text"`
+	ParseMode           string                     `json:"parse_mode"`
+	ReplyKeyboardMarkup *ReplyKeyboardRemoveStruct `json:"reply_markup,omitempty"`
 }
 
 // Used for "typing..." indicators,
@@ -52,6 +63,7 @@ type WebAppInfo struct {
 	URL string `json:"url"`
 }
 
+// https://core.telegram.org/bots/api#keyboardbutton
 type KeyboardButton struct {
 	Text   string      `json:"text"`
 	WebApp *WebAppInfo `json:"web_app,omitempty"`
@@ -61,9 +73,14 @@ type ReplyKeyboardMarkupStruct struct { // https://core.telegram.org/bots/api/#r
 	Keyboard [][]KeyboardButton `json:"keyboard"`
 }
 
+type ReplyKeyboardRemoveStruct struct { // from https://core.telegram.org/bots/api#replykeyboardremove
+	RemoveKeyboard bool `json:"remove_keyboard"`
+}
+
 // Used for images whose ID or URL we have.
 // No specific struct exists for "dynamic"
 // image uploads
+// https://core.telegram.org/bots/api#inputmediaphoto I think
 type sendWebPhotoRequestBody struct {
 	ChatID  int    `json:"chat_id"`
 	Photo   string `json:"photo"`
@@ -96,8 +113,13 @@ func GetTelegramToken() string {
    Sends a POST request to the telegram API that contains the link to a photo. This photo is sent to the identified user. Description is set as the text of the message
    https://core.telegram.org/bots/api#sendphoto
 */
-func SendStaticWebPhoto(chatID int, photoURL string, description string) error {
+func SendStaticWebPhoto(chatID int, photoURL string, description string, keyboardIdentifier KeyboardIdentifier) error {
 	telegramUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto", GetTelegramToken())
+
+	if keyboardIdentifier != NilKeyboard {
+		zap.S().Error("Tried to set a keyboard with SendDynamicPhoto. Is that even possible?")
+		// Initial scan of the documentation says it isn't, but I was really tired, and it's quite hot right now. Definitely recheck if needed.
+	}
 
 	requestBody := &sendWebPhotoRequestBody{
 		ChatID:  chatID,
@@ -150,10 +172,16 @@ to the user with the given chatID. A description/caption can also be added.
 
 Returns telegram assigned identifier and error, if the request should fail
 */
-func SendDynamicPhoto(chatID int, photoFilePath string, description string) (string, error) {
+func SendDynamicPhoto(chatID int, photoFilePath string, description string, keyboardIdentifier KeyboardIdentifier) (string, error) {
 	telegramUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendPhoto", GetTelegramToken())
 
 	requestBody, contentType, err := prepareMultipartForUpload(photoFilePath, chatID, description)
+
+	if keyboardIdentifier != NilKeyboard {
+		zap.S().Error("Tried to set a keyboard with SendDynamicPhoto. Is that even possible?")
+		// Initial scan of the documentation says it isn't, but I was really tired, and it's quite hot right now. Definitely recheck if needed.
+	}
+
 	if err != nil {
 		zap.S().Errorf("Couldn't build request to send detailed /jetze report")
 		return "", err
@@ -187,19 +215,45 @@ func SendDynamicPhoto(chatID int, photoFilePath string, description string) (str
    Sends a POST request to the telegram API that sends the indicated string to the indicated user.
    https://core.telegram.org/bots/api#sendmessage
 */
-func SendMessage(chatID int, message string) error {
+func SendMessage(chatID int, message string, keyboardIdentifier KeyboardIdentifier) error {
 	telegramUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", GetTelegramToken())
-	keyboard := GetReplyKeyboard()
+	var reqBytes []byte
+	var err error
+	if keyboardIdentifier == NilKeyboard {
+		requestBody := &sendMessageRequestBody{
+			ChatID:    chatID,
+			Text:      message,
+			ParseMode: "HTML",
+		}
+		reqBytes, err = json.Marshal(requestBody)
+	} else if keyboardIdentifier == NoKeyboard {
+		noKeyboard := &ReplyKeyboardRemoveStruct{RemoveKeyboard: true}
+		requestBodyWithKeyboardRemoval := &sendMessageRequestDeleteKeyboardRequestBody{
+			ChatID:              chatID,
+			Text:                message,
+			ParseMode:           "HTML",
+			ReplyKeyboardMarkup: noKeyboard,
+		}
+		reqBytes, err = json.Marshal(requestBodyWithKeyboardRemoval)
 
-	requestBody := &sendMessageRequestBody{
-		ChatID:              chatID,
-		Text:                message,
-		ParseMode:           "HTML",
-		ReplyKeyboardMarkup: *keyboard,
+	} else {
+		keyboard, err := GetKeyboardFromIdentifier(keyboardIdentifier)
+		if err != nil {
+			zap.S().Errorw("Error while sending message, can't get keyboard",
+				"keyboardIdentifier", keyboardIdentifier,
+				"error", err)
+		}
+		requestBody := &sendMessageRequestBody{
+			ChatID:              chatID,
+			Text:                message,
+			ParseMode:           "HTML",
+			ReplyKeyboardMarkup: keyboard,
+		}
+		reqBytes, err = json.Marshal(requestBody)
 	}
 
-	reqBytes, err := json.Marshal(requestBody)
 	if err != nil {
+		// err from reqBytes
 		return err
 	}
 

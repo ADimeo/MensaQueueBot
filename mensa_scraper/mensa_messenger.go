@@ -177,7 +177,8 @@ func sendLatestMenuToUsers(idsOfInterestedUsers []int) error {
 	formattedMessage := buildMessageFrom(latestOffersInDB)
 
 	for _, userID := range idsOfInterestedUsers {
-		telegram_connector.SendMessage(userID, formattedMessage)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PUSH_MESSAGE, userID)
+		telegram_connector.SendMessage(userID, formattedMessage, keyboardIdentifier)
 	}
 	return nil
 }
