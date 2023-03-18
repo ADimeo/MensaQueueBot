@@ -138,7 +138,7 @@ func GetUsersWithInitialMessageInTimeframe(nowInUTC time.Time, lowerBoundCESTMin
 }
 
 func UpdateUserPreferences(userID int, wantsMensaMessages bool, startTimeInCESTMinutes int, endTimeInCESTMinutes int, weekdayBitmap int) error {
-	queryString := "INSERT INTO mensaPreferences(reporterID, wantsMensaMessages, startTimeInCESTinutes, endTimeInCESTMinutes, weekdayBitmap) VALUES (?,?,?,?,?) ON CONFLICT (reporterID) DO UPDATE SET wantsMensaMessages=?, startTimeInCESTMinutes=?, endTimeInCESTMinutes=?,weekdayBitmap=?;"
+	queryString := "INSERT INTO mensaPreferences(reporterID, wantsMensaMessages, startTimeInCESTMinutes, endTimeInCESTMinutes, weekdayBitmap) VALUES (?,?,?,?,?) ON CONFLICT (reporterID) DO UPDATE SET wantsMensaMessages=?, startTimeInCESTMinutes=?, endTimeInCESTMinutes=?,weekdayBitmap=?;"
 	db := GetDBHandle()
 	DBMutex.Lock()
 

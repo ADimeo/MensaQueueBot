@@ -37,10 +37,10 @@ const (
 	NoKeyboard       KeyboardIdentifier = 4
 )
 
-const LEGACY_KEYBOARD_FILEPATH = "./keyboard.json"
-const REPORT_KEYBOARD_FILEPATH = "./keyboards/00_report_keyboard.json"
-const MAIN_KEYBOARD_FILEPATH = "./keyboards/01_main_keyboard.json"
-const SETTINGS_KEYBOARD_FILEPATH = "./keyboards/02_settings_keyboard.json"
+const LEGACY_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/keyboard.json"
+const REPORT_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/00_report_keyboard.json"
+const MAIN_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/01_main_keyboard.json"
+const SETTINGS_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/02_settings_keyboard.json"
 
 /*
 Takes enum values, as defined in keyboard_decider.go
