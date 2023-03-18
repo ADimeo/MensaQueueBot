@@ -7,7 +7,6 @@ package db_connectors
 import (
 	"database/sql"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"strconv"
@@ -25,8 +24,8 @@ const CHANGELOG_FILE_LOCATION = "./changelog.psv"
 var changelogs []changelog
 
 /* Assumes one changelog per line, with "version" always increasing one-by-one*/
-func GetChangelogByNumber(changelogNumber int) (string, error) {
-	zap.S().Info("Getting the changelog by number")
+func GetCurrentChangelog() (changelog, error) {
+	zap.S().Debug("Getting latest changelog...")
 
 	if len(changelogs) == 0 {
 		// load changelogs into memory if they aren't loaded yet
@@ -57,12 +56,7 @@ func GetChangelogByNumber(changelogNumber int) (string, error) {
 			changelogs = append(changelogs, readChangelog)
 		}
 	}
-
-	if len(changelogs) > changelogNumber {
-		return changelogs[changelogNumber].Text, nil
-	}
-	return "", errors.New("Requested changelog is out of bounds")
-
+	return changelogs[len(changelogs)], nil
 }
 
 /*

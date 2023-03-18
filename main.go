@@ -77,19 +77,27 @@ func parseRequest(c *gin.Context) (*telegram_connector.WebhookRequestBody, error
 	return body, err
 }
 
+// Gets the newest changelog from the changelog file and sends it to the
+// user if they haven't received it yet
 func sendChangelogIfNecessary(chatID int) {
+
 	numberOfLastSentChangelog := db_connectors.GetLatestChangelogSentToUser(chatID)
-	changelog, noChangelogWithIDError := db_connectors.GetChangelogByNumber(numberOfLastSentChangelog + 1)
+	changelog, noChangelogWithIDError := db_connectors.GetCurrentChangelog()
 
-	if noChangelogWithIDError == nil {
-		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PUSH_MESSAGE, chatID)
+	if noChangelogWithIDError != nil {
+		zap.S().Error("Can't get latest changelog: ", noChangelogWithIDError)
+		return
+	}
 
-		sendError := telegram_connector.SendMessage(chatID, changelog, keyboardIdentifier)
-		if sendError == nil {
-			db_connectors.SaveNewChangelogForUser(chatID, numberOfLastSentChangelog+1)
-		} else {
-			zap.S().Error("Got an error while sending changelog to user.", sendError)
-		}
+	if numberOfLastSentChangelog >= changelog.Id {
+		return
+	}
+
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PUSH_MESSAGE, chatID)
+	if err := telegram_connector.SendMessage(chatID, changelog.Text, keyboardIdentifier); err != nil {
+		zap.S().Error("Got an error while sending changelog to user.", err)
+	} else {
+		db_connectors.SaveNewChangelogForUser(chatID, changelog.Id)
 	}
 }
 
@@ -116,6 +124,7 @@ func legacyRequestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_
 		{
 			zap.S().Info("Sending onboarding (/start) messages")
 			SendWelcomeMessage(chatID)
+			sendChangelogIfNecessary(chatID)
 		}
 	case sentMessage == "/help":
 		{
@@ -333,7 +342,7 @@ func runEnvironmentTests() {
 	GetMensaLocationSlice()
 	telegram_connector.LoadAllKeyboardsForTest()
 	utils.GetLocalLocation()
-	db_connectors.GetChangelogByNumber(0)
+	db_connectors.GetCurrentChangelog()
 }
 
 func initDatabases() {
