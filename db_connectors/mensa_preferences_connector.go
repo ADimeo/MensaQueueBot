@@ -83,9 +83,8 @@ func GetFirstCESTMinuteForIntroMessage() (int, error) {
 	// But, well, it's invisible to users,
 	// And getting this behaviour cleanly (so wrapping arround the weekday bitmap,
 	// etc.) just doesn't feel worth it at all.
-	queryString := `SELECT MIN(startTimeInCESTMinutes) FROM mensaPreferences
-	WHERE wantsMensaMessage = 1
-	FROM mensaPreferences;`
+	queryString := `SELECT IFNULL(MIN(startTimeInCESTMinutes), 0) FROM mensaPreferences
+	WHERE wantsMensaMessages = 1;`
 	db := GetDBHandle()
 
 	var firstTime int
