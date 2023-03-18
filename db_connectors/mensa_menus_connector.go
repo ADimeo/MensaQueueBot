@@ -16,14 +16,17 @@ type DBOfferInformation struct {
 
 // time, title, decsription, counter
 
-func GetLatestMensaOffers() ([]DBOfferInformation, error) {
-	queryString := `SELECT time, title, description, counter FROM mensaMenus WHERE 
-	counter == (SELECT MAX(counter) FROM mensaMenus);`
+// Returns latest mensa offers, but for today
+func GetLatestMensaOffersFromToday() ([]DBOfferInformation, error) {
+	queryString := `SELECT time, title, description, counter FROM mensaMenus 
+	WHERE date(time) == ? 
+	AND counter == (SELECT MAX(counter) FROM mensaMenus);`
 	db := GetDBHandle()
 
 	var latestOffers []DBOfferInformation
 
-	rows, err := db.Query(queryString)
+	currentDate := time.Now().Format("2006-01-02")
+	rows, err := db.Query(queryString, currentDate)
 	if err != nil {
 		zap.S().Errorf("Error while querying for latest mensa offers", err)
 		return latestOffers, err

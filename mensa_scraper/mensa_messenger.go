@@ -1,6 +1,7 @@
 package mensa_scraper
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -145,10 +146,7 @@ func sendInitialMessagesThatShouldBeSentAt(nowInUTC time.Time, nowCESTMinute int
 	}
 
 	err = sendLatestMenuToUsers(users)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func SendLatestMenuToUsersCurrentlyListening() error {
@@ -163,13 +161,18 @@ func SendLatestMenuToUsersCurrentlyListening() error {
 
 func SendLatestMenuToSingleUser(userID int) error {
 	sliceOfUserID := []int{userID}
-	return sendLatetMenuToUsers(sliceOfUserID)
+
+	return sendLatestMenuToUsers(sliceOfUserID)
 }
 
 func sendLatestMenuToUsers(idsOfInterestedUsers []int) error {
-	latestOffersInDB, err := db_connectors.GetLatestMensaOffers()
+	latestOffersInDB, err := db_connectors.GetLatestMensaOffersFromToday()
 	if err != nil {
 		return err
+	}
+	if len(latestOffersInDB) == 0 {
+		return errors.New("No menu from today available")
+
 	}
 	formattedMessage := buildMessageFrom(latestOffersInDB)
 

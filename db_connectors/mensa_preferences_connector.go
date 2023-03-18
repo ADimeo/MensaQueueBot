@@ -50,7 +50,7 @@ func GetUsersToSendMenuToByTimestamp(nowInUTC time.Time) ([]int, error) {
 func GetCESTMinuteForNextIntroMessage(nowInUTC time.Time, cestMinuteOfLastRun int) (int, error) {
 	queryString := `SELECT startTimeInCESTMinutes FROM mensaPreferences 
 	WHERE startTimeInCESTMinutes > ? 
-	AND wantsMensaMessage = 1
+	AND wantsMensaMessages = 1
 	AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
 	AND ? & weekdayBitmap >= 0
 	ORDER BY startTimeInCESTMinutes ASC 
@@ -83,7 +83,7 @@ func GetFirstCESTMinuteForIntroMessage() (int, error) {
 	// But, well, it's invisible to users,
 	// And getting this behaviour cleanly (so wrapping arround the weekday bitmap,
 	// etc.) just doesn't feel worth it at all.
-	queryString := `SELECT MIN(startTimeInCESTMinutes) 
+	queryString := `SELECT MIN(startTimeInCESTMinutes) FROM mensaPreferences
 	WHERE wantsMensaMessage = 1
 	FROM mensaPreferences;`
 	db := GetDBHandle()

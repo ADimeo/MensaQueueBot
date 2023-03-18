@@ -183,7 +183,12 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 	case sentMessage == "Menu?":
 		{
 			zap.S().Info("Received a 'Menu?' request")
-			mensa_scraper.SendLatestMenuToSingleUser(chatID)
+			if err := mensa_scraper.SendLatestMenuToSingleUser(chatID); err != nil {
+				message := "I'm so sorry, I can't find the current menu for today 🤕"
+				keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.INFO_REQUEST, chatID)
+				telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+
+			}
 			sendChangelogIfNecessary(chatID)
 		}
 	case sentMessage == "Report!":

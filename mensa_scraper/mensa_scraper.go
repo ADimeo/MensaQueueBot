@@ -114,7 +114,7 @@ func insertDateOffersIntoDBWithFreshCounter(scrapeTimestamp time.Time, dateInfor
 // ones we last stored in the DB
 func isDateInformationFresh(dateInformation DateInformation) bool {
 	// QUery DB for latest menus
-	dbOffers, err := db_connectors.GetLatestMensaOffers()
+	dbOffers, err := db_connectors.GetLatestMensaOffersFromToday()
 	if err != nil {
 		zap.S().Errorf("Can not determine freshness of queried menu, defaulting to don't insert", err)
 		return true
