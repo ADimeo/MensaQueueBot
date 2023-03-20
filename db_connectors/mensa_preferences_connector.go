@@ -2,6 +2,8 @@ package db_connectors
 
 import (
 	"database/sql"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/utils"
@@ -10,6 +12,72 @@ import (
 
 // Customise:
 // User has userID, times(start) (minutes), time(end) (minutes), Weekdays (binary and), wants_mensa_messages, temp_reported_today (date?)
+
+type MensaPreferenceSettings struct {
+	ReportAtAll   bool   `json:"reportAtall"`
+	FromTime      string `json:"fromTime"`
+	WeekdayBitmap int    `json:"weekdayBitmap"`
+	ToTime        string `json:"toTime"`
+}
+
+func (settingsStruct MensaPreferenceSettings) SetFromTimeFromCESTMinutes(cestMinutes int) {
+	baseString := "%02d:%02d"
+	hours := cestMinutes % 60
+	minutes := cestMinutes % 60
+	timeString := fmt.Sprint(baseString, hours, minutes)
+	settingsStruct.FromTime = timeString
+}
+
+func (settingsStruct MensaPreferenceSettings) SetToTimeFromCESTMinutes(cestMinutes int) {
+	baseString := "%02d:%02d"
+	hours := cestMinutes % 60
+	minutes := cestMinutes % 60
+	timeString := fmt.Sprint(baseString, hours, minutes)
+	settingsStruct.ToTime = timeString
+}
+
+func (settingsStruct *MensaPreferenceSettings) GetToTimeAsCESTMinute() (int, error) {
+	// We expect a format like 12:00
+	hour, err := strconv.Atoi(settingsStruct.ToTime[0:2])
+	if err != nil {
+		zap.S().Errorw("Can't convert ToTime string to actual int", "FromTime value", settingsStruct.ToTime, "error", err)
+		return 840, err
+	}
+
+	minute, err := strconv.Atoi(settingsStruct.ToTime[3:5])
+	if err != nil {
+		zap.S().Errorw("Can't convert ToTime string to actual int", "FromTime value", settingsStruct.ToTime, "error", err)
+		return 840, err
+	}
+
+	cestMinute := hour*60 + minute
+	if err != nil {
+		zap.S().Errorw("Can't convert ToTime string to actual int", "FromTime value", settingsStruct.ToTime, "error", err)
+		return 840, err
+	}
+	return cestMinute, nil
+}
+
+func (settingsStruct MensaPreferenceSettings) GetFromTimeAsCESTMinute() (int, error) {
+	// We expect a format like 12:00
+	hour, err := strconv.Atoi(settingsStruct.FromTime[0:2])
+	if err != nil {
+		zap.S().Errorw("Can't convert FromTime string to actual int", "FromTime value", settingsStruct.FromTime, "error", err)
+		return 600, err
+	}
+	minute, err := strconv.Atoi(settingsStruct.FromTime[3:5])
+	if err != nil {
+		zap.S().Errorw("Can't convert FromTime string to actual int", "FromTime value", settingsStruct.FromTime, "error", err)
+		return 600, err
+	}
+
+	cestMinute := hour*60 + minute
+	if err != nil {
+		zap.S().Errorw("Can't convert FromTime string to actual int", "FromTime value", settingsStruct.FromTime, "error", err)
+		return 600, err
+	}
+	return cestMinute, nil
+}
 
 func GetUsersToSendMenuToByTimestamp(nowInUTC time.Time) ([]int, error) {
 	queryString := `SELECT reporterID FROM mensaPreferences
@@ -146,6 +214,33 @@ func UpdateUserPreferences(userID int, wantsMensaMessages bool, startTimeInCESTM
 		wantsMensaMessages, startTimeInCESTMinutes, endTimeInCESTMinutes, weekdayBitmap)
 	DBMutex.Unlock()
 	return err
+}
+
+func GetUserPreferences(userID int) (MensaPreferenceSettings, error) {
+	queryString := `SELECT wantsMensaMessages, weekdayBitmap, startTimeInCESTMinutes, endTimeInCESTMinutes 
+	FROM mensaPreferences
+	WHERE reporterID == ?;`
+
+	db := GetDBHandle()
+	var usersPreferences MensaPreferenceSettings
+	var weekdayBitmap int
+	var startCESTMinutes int
+	var endCESTMinutes int
+
+	if err := db.QueryRow(queryString, userID).Scan(&usersPreferences.ReportAtAll, &weekdayBitmap, &startCESTMinutes, &endCESTMinutes); err != nil {
+		if err == sql.ErrNoRows {
+			zap.S().Info("User doesn't have associated mensa settings yet")
+			return usersPreferences, err
+		} else {
+			zap.S().Error("Error while querying for latest report", err)
+		}
+	}
+
+	usersPreferences.WeekdayBitmap = weekdayBitmap
+	usersPreferences.SetFromTimeFromCESTMinutes(startCESTMinutes)
+	usersPreferences.SetToTimeFromCESTMinutes(endCESTMinutes)
+
+	return usersPreferences, nil
 }
 
 func SetUserToReportedOnDate(userID int, nowInUTC time.Time) {

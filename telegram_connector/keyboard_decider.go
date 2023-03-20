@@ -3,6 +3,7 @@ package telegram_connector
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -42,6 +43,18 @@ const REPORT_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/00_report_keybo
 const MAIN_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/01_main_keyboard.json"
 const SETTINGS_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/02_settings_keyboard.json"
 
+// Needs to be consistent with javascript logic in settings.html
+const KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING = "?reportAtAll=%t&reportingDays=%d&fromTime=%d&toTime=%d"
+
+func GetCustomizedKeyboardFromIdentifier(chatID int, identifier KeyboardIdentifier) (*ReplyKeyboardMarkupStruct, error) {
+	baseKeyboard, err := getBaseKeyboardFromIdentifier(identifier)
+	if err != nil {
+		return baseKeyboard, err
+	}
+	return customizeKeyboardForUser(chatID, identifier, baseKeyboard)
+
+}
+
 /*
 Takes enum values, as defined in keyboard_decider.go
 Reads a JSON file and returns a keyboard struct, depending on the requested identifier.
@@ -50,9 +63,9 @@ the caller needs to have special logic.
 
 This function mostly exists to provide some stability for the NilKeyboard case.
 Not having this function would lead to some weird things being encoded in
-the compined GetIdentifierViaRequestType and GetKeyboardFromIdentifier function
+the compined GetIdentifierViaRequestType and getBaseKeyboardFromIdentifier function
 */
-func GetKeyboardFromIdentifier(identifier KeyboardIdentifier) (*ReplyKeyboardMarkupStruct, error) {
+func getBaseKeyboardFromIdentifier(identifier KeyboardIdentifier) (*ReplyKeyboardMarkupStruct, error) {
 	switch identifier {
 	case LegacyKeyboard:
 		{
@@ -85,6 +98,38 @@ func GetKeyboardFromIdentifier(identifier KeyboardIdentifier) (*ReplyKeyboardMar
 	return &nilKeyboard, errors.New("Caller requested unknown keyboard type")
 }
 
+/*
+"Customizes" the base keyboard for a single user. Right now this means exactly one thing:
+The settings keyboard is enriched with the current user settings, so that they can be
+displayed without serving an additional request.
+*/
+func customizeKeyboardForUser(userID int, identifier KeyboardIdentifier, baseKeyboard *ReplyKeyboardMarkupStruct) (*ReplyKeyboardMarkupStruct, error) {
+	if identifier == SettingsKeyboard {
+		// This is the only one that needs customization right now
+		// We need to add the users current settings to the web_app url
+		// which opens the webview with the settings
+		settingsQueryString, err := getSettingsQueryStringForUser(userID)
+		if err != nil {
+			// TODO
+
+		}
+		customizedURL := baseKeyboard.Keyboard[1][1].WebApp.URL + settingsQueryString
+
+		baseKeyboard.Keyboard[1][1].WebApp.URL = customizedURL
+	}
+	return baseKeyboard, nil
+}
+
+func getSettingsQueryStringForUser(userID int) (string, error) {
+	preferencesStruct, err := db_connectors.GetUserPreferences(userID)
+	if err != nil {
+		// TODO
+	}
+	queryString := fmt.Sprintf(KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING, preferencesStruct.ReportAtAll, preferencesStruct.WeekdayBitmap, preferencesStruct.FromTime, preferencesStruct.ToTime)
+	return queryString, nil
+
+}
+
 /* Function that takes a requestType enum and returns a keyboard enum, that is then looked up
 when a keyboard should be used.
 In theory each messageHandler already has the knowledge to call SendMessage by themselves,
@@ -92,7 +137,6 @@ a single response handler will very seldomly (never?) send more than one keyboar
 user. However, I hope that this centralised switch statement will simplify maintenance, since
 there's now a single point where this new functionality can be added, and no one will have
 to look up "uuuhhh, which message sent that type again?"
-
 */
 func GetIdentifierViaRequestType(requestType UserRequestType, userID int) KeyboardIdentifier {
 	userIsABTester := db_connectors.GetIsUserABTester(userID)
@@ -214,8 +258,8 @@ func getReplyKeyboard(jsonPath string) *ReplyKeyboardMarkupStruct {
 }
 
 func LoadAllKeyboardsForTest() {
-	GetKeyboardFromIdentifier(LegacyKeyboard)
-	GetKeyboardFromIdentifier(ReportKeyboard)
-	GetKeyboardFromIdentifier(MainKeyboard)
-	GetKeyboardFromIdentifier(SettingsKeyboard)
+	getBaseKeyboardFromIdentifier(LegacyKeyboard)
+	getBaseKeyboardFromIdentifier(ReportKeyboard)
+	getBaseKeyboardFromIdentifier(MainKeyboard)
+	getBaseKeyboardFromIdentifier(SettingsKeyboard)
 }

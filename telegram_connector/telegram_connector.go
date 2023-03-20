@@ -237,7 +237,7 @@ func SendMessage(chatID int, message string, keyboardIdentifier KeyboardIdentifi
 		reqBytes, err = json.Marshal(requestBodyWithKeyboardRemoval)
 
 	} else {
-		keyboard, err := GetKeyboardFromIdentifier(keyboardIdentifier)
+		keyboard, err := GetCustomizedKeyboardFromIdentifier(chatID, keyboardIdentifier)
 		if err != nil {
 			zap.S().Errorw("Error while sending message, can't get keyboard",
 				"keyboardIdentifier", keyboardIdentifier,

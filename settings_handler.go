@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
-	"github.com/ADimeo/MensaQueueBot/mensa_scraper"
 	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"go.uber.org/zap"
 )
@@ -37,19 +36,18 @@ func HandleABTestJoining(chatID int) {
 
 func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookRequestBodyWebAppData) {
 	typeOfKeyboard := webAppData.ButtonText
-	if typeOfKeyboard == "TEST" {
+	if typeOfKeyboard == "Change Settings" {
 		jsonString := webAppData.Data
-		var mensaSettings mensa_scraper.MensaPreferenceSettings
+		var mensaSettings db_connectors.MensaPreferenceSettings
 		err := json.Unmarshal([]byte(jsonString), &mensaSettings)
 		if err != nil {
 			zap.S().Errorw("Can't unmarshal the settings json we got as WebAppData", "json", jsonString, "error", err)
 		}
 
-		weekdayBitmap := mensaSettings.GetWeekdayBitmap()
 		startCESTMinutes, _ := mensaSettings.GetFromTimeAsCESTMinute() // These functions default to acceptable values, even on errors
 		endCESTMinutes, _ := mensaSettings.GetToTimeAsCESTMinute()
 
-		if err := db_connectors.UpdateUserPreferences(chatID, mensaSettings.ReportAtAll, startCESTMinutes, endCESTMinutes, weekdayBitmap); err != nil {
+		if err := db_connectors.UpdateUserPreferences(chatID, mensaSettings.ReportAtAll, startCESTMinutes, endCESTMinutes, mensaSettings.WeekdayBitmap); err != nil {
 			zap.S().Warnw("Can't update user preferences", "chatID", chatID, err)
 			message := "Error saving settings, please try again later"
 			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)

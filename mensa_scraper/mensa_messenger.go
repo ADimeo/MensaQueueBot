@@ -3,7 +3,6 @@ package mensa_scraper
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
@@ -12,83 +11,6 @@ import (
 	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"
 )
-
-type MensaPreferenceSettings struct {
-	ReportAtAll bool   `json:"reportAtall"`
-	ReportMon   bool   `json:"reportMon"`
-	ReportTue   bool   `json:"reportTue"`
-	ReportWed   bool   `json:"reportWed"`
-	ReportThu   bool   `json:"reportThu"`
-	ReportFri   bool   `json:"reportFri"`
-	FromTime    string `json:"fromTime"`
-	ToTime      string `json:"toTime"`
-}
-
-func (settingsStruct MensaPreferenceSettings) GetWeekdayBitmap() int {
-	bitmap := 0
-	// rightmost bit (position 0) is saturday, is 0
-	// leftmost bit (position 6) is sunday, is 0
-	if settingsStruct.ReportFri {
-		// Is there really no prettier way to do this?
-		bitmap += 1 << 1
-	}
-	if settingsStruct.ReportThu {
-		bitmap += 1 << 2
-	}
-	if settingsStruct.ReportWed {
-		bitmap += 1 << 3
-	}
-	if settingsStruct.ReportTue {
-		bitmap += 1 << 4
-	}
-	if settingsStruct.ReportMon {
-		bitmap += 1 << 5
-	}
-	return bitmap
-}
-
-func (settingsStruct MensaPreferenceSettings) GetFromTimeAsCESTMinute() (int, error) {
-	// We expect a format like 12:00
-	hour, err := strconv.Atoi(settingsStruct.FromTime[0:2])
-	if err != nil {
-		zap.S().Errorw("Can't convert FromTime string to actual int", "FromTime value", settingsStruct.FromTime, "error", err)
-		return 600, err
-	}
-	minute, err := strconv.Atoi(settingsStruct.FromTime[3:5])
-	if err != nil {
-		zap.S().Errorw("Can't convert FromTime string to actual int", "FromTime value", settingsStruct.FromTime, "error", err)
-		return 600, err
-	}
-
-	cestMinute := hour*60 + minute
-	if err != nil {
-		zap.S().Errorw("Can't convert FromTime string to actual int", "FromTime value", settingsStruct.FromTime, "error", err)
-		return 600, err
-	}
-	return cestMinute, nil
-}
-
-func (settingsStruct *MensaPreferenceSettings) GetToTimeAsCESTMinute() (int, error) {
-	// We expect a format like 12:00
-	hour, err := strconv.Atoi(settingsStruct.ToTime[0:2])
-	if err != nil {
-		zap.S().Errorw("Can't convert ToTime string to actual int", "FromTime value", settingsStruct.ToTime, "error", err)
-		return 840, err
-	}
-
-	minute, err := strconv.Atoi(settingsStruct.ToTime[3:5])
-	if err != nil {
-		zap.S().Errorw("Can't convert ToTime string to actual int", "FromTime value", settingsStruct.ToTime, "error", err)
-		return 840, err
-	}
-
-	cestMinute := hour*60 + minute
-	if err != nil {
-		zap.S().Errorw("Can't convert ToTime string to actual int", "FromTime value", settingsStruct.ToTime, "error", err)
-		return 840, err
-	}
-	return cestMinute, nil
-}
 
 var globalLastInitialMessageCESTMinute int
 
