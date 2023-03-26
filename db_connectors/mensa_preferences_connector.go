@@ -20,19 +20,19 @@ type MensaPreferenceSettings struct {
 	ToTime        string `json:"toTime"`
 }
 
-func (settingsStruct MensaPreferenceSettings) SetFromTimeFromCESTMinutes(cestMinutes int) {
+func (settingsStruct *MensaPreferenceSettings) SetFromTimeFromCESTMinutes(cestMinutes int) {
 	baseString := "%02d:%02d"
-	hours := cestMinutes % 60
+	hours := cestMinutes / 60
 	minutes := cestMinutes % 60
-	timeString := fmt.Sprint(baseString, hours, minutes)
+	timeString := fmt.Sprintf(baseString, hours, minutes)
 	settingsStruct.FromTime = timeString
 }
 
-func (settingsStruct MensaPreferenceSettings) SetToTimeFromCESTMinutes(cestMinutes int) {
+func (settingsStruct *MensaPreferenceSettings) SetToTimeFromCESTMinutes(cestMinutes int) {
 	baseString := "%02d:%02d"
-	hours := cestMinutes % 60
+	hours := cestMinutes / 60
 	minutes := cestMinutes % 60
-	timeString := fmt.Sprint(baseString, hours, minutes)
+	timeString := fmt.Sprintf(baseString, hours, minutes)
 	settingsStruct.ToTime = timeString
 }
 

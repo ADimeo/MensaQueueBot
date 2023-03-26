@@ -61,7 +61,7 @@ func sendPointsOptOutResponse(chatID int, currentlyOptedIn bool) {
 	}
 }
 
-func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) error {
+func GetPointsRequestResponseText(chatID int) string {
 	emojiRune := GetRandomAcceptableEmoji()
 	baseMessage := "You have collected %d points%s" + string(emojiRune)
 	var encouragements = [...]string{
@@ -75,30 +75,31 @@ func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) 
 		", and I'll be honest, I don't know what to say 🪕",
 	}
 
-	explanationMessage := `You're currently not collecting points, but please know that we greatly appreciate all reports. For information about points send /points_help`
+	explanationMessage := `You're currently not collecting points. For information about points send /points_help`
 
-	var err error
+	currentlyOptedIn := db_connectors.UserIsCollectingPoints(chatID)
+	if !currentlyOptedIn {
+		return explanationMessage
+	}
+	pointsCollected := db_connectors.GetNumberOfPointsByUser(chatID)
+	encouragementSelector := pointsCollected / 9 // New encouragement message every 9 points
+	if encouragementSelector >= len(encouragements) {
+		encouragementSelector = len(encouragements) - 1
+	}
+
+	encouragementMessage := encouragements[encouragementSelector]
+	messageToSend := fmt.Sprintf(baseMessage, pointsCollected, encouragementMessage)
+	return messageToSend
+}
+
+func sendPointsRequestedResponse(chatID int, currentlyOptedIn bool, points int) error {
 	zap.S().Info("Sending pointsrequest message.")
-	if currentlyOptedIn {
-		pointsCollected := db_connectors.GetNumberOfPointsByUser(chatID)
-		encouragementSelector := pointsCollected / 9 // New encouragement message every 9 points
-		if encouragementSelector >= len(encouragements) {
-			encouragementSelector = len(encouragements) - 1
-		}
 
-		encouragementMessage := encouragements[encouragementSelector]
-		messageToSend := fmt.Sprintf(baseMessage, pointsCollected, encouragementMessage)
-		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
-		err := telegram_connector.SendMessage(chatID, messageToSend, keyboardIdentifier)
-		if err != nil {
-			zap.S().Errorf("Error while sending pointsrequest message for %s points", points, err)
-		}
-	} else {
-		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
-		err = telegram_connector.SendMessage(chatID, explanationMessage, keyboardIdentifier)
-		if err != nil {
-			zap.S().Error("Error while sending pointsrequest message.", err)
-		}
+	messageToSend := GetPointsRequestResponseText(chatID)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+	err := telegram_connector.SendMessage(chatID, messageToSend, keyboardIdentifier)
+	if err != nil {
+		zap.S().Error("Error while sending pointsrequest message.", err)
 	}
 	return err
 }

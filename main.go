@@ -234,10 +234,7 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 			// Let's not forget how to get to the settings screen...
 			// TODO
 			zap.S().Info("Received a '/settings' request")
-
-			message := "TODO PLACEHOLDER SETTINGS REPORT W. POINTS, SETTINGS OVERVIEW, MENSABOT VERSION, WHETHER AB TESTER"
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
-			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+			SendSettingsOverviewMessage(chatID)
 		}
 	case sentMessage == "General Help":
 		{

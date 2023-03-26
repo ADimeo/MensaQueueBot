@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
 	"github.com/ADimeo/MensaQueueBot/telegram_connector"
@@ -18,7 +20,7 @@ func HandleAccountDeletion(chatID int) {
 		zap.S().Warn("Error in forgetme: ", err1, err2)
 	} else {
 		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.ACCOUNT_DELETION, chatID)
-		telegram_connector.SendMessage(chatID, "Who are you again? I have completely forgotten you exist.", keyboardIdentifier)
+		telegram_connector.SendMessage(chatID, "Who are you again? I have completely forgotten you exist. Remind me with /start, please?", keyboardIdentifier)
 	}
 }
 
@@ -62,4 +64,71 @@ func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookReque
 
 	}
 
+}
+
+func SendSettingsOverviewMessage(chatID int) error {
+	baseMessage := `<b>Settings</b>`
+	var lengthReportMessage string
+	var pointsReportMessage string
+	var abTesterMessage string
+
+	userPreferences, err := db_connectors.GetUserPreferences(chatID)
+	if err != nil {
+		// TODO
+	}
+	lengthReportMessage = buildLengthReportMessage(userPreferences)
+	pointsReportMessage = buildPointsReportMessage(chatID)
+
+	message := baseMessage + "\n\n" + lengthReportMessage + "\n" + pointsReportMessage
+
+	if db_connectors.GetIsUserABTester(chatID) {
+		abTesterMessage = buildABTesterMessage(chatID)
+		message = message + "\n" + abTesterMessage
+	}
+
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
+	return telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+}
+
+func buildLengthReportMessage(userPreferences db_connectors.MensaPreferenceSettings) string {
+	noMessage := "You are not receiving any mensa menus."
+	yesMessage := "You are receiving menus on %s, from %s to %s"
+
+	if !userPreferences.ReportAtAll || userPreferences.WeekdayBitmap == 0 {
+		return noMessage
+	} else {
+		weekdaysString := ""
+		if userPreferences.WeekdayBitmap&0b0100000 != 0 {
+			weekdaysString += ", Mondays"
+		}
+		if userPreferences.WeekdayBitmap&0b0010000 != 0 {
+			weekdaysString += ", Tuesdays"
+		}
+		if userPreferences.WeekdayBitmap&0b0001000 != 0 {
+			weekdaysString += ", Wednesdays"
+		}
+		if userPreferences.WeekdayBitmap&0b0000100 != 0 {
+			weekdaysString += ", Thursdays"
+		}
+		if userPreferences.WeekdayBitmap&0b0000010 != 0 {
+			weekdaysString += ", Fridays"
+		}
+		weekdaysString = weekdaysString[2:]
+		lastCommaPosition := strings.LastIndex(weekdaysString, ",") + 1
+		weekdaysString = weekdaysString[:lastCommaPosition] + " and" + weekdaysString[lastCommaPosition:]
+		return fmt.Sprintf(yesMessage, weekdaysString, userPreferences.FromTime, userPreferences.ToTime)
+	}
+}
+
+func buildPointsReportMessage(chatID int) string {
+	pointsMessage := GetPointsRequestResponseText(chatID)
+	return pointsMessage
+}
+
+func buildABTesterMessage(chatID int) string {
+	if db_connectors.GetIsUserABTester(chatID) {
+		return "You are currently opted in to test new features"
+	} else {
+		return "You are currently not a beta tester"
+	}
 }
