@@ -340,6 +340,13 @@ func runEnvironmentTests() {
 	telegram_connector.LoadAllKeyboardsForTest()
 	utils.GetLocalLocation()
 	db_connectors.GetCurrentChangelog()
+
+	// We also init rod, which makes sure that the
+	// browser interaction works
+	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()
+	browser := rod.New().ControlURL(u).MustConnect()
+	browser.MustPage("https://google.com").MustWaitLoad()
+	browser.MustClose()
 }
 
 func initDatabases() {
@@ -364,12 +371,6 @@ func initDatabases() {
 		}
 	}
 
-	// We also init rod, which makes sure that the
-	// browser interaction works
-	u := launcher.New().Bin("/usr/bin/google-chrome").MustLaunch()
-	browser := rod.New().ControlURL(u).MustConnect()
-	browser.MustPage("https://google.com").MustWaitLoad()
-	browser.MustClose()
 }
 
 func main() {

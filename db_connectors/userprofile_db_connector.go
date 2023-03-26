@@ -56,7 +56,7 @@ func GetCurrentChangelog() (changelog, error) {
 			changelogs = append(changelogs, readChangelog)
 		}
 	}
-	return changelogs[len(changelogs)], nil
+	return changelogs[len(changelogs)-1], nil
 }
 
 /*

@@ -44,7 +44,7 @@ const MAIN_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/01_main_keyboard.
 const SETTINGS_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/02_settings_keyboard.json"
 
 // Needs to be consistent with javascript logic in settings.html
-const KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING = "?reportAtAll=%t&reportingDays=%d&fromTime=%d&toTime=%d"
+const KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING = "?reportAtAll=%t&reportingDays=%d&fromTime=%s&toTime=%s"
 
 func GetCustomizedKeyboardFromIdentifier(chatID int, identifier KeyboardIdentifier) (*ReplyKeyboardMarkupStruct, error) {
 	baseKeyboard, err := getBaseKeyboardFromIdentifier(identifier)
@@ -113,9 +113,9 @@ func customizeKeyboardForUser(userID int, identifier KeyboardIdentifier, baseKey
 			// TODO
 
 		}
-		customizedURL := baseKeyboard.Keyboard[1][1].WebApp.URL + settingsQueryString
+		customizedURL := baseKeyboard.Keyboard[1][0].WebApp.URL + settingsQueryString
 
-		baseKeyboard.Keyboard[1][1].WebApp.URL = customizedURL
+		baseKeyboard.Keyboard[1][0].WebApp.URL = customizedURL
 	}
 	return baseKeyboard, nil
 }
@@ -142,9 +142,31 @@ func GetIdentifierViaRequestType(requestType UserRequestType, userID int) Keyboa
 	userIsABTester := db_connectors.GetIsUserABTester(userID)
 	zap.S().Debugf("User is sending us a %s request, returning corresponding keyboard identifier", requestType)
 	if !userIsABTester {
-		zap.S().Debug("Returning legacy keyboard, no AB Tester")
-		return LegacyKeyboard
+		zap.S().Debug("Returning legacy keyboard or no keyboard, no AB Tester")
+		switch requestType {
+		case INFO_REQUEST:
+			{
+				return NilKeyboard
+			}
+		case PUSH_MESSAGE:
+			{
+				return NilKeyboard
+			}
+		case TUTORIAL_MESSAGE:
+			{
+				return NilKeyboard
+			}
+		case ACCOUNT_DELETION:
+			{
+				return NoKeyboard
+			}
+		default:
+			{
+				return LegacyKeyboard
+			}
+		}
 	}
+
 	switch requestType {
 	case LENGTH_REPORT:
 		{
