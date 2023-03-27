@@ -44,7 +44,7 @@ const MAIN_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/01_main_keyboard.
 const SETTINGS_KEYBOARD_FILEPATH = "./telegram_connector/keyboards/02_settings_keyboard.json"
 
 // Needs to be consistent with javascript logic in settings.html
-const KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING = "?reportAtAll=%t&reportingDays=%d&fromTime=%s&toTime=%s"
+const KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING = "?reportAtAll=%t&reportingDays=%d&fromTime=%s&toTime=%s&points=%t"
 
 func GetCustomizedKeyboardFromIdentifier(chatID int, identifier KeyboardIdentifier) (*ReplyKeyboardMarkupStruct, error) {
 	baseKeyboard, err := getBaseKeyboardFromIdentifier(identifier)
@@ -110,8 +110,8 @@ func customizeKeyboardForUser(userID int, identifier KeyboardIdentifier, baseKey
 		// which opens the webview with the settings
 		settingsQueryString, err := getSettingsQueryStringForUser(userID)
 		if err != nil {
-			// TODO
-
+			// Can't customize URL. Go back to defaults, which the html/js define
+			return baseKeyboard, nil
 		}
 		customizedURL := baseKeyboard.Keyboard[1][0].WebApp.URL + settingsQueryString
 
@@ -123,9 +123,11 @@ func customizeKeyboardForUser(userID int, identifier KeyboardIdentifier, baseKey
 func getSettingsQueryStringForUser(userID int) (string, error) {
 	preferencesStruct, err := db_connectors.GetUserPreferences(userID)
 	if err != nil {
-		// TODO
+		zap.S().Error("Can't get user preferences", err)
+		return "", err
 	}
-	queryString := fmt.Sprintf(KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING, preferencesStruct.ReportAtAll, preferencesStruct.WeekdayBitmap, preferencesStruct.FromTime, preferencesStruct.ToTime)
+	userPointPreferences := db_connectors.UserIsCollectingPoints(userID)
+	queryString := fmt.Sprintf(KEYBOARD_SETTINGS_OPENER_BASE_QUERY_STRING, preferencesStruct.ReportAtAll, preferencesStruct.WeekdayBitmap, preferencesStruct.FromTime, preferencesStruct.ToTime, userPointPreferences)
 	return queryString, nil
 
 }

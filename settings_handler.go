@@ -10,6 +10,11 @@ import (
 	"go.uber.org/zap"
 )
 
+type PreferenceSettings struct {
+	MensaPreferences db_connectors.MensaPreferenceSettings `json:"mensaPreferences"`
+	Points           bool                                  `json:"points"`
+}
+
 func HandleAccountDeletion(chatID int) {
 	err1 := db_connectors.DeleteAllUserPointData(chatID)
 	err2 := db_connectors.DeleteAllUserChangelogData(chatID)
@@ -40,30 +45,54 @@ func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookReque
 	typeOfKeyboard := webAppData.ButtonText
 	if typeOfKeyboard == "Change Settings" {
 		jsonString := webAppData.Data
-		var mensaSettings db_connectors.MensaPreferenceSettings
-		err := json.Unmarshal([]byte(jsonString), &mensaSettings)
+		var settings PreferenceSettings
+		err := json.Unmarshal([]byte(jsonString), &settings)
 		if err != nil {
 			zap.S().Errorw("Can't unmarshal the settings json we got as WebAppData", "json", jsonString, "error", err)
 		}
+		mensaSettings := settings.MensaPreferences
 
 		startCESTMinutes, _ := mensaSettings.GetFromTimeAsCESTMinute() // These functions default to acceptable values, even on errors
 		endCESTMinutes, _ := mensaSettings.GetToTimeAsCESTMinute()
 
+		settingsUpdated := true
+
 		if err := db_connectors.UpdateUserPreferences(chatID, mensaSettings.ReportAtAll, startCESTMinutes, endCESTMinutes, mensaSettings.WeekdayBitmap); err != nil {
-			zap.S().Warnw("Can't update user preferences", "chatID", chatID, err)
-			message := "Error saving settings, please try again later"
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
-			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
-		} else {
+			zap.S().Errorw("Can't update user mensa preferences", "chatID", chatID, err)
+			settingsUpdated = false
+		}
+		if err = changePointSettings(settings.Points, chatID); err != nil {
+			settingsUpdated = false
+		}
+		if settingsUpdated {
 			message := "Successfully saved your settings"
 			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
 			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+		} else {
+
+			message := "Error saving settings, please try again later"
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 		}
+
 	} else {
 		zap.S().Errorw("Unknown button used to send webhook to us", "Button title", typeOfKeyboard, "Data", webAppData.Data)
 
 	}
+}
 
+func changePointSettings(points bool, chatID int) error {
+	var err error
+	if points {
+		if err = db_connectors.EnableCollectionOfPoints(chatID); err != nil {
+			zap.S().Errorw("Can't enable user point collection", "chatID", chatID, err)
+		} else {
+			if err = db_connectors.DisableCollectionOfPoints(chatID); err != nil {
+				zap.S().Errorw("Can't disable user point collection", "chatID", chatID, err)
+			}
+		}
+	}
+	return err
 }
 
 func SendSettingsOverviewMessage(chatID int) error {
