@@ -10,7 +10,6 @@ import (
 func ABTestHandler(userID int) {
 	// Adds them all day every day to all messages
 	var err error
-	// TODO remember that these timestamps need to be in UTC
 	if utils.IsInDebugMode() {
 		err = db_connectors.UpdateUserPreferences(userID, true, 0, 1440, 0b0111110) // Default from 0:00 to 24:00
 	} else {

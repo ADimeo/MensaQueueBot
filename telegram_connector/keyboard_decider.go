@@ -218,43 +218,6 @@ func GetIdentifierViaRequestType(requestType UserRequestType, userID int) Keyboa
 	return NilKeyboard
 }
 
-/*
-- SendStaticWebPhoto
-- SendDynamicPhoto
-- SendMessage
-
-
-TODO
-Methods that send:
-- SendStaticWebPhoto
-	- Platypus bonus - no keyboard
-	- introduction messages - nav back to main keyboard (optional?)
-	- Send old QueueLengthReport - stay on main
-- SendDynamicPhoto
-	- newly generated graph - stay on main
-- SendMessage
-	- Changelogs - no change
-	- Help message points - stay on options
-	- Points_handler - potentially cut out completely into "settings" message?
-		- Opt in/Out Points - stay on options, or back to main?
-			- Will probably be cut completely
-		- "You have collected X points"
-	- reports_handler
-		- thank you post report - back to main
-		- no thanks - back to main
-	- settings_handler
-		- Accout deletion - remove all keyboards
-		- AB Joining - main keyboard
-	- requests_handler
-		- queue length- stay in main
-	- mensa scraper things - stay at same
-	- introduction - main keyboard
-
-
-TODO- add "resize" flag?
--
-*/
-
 // Returns the struct that represents the custom keyboard that should be shown to the user
 // Reads the json from the given file
 func getReplyKeyboard(jsonPath string) *ReplyKeyboardMarkupStruct {

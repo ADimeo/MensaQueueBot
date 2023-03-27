@@ -103,7 +103,9 @@ func SendSettingsOverviewMessage(chatID int) error {
 
 	userPreferences, err := db_connectors.GetUserPreferences(chatID)
 	if err != nil {
-		// TODO
+		zap.S().Errorw("User couldn't quey their settings", "userID", chatID, "error", err)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
+		return telegram_connector.SendMessage(chatID, "I'm sorry, something went wrong. Please complain @adimeo", keyboardIdentifier)
 	}
 	lengthReportMessage = buildLengthReportMessage(userPreferences)
 	pointsReportMessage = buildPointsReportMessage(chatID)
