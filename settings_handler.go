@@ -108,11 +108,11 @@ func SendSettingsOverviewMessage(chatID int) error {
 	lengthReportMessage = buildLengthReportMessage(userPreferences)
 	pointsReportMessage = buildPointsReportMessage(chatID)
 
-	message := baseMessage + "\n\n" + lengthReportMessage + "\n" + pointsReportMessage
+	message := baseMessage + "\n\n" + lengthReportMessage + "\n\n" + pointsReportMessage
 
 	if db_connectors.GetIsUserABTester(chatID) {
 		abTesterMessage = buildABTesterMessage(chatID)
-		message = message + "\n" + abTesterMessage
+		message = message + "\n\n" + abTesterMessage
 	}
 
 	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)

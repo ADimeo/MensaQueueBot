@@ -18,7 +18,7 @@ import (
 const KEY_TELEGRAM_TOKEN string = "MENSA_QUEUE_BOT_TELEGRAM_TOKEN"
 
 type WebhookRequestBodyWebAppData struct {
-	ButtonText string `json:"button_test"`
+	ButtonText string `json:"button_text"`
 	Data       string `json:"data"`
 }
 
