@@ -50,7 +50,7 @@ func AddInternetPoint(userID int) error {
 }
 
 func EnableCollectionOfPoints(userID int) error {
-	queryString := "INSERT INTO internetpoints VALUES (NULL, ?, 0);"
+	queryString := "INSERT INTO internetpoints VALUES (NULL, ?, 0) ON CONFLICT (reporterID) DO NOTHING;"
 	db := GetDBHandle()
 
 	zap.S().Infof("Enabling point collection for user %d", userID)

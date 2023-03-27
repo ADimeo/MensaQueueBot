@@ -1,3 +1,11 @@
-https://{$CADDY_SITE_ADDRESS}
+https://{$CADDY_SITE_ADDRESS} {
+	reverse_proxy server:8080
+}
 
-reverse_proxy server:8080
+https://{$CADDY_FILES_ADDRESS} {
+	# Needs to run on a server, can't hardcode it
+	root * /static/
+	file_server browse
+
+}
+

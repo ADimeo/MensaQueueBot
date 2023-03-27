@@ -7,6 +7,8 @@
         # ansible.builtin.copy Is extremely slow
         src: ../../../mensa_queue_bot/
         dest: ./mensaqueuebot
+        delete: true
+
 
     - name: Builds the container remotely
       ansible.builtin.command: 

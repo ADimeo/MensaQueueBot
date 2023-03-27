@@ -5,6 +5,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
+      - static:/static/
     ports:
       - 80:80
       - 443:443
@@ -15,6 +16,7 @@ services:
     image: mensaqueuebot
     volumes:
         - db_data:${MENSA_QUEUE_BOT_DB_PATH}
+        - static:/static/
     env_file: .env
     environment:
       GIN_MODE: release
@@ -22,3 +24,4 @@ services:
 volumes:
   caddy_data:
   db_data:
+  static:

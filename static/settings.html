@@ -1,0 +1,190 @@
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+            body {margin: 5% auto; background: #f2f2f2; color: #444444; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.8; text-shadow: 0 1px 0 #ffffff; max-width: 90%;}
+            code {background: white;}
+            a {border-bottom: 1px solid #444444; color: #444444; text-decoration: none;}
+            a:hover {border-bottom: 0;}
+
+            .button-labels label {
+                display: inline-block;
+                border: solid 1px #ddd;
+              background-color: #eee;
+              padding: 3px;
+            }
+
+            .styled {
+              flex: 1 1 0;
+              line-height: 2.5;
+              padding: 0 20px;
+              font-size: 1rem;
+              text-align: center;
+              color: #fff;
+              border-radius: 10px;
+              background-color: #99ccff;
+            }
+
+            .selected {
+              background-color: #3399ff;
+              box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.6);
+
+            }
+
+            .styled:active {
+              box-shadow: inset -2px -2px 3px rgba(255, 255, 255, 0.6), inset 2px 2px 3px rgba(0, 0, 0, 0.6);
+              background-color: #3366ff;
+            }
+
+</style>
+</head>
+<body>
+    <h1>Settings</h1>
+    <label for="atall">
+   <input type="checkbox" id="atall" name="atall" value="yes" checked=true>Do you want to receive mensa messages?
+   <p>
+    <label for="points">
+   <input type="checkbox" id="points" name="points" value="no" checked=false>Do you want to collect points for reports?
+    <h3>On which days do you want to receive menu messages?</h3>
+     <div class="flex-container">
+         
+    <button id="mon" name="mon" class="styled selected"
+            type="button" onClick=restyle("mon")>
+        Mon
+    </button>
+
+    <button id="tue" name="tue" class="styled selected"
+            type="button" onClick=restyle("tue")>
+        Tue
+    </button>
+    <button id="wed" name="wed" class="styled selected"
+            type="button" onClick=restyle("wed")>
+        Wed
+    </button>
+    <button id="thu" name="thu" class="styled selected"
+            type="button" onClick=restyle("thu")>
+        Thu
+    </button>
+    <button id="fri" name="fri" class="styled selected"
+            type="button" onClick=restyle("fri")>
+        Fri
+    </button>
+
+
+<!--
+    <label for="mon">
+    <input type="checkbox" id="mon" name="mon" value="yes" checked=true>Monday
+    </label>
+    <label for="tue">
+    <input type="checkbox" id="tue" name="tue" value="yes" checked=true>Tuesday
+    </label>
+    <label for="wed">
+   <input type="checkbox" id="wed" name="wed" value="yes" checked=true>Wednesday
+    </label>
+    <label for="thu">
+   <input type="checkbox" id="thu" name="thu" value="yes" checked=true>Thursday
+    </label>
+    <label for="fri">
+   <input type="checkbox" id="fri" name="fri" value="yes" checked=true>Friday
+
+    </label>
+-->
+    </div> 
+    <div class="flex-container">
+        <label for="from_time">From...</label>
+        <input type="time" id="from_time" name="from_time"
+               min="09:00" max="18:00" value="11:00" required>
+        <label for="to_time">To...</label>
+        <input type="time" id="to_time" name="to_time"
+               min="09:00" max="18:00" value="14:00" required>
+    </div>
+    <button onclick="Telegram.WebApp.sendData(getData())">Change settings</button>
+
+<script type="text/javascript"> 
+    function restyle(buttonID){
+            if ( document.getElementById(buttonID).classList.contains('selected') ){
+document.getElementById(buttonID).classList.remove('selected');
+            } else {
+                document.getElementById(buttonID).classList.add('selected');
+            }
+        }
+    function populateFormWithUserSettings(){
+            // We read the users current settings from the url query string
+            // As per https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript/901144#901144
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
+            // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
+            document.getElementById("atall").checked = (params.reportAtAll == "true")
+            document.getElementById("points").checked = (params.points != "false")
+
+            // Decode the wekday bitmap
+            let weekdayBitmap = params.reportingDays;
+            if ((weekdayBitmap & 0b0100000) == 0) {
+                document.getElementById("mon").classList.remove('selected');
+            }
+            if ((weekdayBitmap & 0b0010000) == 0) {
+                 document.getElementById("tue").classList.remove('selected');
+            }
+            if ((weekdayBitmap & 0b0001000) == 0) {
+                 document.getElementById("wed").classList.remove('selected');
+            }
+            if ((weekdayBitmap & 0b0000100) == 0){
+                 document.getElementById("thu").classList.remove('selected');
+            }
+            if ((weekdayBitmap & 0b0000010) == 0) {
+                 document.getElementById("fri").classList.remove('selected');
+            }
+            // And the times
+            document.getElementById("from_time").value = params.fromTime;
+            document.getElementById("to_time").value = params.toTime;
+    }
+
+    function getData() {
+            let settingsObject = {};
+            let mensaSettingsObject = {};
+            mensaSettingsObject.reportAtall= document.getElementById("atall").checked;
+
+            reportMon = document.getElementById("mon").classList.contains('selected');
+            reportTue = document.getElementById("tue").classList.contains('selected');
+            reportWed = document.getElementById("wed").classList.contains('selected');
+            reportThu = document.getElementById("thu").classList.contains('selected');
+            reportFri = document.getElementById("fri").classList.contains('selected');
+            let weekdayBitmap = 0
+            if (reportMon){
+                    weekdayBitmap = weekdayBitmap | 0b0100000;
+                    console.log("MON")
+                }
+            if (reportTue){
+                    weekdayBitmap = weekdayBitmap | 0b0010000;
+                    console.log("TUE")
+                }
+            if (reportWed){
+                    weekdayBitmap = weekdayBitmap | 0b0001000;
+                    console.log("WED")
+                }
+            if (reportThu){
+                    weekdayBitmap = weekdayBitmap | 0b0000100;
+                    console.log("THU")
+                }
+            if (reportFri){
+                    weekdayBitmap = weekdayBitmap | 0b0000010;
+                    console.log("FRI")
+                }
+            mensaSettingsObject.weekdayBitmap = weekdayBitmap;
+
+            
+            mensaSettingsObject.fromTime = document.getElementById("from_time").value;
+            mensaSettingsObject.toTime = document.getElementById("to_time").value;
+
+            settingsObject.mensaPreferences = mensaSettingsObject;
+            settingsObject.points = document.getElementById("points").checked;
+
+            const settingsJSON = JSON.stringify(settingsObject);
+            return settingsJSON;
+        };
+
+    populateFormWithUserSettings()
+</script>
+
+
+</body>

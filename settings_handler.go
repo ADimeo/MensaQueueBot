@@ -66,12 +66,12 @@ func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookReque
 		}
 		if settingsUpdated {
 			message := "Successfully saved your settings"
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID) // Update the settings displayed to the user
 			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 		} else {
 
 			message := "Error saving settings, please try again later"
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
 			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 		}
 
@@ -86,10 +86,10 @@ func changePointSettings(points bool, chatID int) error {
 	if points {
 		if err = db_connectors.EnableCollectionOfPoints(chatID); err != nil {
 			zap.S().Errorw("Can't enable user point collection", "chatID", chatID, err)
-		} else {
-			if err = db_connectors.DisableCollectionOfPoints(chatID); err != nil {
-				zap.S().Errorw("Can't disable user point collection", "chatID", chatID, err)
-			}
+		}
+	} else {
+		if err = db_connectors.DisableCollectionOfPoints(chatID); err != nil {
+			zap.S().Errorw("Can't disable user point collection", "chatID", chatID, err)
 		}
 	}
 	return err
