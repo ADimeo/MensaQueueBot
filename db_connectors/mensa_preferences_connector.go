@@ -216,6 +216,8 @@ func UpdateUserPreferences(userID int, wantsMensaMessages bool, startTimeInCESTM
 	return err
 }
 
+// Returns preferences for single user. Sets preferences to default
+// And returns those if user doesn't have any associated preferences
 func GetUserPreferences(userID int) (MensaPreferenceSettings, error) {
 	queryString := `SELECT wantsMensaMessages, weekdayBitmap, startTimeInCESTMinutes, endTimeInCESTMinutes 
 	FROM mensaPreferences
@@ -230,7 +232,10 @@ func GetUserPreferences(userID int) (MensaPreferenceSettings, error) {
 	if err := db.QueryRow(queryString, userID).Scan(&usersPreferences.ReportAtAll, &weekdayBitmap, &startCESTMinutes, &endCESTMinutes); err != nil {
 		if err == sql.ErrNoRows {
 			zap.S().Info("User doesn't have associated mensa settings yet")
-			return usersPreferences, err
+			usersPreferences, err = SetDefaultMensaPreferencesForUser(userID)
+			if err != nil {
+				return usersPreferences, err
+			}
 		} else {
 			zap.S().Error("Error while querying for latest report", err)
 		}
@@ -241,6 +246,43 @@ func GetUserPreferences(userID int) (MensaPreferenceSettings, error) {
 	usersPreferences.SetToTimeFromCESTMinutes(endCESTMinutes)
 
 	return usersPreferences, nil
+}
+func SetDefaultMensaPreferencesForUser(userID int) (MensaPreferenceSettings, error) {
+	var err error
+	var usersPreferences MensaPreferenceSettings
+	usersPreferences.ReportAtAll = true
+	if utils.IsInDebugMode() {
+		err = UpdateUserPreferences(userID, true, 0, 1440, 0b0111110) // Default from 0:00 to 24:00
+		usersPreferences.WeekdayBitmap = 0b0111110
+		usersPreferences.SetFromTimeFromCESTMinutes(0)
+		usersPreferences.SetToTimeFromCESTMinutes(1440)
+
+	} else {
+		err = UpdateUserPreferences(userID, true, 600, 840, 0b0111110) // Default from 10:00 to 14:00
+		usersPreferences.WeekdayBitmap = 0b0111110
+		usersPreferences.SetFromTimeFromCESTMinutes(600)
+		usersPreferences.SetToTimeFromCESTMinutes(840)
+	}
+
+	if err != nil {
+		zap.S().Errorf("Can't set default preferences for user %d", userID, err)
+	}
+	return usersPreferences, err
+}
+
+func DeleteAllUserMensaPreferences(userID int) error {
+	queryString := `DELETE FROM mensaPreferences WHERE reporterID == ?;`
+	db := GetDBHandle()
+	zap.S().Infof("Deleting mensa preferences for user %d", userID)
+
+	DBMutex.Lock()
+	_, err := db.Exec(queryString, userID)
+	DBMutex.Unlock()
+	if err != nil {
+		zap.S().Errorf("Error while deleting mensa preferences of user %s", userID, err)
+		return err
+	}
+	return nil
 }
 
 func SetUserToReportedOnDate(userID int, nowInUTC time.Time) {

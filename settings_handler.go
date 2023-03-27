@@ -18,11 +18,12 @@ type PreferenceSettings struct {
 func HandleAccountDeletion(chatID int) {
 	err1 := db_connectors.DeleteAllUserPointData(chatID)
 	err2 := db_connectors.DeleteAllUserChangelogData(chatID)
-	if err1 != nil || err2 != nil {
+	err3 := db_connectors.DeleteAllUserMensaPreferences(chatID)
+	if err1 != nil || err2 != nil || err3 != nil {
 		zap.S().Infof("Sending error message to user")
 		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.SETTINGS_INTERACTION, chatID)
 		telegram_connector.SendMessage(chatID, "Something went wrong deleting your data. Contact @adimeo for details and fixes", keyboardIdentifier)
-		zap.S().Warn("Error in forgetme: ", err1, err2)
+		zap.S().Warn("Error in forgetme: ", err1, err2, err3)
 	} else {
 		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.ACCOUNT_DELETION, chatID)
 		telegram_connector.SendMessage(chatID, "Who are you again? I have completely forgotten you exist. Remind me with /start, please?", keyboardIdentifier)
