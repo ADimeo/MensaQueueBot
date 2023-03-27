@@ -25,6 +25,7 @@ const (
 	TUTORIAL_MESSAGE     UserRequestType = "TUTORIAL_MESSAGE"
 	PREPARE_MAIN         UserRequestType = "PREPARE_MAIN"
 	ACCOUNT_DELETION     UserRequestType = "ACCOUNT_DELETION"
+	IMAGE_REQUEST        UserRequestType = "IMAGE_REQUEST"
 )
 
 type KeyboardIdentifier int
@@ -154,13 +155,13 @@ func GetIdentifierViaRequestType(requestType UserRequestType, userID int) Keyboa
 			{
 				return NilKeyboard
 			}
-		case TUTORIAL_MESSAGE:
-			{
-				return NilKeyboard
-			}
 		case ACCOUNT_DELETION:
 			{
 				return NoKeyboard
+			}
+		case IMAGE_REQUEST:
+			{
+				return NilKeyboard
 			}
 		default:
 			{
@@ -202,7 +203,12 @@ func GetIdentifierViaRequestType(requestType UserRequestType, userID int) Keyboa
 		}
 	case TUTORIAL_MESSAGE:
 		{
-			// User requested help or a tutorial. Always stays at current keyboard
+			// User requested help or a tutorial. We need to init the main keyboard
+			return MainKeyboard
+		}
+	case IMAGE_REQUEST:
+		{
+			// We currently haven't implemented setting keyboards with images yet
 			return NilKeyboard
 		}
 	case PREPARE_MAIN:

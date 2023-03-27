@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/ADimeo/MensaQueueBot/utils"
 	"go.uber.org/zap"
 )
 
@@ -25,7 +26,7 @@ func GetLatestMensaOffersFromToday() ([]DBOfferInformation, error) {
 
 	var latestOffers []DBOfferInformation
 
-	currentDate := time.Now().Format("2006-01-02")
+	currentDate := time.Now().In(utils.GetLocalLocation()).Format("2006-01-02")
 	rows, err := db.Query(queryString, currentDate)
 	if err != nil {
 		zap.S().Errorf("Error while querying for latest mensa offers", err)

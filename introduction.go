@@ -103,7 +103,7 @@ func SendWelcomeMessage(chatID int) {
 	}
 
 	// Send single photo for illustration
-	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.IMAGE_REQUEST, chatID)
 	err = telegram_connector.SendStaticWebPhoto(chatID, mensaLocationArray[3].PhotoUrl, mensaLocationArray[3].Description, keyboardIdentifier)
 	if err != nil {
 		zap.S().Error("Error while sending first welcome messages.", err)
@@ -127,7 +127,7 @@ func SendWelcomeMessage(chatID int) {
 	for i := 5; i < 9; i++ {
 		// We consciously skip the last entry which doesn't have an illstration
 		messageString := messageArray[i]
-		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.IMAGE_REQUEST, chatID)
 		err = telegram_connector.SendMessage(chatID, messageString, keyboardIdentifier)
 		if err != nil {
 			zap.S().Error("Error while sending final welcome messages.", err)

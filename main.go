@@ -188,9 +188,9 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 	lengthReportRegex := regexp.MustCompile(REPORT_REGEX)
 	switch {
 	// CASES FROM MAIN KEYBOARD
-	case sentMessage == "Jetze?":
+	case sentMessage == "Queue?":
 		{
-			zap.S().Info("Received a 'Jetze?' request")
+			zap.S().Info("Received a 'Queue?' request")
 			GenerateAndSendGraphicQueueLengthReport(chatID)
 			sendChangelogIfNecessary(chatID)
 		}
