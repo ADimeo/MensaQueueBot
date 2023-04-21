@@ -169,3 +169,21 @@ func makeUserABTesterWithDB(userID int, optingIn bool, db *sql.DB) error {
 	}
 	return nil
 }
+
+func UserHasBeenMigrated(userID int) bool {
+	// "Updated" means they have been added to the table of mensa preferences"
+	queryString := `SELECT reporterID FROM mensaPreferences WHERE reporterID = ?`
+	db := GetDBHandle()
+	var userHasMensaPreferences int
+
+	if err := db.QueryRow(queryString, userID).Scan(&userHasMensaPreferences); err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		} else {
+			zap.S().Errorw("Error while querying for A/B tester state", err)
+			return false
+		}
+	}
+	return true
+
+}

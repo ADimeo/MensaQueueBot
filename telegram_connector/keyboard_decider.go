@@ -20,7 +20,7 @@ const (
 	PREPARE_REPORT       UserRequestType = "PREPARE_REPORT"
 	INFO_REQUEST         UserRequestType = "INFO_REQUEST"
 	PREPARE_SETTINGS     UserRequestType = "PREPARE_SETTINGS"
-	SETTINGS_INTERACTION UserRequestType = "SETTINS_INTERACTION"
+	SETTINGS_INTERACTION UserRequestType = "SETTINGS_INTERACTION"
 	PUSH_MESSAGE         UserRequestType = "PUSH_MESSAGE"
 	TUTORIAL_MESSAGE     UserRequestType = "TUTORIAL_MESSAGE"
 	PREPARE_MAIN         UserRequestType = "PREPARE_MAIN"
@@ -142,34 +142,7 @@ there's now a single point where this new functionality can be added, and no one
 to look up "uuuhhh, which message sent that type again?"
 */
 func GetIdentifierViaRequestType(requestType UserRequestType, userID int) KeyboardIdentifier {
-	userIsABTester := db_connectors.GetIsUserABTester(userID)
 	zap.S().Debugf("User is sending us a %s request, returning corresponding keyboard identifier", requestType)
-	if !userIsABTester {
-		zap.S().Debug("Returning legacy keyboard or no keyboard, no AB Tester")
-		switch requestType {
-		case INFO_REQUEST:
-			{
-				return NilKeyboard
-			}
-		case PUSH_MESSAGE:
-			{
-				return NilKeyboard
-			}
-		case ACCOUNT_DELETION:
-			{
-				return NoKeyboard
-			}
-		case IMAGE_REQUEST:
-			{
-				return NilKeyboard
-			}
-		default:
-			{
-				return LegacyKeyboard
-			}
-		}
-	}
-
 	switch requestType {
 	case LENGTH_REPORT:
 		{

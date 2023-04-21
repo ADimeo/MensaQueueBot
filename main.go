@@ -77,10 +77,17 @@ func parseRequest(c *gin.Context) (*telegram_connector.WebhookRequestBody, error
 	return body, err
 }
 
+func updateUserFromLegacy(chatID int) {
+	// Update state in the DB
+	err := db_connectors.UpdateUserPreferences(chatID, true, 600, 840, 0b0111110) // Default from 11:00 to 14:00
+	if err != nil {
+		zap.S().Error(err)
+	}
+}
+
 // Gets the newest changelog from the changelog file and sends it to the
 // user if they haven't received it yet
 func sendChangelogIfNecessary(chatID int) {
-
 	numberOfLastSentChangelog := db_connectors.GetLatestChangelogSentToUser(chatID)
 	changelog, noChangelogWithIDError := db_connectors.GetCurrentChangelog()
 
@@ -122,64 +129,58 @@ func legacyRequestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_
 	switch {
 	case sentMessage == "/start":
 		{
-			zap.S().Info("Sending onboarding (/start) messages")
-			SendWelcomeMessage(chatID)
-			sendChangelogIfNecessary(chatID)
+			zap.S().Info("Migrating from /start")
+			requestSwitch(chatID, "/start", bodyAsStruct)
 		}
 	case sentMessage == "/help":
 		{
-			zap.S().Info("Sending queue length (/help) messages")
-			sendQueueLengthExamples(chatID)
+			zap.S().Info("Migrating from /help")
+			requestSwitch(chatID, "/help", bodyAsStruct)
 		}
 	case pointsRegex.Match([]byte(sentMessage)):
 		{
-			zap.S().Info("User is checking point status")
-			HandlePointsRequest(sentMessage, chatID)
-			sendChangelogIfNecessary(chatID)
+			zap.S().Info("Migrating from points message")
+			requestSwitch(chatID, "/settings", bodyAsStruct)
 		}
 	case sentMessage == "/jetze":
 		{
-			zap.S().Infof("Received a /jetze request")
-			GenerateAndSendGraphicQueueLengthReport(chatID)
-			sendChangelogIfNecessary(chatID)
+			zap.S().Info("Migrating from /jetze")
+			requestSwitch(chatID, "Queue?", bodyAsStruct)
+			telegram_connector.SendMessage(chatID, "Upgrading your keyboard...", telegram_connector.MainKeyboard)
 		}
 	case sentMessage == "/jetze@MensaQueueBot":
-		zap.S().Infof("Received a /jetze request, but in a group")
-		GenerateAndSendGraphicQueueLengthReport(chatID)
-		sendChangelogIfNecessary(chatID)
+		zap.S().Info("Migrating from /jetze, but in group")
+		requestSwitch(chatID, "Queue?", bodyAsStruct)
+		telegram_connector.SendMessage(chatID, "Upgrading your keyboard...", telegram_connector.MainKeyboard)
 	case lengthReportRegex.Match([]byte(sentMessage)):
 		{
-			zap.S().Infof("Received a new report: %s", sentMessage)
-			messageUnixTime := bodyAsStruct.Message.Date
-			HandleLengthReport(sentMessage, messageUnixTime, chatID)
-			sendChangelogIfNecessary(chatID)
+			zap.S().Info("Migrating from report")
+			requestSwitch(chatID, sentMessage, bodyAsStruct)
 		}
 	case sentMessage == "/forgetme":
 		{
 			zap.S().Infof("User requested deletion of their data: %s", sentMessage)
-			HandleAccountDeletion(chatID)
+			requestSwitch(chatID, "/forgetme", bodyAsStruct)
 		}
 	case sentMessage == "/joinABTesters": // In the future reading secret codes might be interesting
 		{
-			zap.S().Infof("User %d is joining test group", chatID)
-			HandleABTestJoining(chatID)
+			zap.S().Infof("Migrating from joinABTEsters", chatID)
+			requestSwitch(chatID, sentMessage, bodyAsStruct)
 		}
 	case sentMessage == "": // this likely means that user used a keyboard-html-button thingy
 		{
-			zap.S().Debug("User is changing settings")
-			HandleSettingsChange(chatID, bodyAsStruct.Message.WebAppData)
+			zap.S().Infof("Migrating from keyboard?", chatID)
+			requestSwitch(chatID, sentMessage, bodyAsStruct)
 		}
 	case sentMessage == "/platypus":
 		{
-			zap.S().Infof("PLATYPUS!")
-			url := "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22Nam_Sang_Woo_Safety_Matches%22_platypus_matchbox_label_art_-_from%2C_Collectie_NMvWereldculturen%2C_TM-6477-76%2C_Etiketten_van_luciferdoosjes%2C_1900-1949_%28cropped%29.jpg"
-
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID) // Not technically correct, but eh
-			telegram_connector.SendStaticWebPhoto(chatID, url, "So cute ❤️", keyboardIdentifier)
+			zap.S().Infof("Migrating from platypus?", chatID)
+			requestSwitch(chatID, sentMessage, bodyAsStruct)
+			telegram_connector.SendMessage(chatID, "Upgrading your keyboard...", telegram_connector.MainKeyboard)
 		}
 	default:
 		{
-			zap.S().Infof("Received unknown message: %s", sentMessage)
+			zap.S().Infof("Received unknown message in legacy: %s", sentMessage)
 		}
 	}
 }
@@ -239,7 +240,7 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 		{
 			// Revamping this is contained within a different issue...
 			zap.S().Info("Received a 'General Help' requets")
-			sendQueueLengthExamples(chatID)
+			SendHelpMessage(chatID)
 		}
 	case sentMessage == "Points Help":
 		{
@@ -268,9 +269,20 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 			sendChangelogIfNecessary(chatID)
 		}
 		// OTHER CASES
+	case sentMessage == "/start":
+		{
+			zap.S().Info("Sending onboarding (/start) messages")
+			SendWelcomeMessage(chatID)
+			sendChangelogIfNecessary(chatID)
+		}
 	case sentMessage == "/help":
 		{
 			zap.S().Info("Sending queue length (/help) messages")
+			SendHelpMessage(chatID)
+		}
+	case sentMessage == "/length_illustrations":
+		{
+			zap.S().Info("Sending length illustrations")
 			sendQueueLengthExamples(chatID)
 		}
 	case sentMessage == "/forgetme":
@@ -313,9 +325,12 @@ func reactToRequest(ginContext *gin.Context) {
 
 	sentMessage := bodyAsStruct.Message.Text
 	chatID := bodyAsStruct.Message.Chat.ID
-	if db_connectors.GetIsUserABTester(chatID) {
+
+	if db_connectors.UserHasBeenMigrated(chatID) {
 		requestSwitch(chatID, sentMessage, bodyAsStruct)
 	} else {
+		zap.S().Infof("Migrating user from legacy: %d", chatID)
+		updateUserFromLegacy(chatID)
 		legacyRequestSwitch(chatID, sentMessage, bodyAsStruct)
 	}
 }

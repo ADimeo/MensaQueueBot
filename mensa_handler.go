@@ -18,7 +18,6 @@ func ABTestHandler(userID int) {
 
 	if err != nil {
 		zap.S().Error(err)
-
 	}
 
 }
