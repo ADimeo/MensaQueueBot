@@ -105,7 +105,7 @@ func sendQueueLengthExamples(chatID int) {
 	mensaLocationArray := *GetMensaLocationSlice()
 	for _, mensaLocation := range mensaLocationArray {
 		if mensaLocation.PhotoUrl != "" {
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.TUTORIAL_MESSAGE, chatID)
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.IMAGE_REQUEST, chatID)
 			err := telegram_connector.SendStaticWebPhoto(chatID, mensaLocation.PhotoUrl, mensaLocation.Description, keyboardIdentifier)
 			if err != nil {
 				zap.S().Error("Error while sending help message photographs.", err)
