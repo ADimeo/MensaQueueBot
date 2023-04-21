@@ -202,6 +202,13 @@ func GetUsersWithInitialMessageInTimeframe(nowInUTC time.Time, lowerBoundCESTMin
 		zap.S().Errorf("Error while scanning userids for mensa preferences", err)
 		return userIDs, err
 	}
+	if len(userIDs) == 0 {
+		zap.S().Infow("Query for users with initial message returned empty!",
+			"currentDate", currentDate,
+			"lowerBoundCESTMinute", lowerBoundCESTMinute,
+			"upperBoundCESTMinute", upperBoundCESTMinute,
+			"weekdayBitmap", weekdayBitmap)
+	}
 	return userIDs, nil
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"github.com/ADimeo/MensaQueueBot/utils"
 	"github.com/go-co-op/gocron"
+	"github.com/hashicorp/go-multierror"
 	"go.uber.org/zap"
 )
 
@@ -27,6 +28,7 @@ func ScheduleDailyInitialMessageJob() {
 }
 
 func initialMessageJob() {
+	zap.S().Infof("Prepping to send initial messages...")
 	nowInUTC := time.Now().UTC()
 	nowInLocal := nowInUTC.In(utils.GetLocalLocation())
 	nowCESTMinute := nowInLocal.Hour()*60 + nowInLocal.Minute()
@@ -48,13 +50,11 @@ func scheduleNextInitialMessage(nowInUTC time.Time, nowCESTMinute int) error {
 	}
 	cestHoursForJob := cestMinuteForNextJob / 60
 	cestMinutesForJob := cestMinuteForNextJob % 60
-	timestampString, err := fmt.Printf("%02d:%02d", cestHoursForJob, cestMinutesForJob)
-	if err != nil {
-		zap.S().Error("Can't create time string for next initial message mensa job", err)
-	}
+	timestampString := fmt.Sprintf("%02d:%02d", cestHoursForJob, cestMinutesForJob)
 
 	schedulerInMensaTimezone := gocron.NewScheduler(utils.GetLocalLocation())
 	schedulerInMensaTimezone.Every(1).Day().At(timestampString).LimitRunsTo(1).Do(initialMessageJob)
+	zap.S().Infof("Next initial message scheduled for %s", timestampString)
 
 	schedulerInMensaTimezone.StartAsync()
 	return nil
@@ -67,8 +67,7 @@ func sendInitialMessagesThatShouldBeSentAt(nowInUTC time.Time, nowCESTMinute int
 		return err
 	}
 
-	err = sendLatestMenuToUsers(users)
-	return err
+	return sendLatestMenuToUsers(users)
 }
 
 func SendLatestMenuToUsersCurrentlyListening() error {
@@ -88,21 +87,27 @@ func SendLatestMenuToSingleUser(userID int) error {
 }
 
 func sendLatestMenuToUsers(idsOfInterestedUsers []int) error {
+	if len(idsOfInterestedUsers) == 0 {
+		zap.S().Infof("Tried to send latest menu to empty list of users")
+		return nil
+	}
 	latestOffersInDB, err := db_connectors.GetLatestMensaOffersFromToday()
 	if err != nil {
 		return err
 	}
 	if len(latestOffersInDB) == 0 {
 		return errors.New("No menu from today available")
-
 	}
 	formattedMessage := buildMessageFrom(latestOffersInDB)
 
+	var errorsForAllSends error
 	for _, userID := range idsOfInterestedUsers {
 		keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PUSH_MESSAGE, userID)
-		telegram_connector.SendMessage(userID, formattedMessage, keyboardIdentifier)
+		if err = telegram_connector.SendMessage(userID, formattedMessage, keyboardIdentifier); err != nil {
+			errorsForAllSends = multierror.Append(errorsForAllSends, err)
+		}
 	}
-	return nil
+	return errorsForAllSends
 }
 
 func buildMessageFrom(offerSlice []db_connectors.DBOfferInformation) string {
