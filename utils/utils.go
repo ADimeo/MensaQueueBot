@@ -41,8 +41,8 @@ func GetMensaOpeningTime() time.Time {
 
 func GetMensaClosingTime() time.Time {
 	var today = time.Now()
-	// Mensa closes at 15:00
-	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 15, 0, 0, 0, GetLocalLocation())
+	// Mensa closes at 18:00
+	var closingTime = time.Date(today.Year(), today.Month(), today.Day(), 18, 0, 0, 0, GetLocalLocation())
 	return closingTime
 }
 
