@@ -12,6 +12,40 @@ import (
 )
 
 /*
+HandleNavigationToReportKeyboard handles navigation to the report keyboard.
+This includes the actual navigation (sending out a message with the new keyboard,
+as well as storing the users intent in the DB, which is used to id whether they've
+reported somethign on this day (for mensa updates)
+*/
+func HandleNavigationToReportKeyboard(sentMessage string, chatID int) {
+	message := "Great! How is it looking?"
+	nowInUTCTime := time.Now().UTC()
+	db_connectors.SetUserToReportedOnDate(chatID, nowInUTCTime)
+
+	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_REPORT, chatID)
+	telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+}
+
+/*
+HandleLengthReport is the function called on the actual Lx length report. It handles validation
+and storage of the given report, as well as the feedback message.
+*/
+func HandleLengthReport(sentMessage string, messageUnixTime int, chatID int) {
+	if reportAppearsValid(sentMessage) {
+		errorWhileSaving := saveQueueLength(sentMessage, messageUnixTime, chatID)
+		if errorWhileSaving == nil {
+			if db_connectors.UserIsCollectingPoints(chatID) {
+				db_connectors.AddInternetPoint(chatID)
+			}
+			sendThankYouMessage(chatID, sentMessage)
+		}
+	} else {
+		sendNoThanksMessage(chatID, sentMessage)
+	}
+
+}
+
+/*
    Sends a thank you message for a report
 */
 func sendThankYouMessage(chatID int, textSentByUser string) {
@@ -70,19 +104,4 @@ func reportAppearsValid(reportText string) bool {
 	}
 	zap.S().Info("Report is considered valid")
 	return true
-}
-
-func HandleLengthReport(sentMessage string, messageUnixTime int, chatID int) {
-	if reportAppearsValid(sentMessage) {
-		errorWhileSaving := saveQueueLength(sentMessage, messageUnixTime, chatID)
-		if errorWhileSaving == nil {
-			if db_connectors.UserIsCollectingPoints(chatID) {
-				db_connectors.AddInternetPoint(chatID)
-			}
-			sendThankYouMessage(chatID, sentMessage)
-		}
-	} else {
-		sendNoThanksMessage(chatID, sentMessage)
-	}
-
 }

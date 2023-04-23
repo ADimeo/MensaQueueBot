@@ -209,9 +209,7 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 	case sentMessage == "Report!":
 		{
 			zap.S().Info("Received a 'Report!' request")
-			message := "Great! How is it looking?"
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_REPORT, chatID)
-			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+			HandleNavigationToReportKeyboard(sentMessage, chatID)
 		}
 		// CASES FROM REPORT KEYBOARD
 	case lengthReportRegex.Match([]byte(sentMessage)):
@@ -364,7 +362,6 @@ func runEnvironmentTests() {
 }
 
 func initDatabases() {
-
 	db_handle := db_connectors.GetDBHandle()
 	driver, err := sqlite3.WithInstance(db_handle, &sqlite3.Config{})
 	if err != nil {

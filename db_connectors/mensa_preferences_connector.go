@@ -292,16 +292,25 @@ func DeleteAllUserMensaPreferences(userID int) error {
 	return nil
 }
 
-func SetUserToReportedOnDate(userID int, nowInUTC time.Time) {
-	/*
-		queryString := `UPDATE mensaPreferences
+func SetUserToReportedOnDate(userID int, nowInUTC time.Time) error {
+	queryString := `UPDATE mensaPreferences
 		SET lastReportDate = ?
 		WHERE reporterID = ?;`
+	db := GetDBHandle()
 
-		db := GetDBHandle()
-		// TODO finish query
-		**/
+	currentDate := nowInUTC.Format("2006-01-02")
 
+	DBMutex.Lock()
+	_, err := db.Exec(queryString, currentDate, userID)
+	DBMutex.Unlock()
+	if err != nil {
+		zap.S().Errorw("Error while saving users report date %s",
+			"userID", userID,
+			"currentDate", currentDate,
+			"err", err)
+		return err
+	}
+	return nil
 }
 
 func getBitmapForToday(nowInUTC time.Time) int {
