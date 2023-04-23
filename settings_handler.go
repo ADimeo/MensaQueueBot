@@ -69,8 +69,8 @@ func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookReque
 			message := "Successfully saved your settings"
 			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID) // Update the settings displayed to the user
 			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+			SendSettingsOverviewMessage(chatID, true)
 		} else {
-
 			message := "Error saving settings, please try again later"
 			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
 			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
@@ -96,7 +96,7 @@ func changePointSettings(points bool, chatID int) error {
 	return err
 }
 
-func SendSettingsOverviewMessage(chatID int) error {
+func SendSettingsOverviewMessage(chatID int, endInMainMenu bool) error {
 	baseMessage := `<b>Settings</b>`
 	var lengthReportMessage string
 	var pointsReportMessage string
@@ -117,38 +117,62 @@ func SendSettingsOverviewMessage(chatID int) error {
 		abTesterMessage = buildABTesterMessage(chatID)
 		message = message + "\n\n" + abTesterMessage
 	}
-
-	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
+	var keyboardIdentifier telegram_connector.KeyboardIdentifier
+	if endInMainMenu {
+		keyboardIdentifier = telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_MAIN, chatID)
+	} else {
+		keyboardIdentifier = telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
+	}
 	return telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
 }
 
 func buildLengthReportMessage(userPreferences db_connectors.MensaPreferenceSettings) string {
 	noMessage := "You are not receiving any mensa menus."
+	yesAlwaysMessage := "You are receiving menus on all weekdays, from %s to %s"
 	yesMessage := "You are receiving menus on %s, from %s to %s"
 
 	if !userPreferences.ReportAtAll || userPreferences.WeekdayBitmap == 0 {
 		return noMessage
+	} else if userPreferences.WeekdayBitmap == 0b0111110 {
+		return fmt.Sprintf(yesAlwaysMessage, userPreferences.FromTime, userPreferences.ToTime)
 	} else {
 		weekdaysString := ""
+		numberOfWeekdays := 0
 		if userPreferences.WeekdayBitmap&0b0100000 != 0 {
 			weekdaysString += ", Mondays"
+			numberOfWeekdays += 1
 		}
 		if userPreferences.WeekdayBitmap&0b0010000 != 0 {
 			weekdaysString += ", Tuesdays"
+			numberOfWeekdays += 1
 		}
 		if userPreferences.WeekdayBitmap&0b0001000 != 0 {
 			weekdaysString += ", Wednesdays"
+			numberOfWeekdays += 1
 		}
 		if userPreferences.WeekdayBitmap&0b0000100 != 0 {
 			weekdaysString += ", Thursdays"
+			numberOfWeekdays += 1
 		}
 		if userPreferences.WeekdayBitmap&0b0000010 != 0 {
 			weekdaysString += ", Fridays"
+			numberOfWeekdays += 1
 		}
 		weekdaysString = weekdaysString[2:]
-		lastCommaPosition := strings.LastIndex(weekdaysString, ",") + 1
-		weekdaysString = weekdaysString[:lastCommaPosition] + " and" + weekdaysString[lastCommaPosition:]
-		return fmt.Sprintf(yesMessage, weekdaysString, userPreferences.FromTime, userPreferences.ToTime)
+		if numberOfWeekdays == 1 {
+			// "Mondays"
+			return fmt.Sprintf(yesMessage, weekdaysString, userPreferences.FromTime, userPreferences.ToTime)
+		} else if numberOfWeekdays == 2 {
+			// "Mondays and Tuesdays"
+			lastCommaPosition := strings.LastIndex(weekdaysString, ",") + 1
+			weekdaysString = weekdaysString[:lastCommaPosition-1] + " and" + weekdaysString[lastCommaPosition:]
+			return fmt.Sprintf(yesMessage, weekdaysString, userPreferences.FromTime, userPreferences.ToTime)
+		} else {
+			// "Mondays, Tuesdays, and Wednesday"
+			lastCommaPosition := strings.LastIndex(weekdaysString, ",") + 1
+			weekdaysString = weekdaysString[:lastCommaPosition] + " and" + weekdaysString[lastCommaPosition:]
+			return fmt.Sprintf(yesMessage, weekdaysString, userPreferences.FromTime, userPreferences.ToTime)
+		}
 	}
 }
 

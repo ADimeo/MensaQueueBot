@@ -232,7 +232,7 @@ func requestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_connec
 		{
 			// Let's not forget how to get to the settings screen...
 			zap.S().Info("Received a '/settings' request")
-			SendSettingsOverviewMessage(chatID)
+			SendSettingsOverviewMessage(chatID, false)
 		}
 	case sentMessage == "General Help":
 		{
