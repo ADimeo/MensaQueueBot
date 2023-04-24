@@ -115,6 +115,12 @@ func GetUsersToSendMenuToByTimestamp(nowInUTC time.Time) ([]int, error) {
 	return userIDs, nil
 }
 
+/*
+returns the CEST Minute that would next run after the given cestMinuteOfLastRun,
+based on some extra conditions (weekday, already reported today, wants messages)
+a cest Minute is an int with hh*60 + mm of a timestamp.
+Uses nowInUTC to find out the date, and cestMinuteOfLastRun for the time
+*/
 func GetCESTMinuteForNextIntroMessage(nowInUTC time.Time, cestMinuteOfLastRun int) (int, error) {
 	queryString := `SELECT startTimeInCESTMinutes FROM mensaPreferences 
 	WHERE startTimeInCESTMinutes > ? 

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ADimeo/MensaQueueBot/db_connectors"
+	"github.com/ADimeo/MensaQueueBot/mensa_scraper"
 	"github.com/ADimeo/MensaQueueBot/telegram_connector"
 	"go.uber.org/zap"
 )
@@ -42,6 +43,29 @@ func HandleABTestJoining(chatID int) {
 	}
 }
 
+func saveNewSettings(chatID int, settings PreferenceSettings, mensaSettings db_connectors.MensaPreferenceSettings) bool {
+	settingsUpdated := true
+	startCESTMinutes, _ := mensaSettings.GetFromTimeAsCESTMinute() // These functions default to acceptable values, even on errors
+	endCESTMinutes, _ := mensaSettings.GetToTimeAsCESTMinute()
+
+	if err := db_connectors.UpdateUserPreferences(chatID, mensaSettings.ReportAtAll, startCESTMinutes, endCESTMinutes, mensaSettings.WeekdayBitmap); err != nil {
+		zap.S().Errorw("Can't update user mensa preferences", "chatID", chatID, err)
+		settingsUpdated = false
+	}
+	if err := changePointSettings(settings.Points, chatID); err != nil {
+		settingsUpdated = false
+	}
+	return settingsUpdated
+}
+
+func callReschedulerForInitialMensaMessageJob(mensaSettings db_connectors.MensaPreferenceSettings) {
+	timeStringInCEST := mensaSettings.FromTime
+	if mensaSettings.ReportAtAll {
+		// Don't need to update the scheduler if this was disabled
+		mensa_scraper.RescheduleNextInitialMessageJobIfNeeded(timeStringInCEST)
+	}
+}
+
 func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookRequestBodyWebAppData) {
 	typeOfKeyboard := webAppData.ButtonText
 	if typeOfKeyboard == "Change Settings" {
@@ -52,24 +76,17 @@ func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookReque
 			zap.S().Errorw("Can't unmarshal the settings json we got as WebAppData", "json", jsonString, "error", err)
 		}
 		mensaSettings := settings.MensaPreferences
+		settingsUpdated := saveNewSettings(chatID, settings, mensaSettings)
 
-		startCESTMinutes, _ := mensaSettings.GetFromTimeAsCESTMinute() // These functions default to acceptable values, even on errors
-		endCESTMinutes, _ := mensaSettings.GetToTimeAsCESTMinute()
-
-		settingsUpdated := true
-
-		if err := db_connectors.UpdateUserPreferences(chatID, mensaSettings.ReportAtAll, startCESTMinutes, endCESTMinutes, mensaSettings.WeekdayBitmap); err != nil {
-			zap.S().Errorw("Can't update user mensa preferences", "chatID", chatID, err)
-			settingsUpdated = false
-		}
-		if err = changePointSettings(settings.Points, chatID); err != nil {
-			settingsUpdated = false
-		}
+		// Feedback messages to user
 		if settingsUpdated {
 			message := "Successfully saved your settings"
-			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID) // Update the settings displayed to the user
+			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)
 			telegram_connector.SendMessage(chatID, message, keyboardIdentifier)
+			// Display updated settings to the user
 			SendSettingsOverviewMessage(chatID, true)
+			// Reschedule initial mensa message job, if needed
+			callReschedulerForInitialMensaMessageJob(mensaSettings)
 		} else {
 			message := "Error saving settings, please try again later"
 			keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.PREPARE_SETTINGS, chatID)

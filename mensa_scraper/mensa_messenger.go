@@ -15,6 +15,10 @@ import (
 
 var globalLastInitialMessageCESTMinute int
 
+// Please only modify in scheduleNextInitialMessage
+// Gets overridden regularly
+var globalInitialMessageScheduler *gocron.Scheduler
+
 func ScheduleDailyInitialMessageJob() {
 	nowInUTC := time.Now().UTC()
 	nowInLocal := nowInUTC.In(utils.GetLocalLocation())
@@ -42,6 +46,69 @@ func initialMessageJob() {
 	}
 }
 
+/*
+For a given timeStringInCEST this updates the next initialMessage job.
+Specifically, if we would skip the newly inserted initial message
+(Since it would still run today, but the next scheduled job is after
+this message should run) we clear the initial job, and recreate it
+with this given message in mind.
+
+Call after DB operation of inserting the new settings have finished!
+This queries the DB
+
+This function will reschedule overeagerly, but that shouldn't be a problem
+since underlying functions should be idempotent if run at the same time with
+the same db state
+*/
+func RescheduleNextInitialMessageJobIfNeeded(insertedTimeStringInCEST string) {
+	if globalInitialMessageScheduler.Len() == 0 {
+		// Scheduler has no jobs at all
+		// This should not happen, but let's schedule a job to fix it
+		zap.S().Error("Initial job scheduler had no jobs during settings change")
+		nowInUTC := time.Now().UTC()
+		nowInCEST := nowInUTC.In(utils.GetLocalLocation())
+		nowCESTMinute := nowInCEST.Hour()*60 + nowInCEST.Minute()
+		scheduleNextInitialMessage(nowInUTC, nowCESTMinute)
+		return
+	}
+
+	nextInitialJob := globalInitialMessageScheduler.Jobs()[0]
+	jobTimeInCEST := nextInitialJob.ScheduledAtTime() // Returns 10:00 string
+	jobTimeAsTime, _ := time.Parse("15:04", jobTimeInCEST)
+	newTimeAsTime, _ := time.Parse("15:04", insertedTimeStringInCEST)
+	if newTimeAsTime.Before(jobTimeAsTime) {
+		// Newly scheduled job would be up first.
+		// Q: Will it need to be scheduled for today?
+		// (Technically scheduleNextInitialMessage should take care of that case,
+		// but this adds some redundancy
+		nowInUTC := time.Now().UTC()
+		nowInCEST := nowInUTC.In(utils.GetLocalLocation())
+		// Let's add two minutes of leeway, just so we don't accidentally schedule this for tomorrow
+		twoMinutes, _ := time.ParseDuration("2m")
+		soonInCEST := nowInCEST.Add(twoMinutes)
+		soonTimeStringInCEST := soonInCEST.Format("15:04")
+		soonTime, _ := time.Parse("15:04", soonTimeStringInCEST)
+		if newTimeAsTime.After(soonTime) {
+			zap.S().Info("Rescheduling initial menu job during settings change")
+			// This is would be the next job for today,
+			// We need to reschedule
+			globalInitialMessageScheduler.Clear()
+			nowCESTMinute := nowInCEST.Hour()*60 + nowInCEST.Minute()
+			scheduleNextInitialMessage(nowInUTC, nowCESTMinute)
+		}
+	}
+}
+
+/*
+schedules the next initialMessage job based on what is stored in the DB.
+Specifically, this will return the next time during which any user wants to
+receive a mensa menu update which
+- is after nowCESTMinute (hh*60+mm)
+- user wants messages
+- on this weekday
+- and hasn't reported yet
+
+*/
 func scheduleNextInitialMessage(nowInUTC time.Time, nowCESTMinute int) error {
 	cestMinuteForNextJob, err := db_connectors.GetCESTMinuteForNextIntroMessage(nowInUTC, nowCESTMinute)
 	if err != nil {
@@ -52,11 +119,11 @@ func scheduleNextInitialMessage(nowInUTC time.Time, nowCESTMinute int) error {
 	cestMinutesForJob := cestMinuteForNextJob % 60
 	timestampString := fmt.Sprintf("%02d:%02d", cestHoursForJob, cestMinutesForJob)
 
-	schedulerInMensaTimezone := gocron.NewScheduler(utils.GetLocalLocation())
-	schedulerInMensaTimezone.Every(1).Day().At(timestampString).LimitRunsTo(1).Do(initialMessageJob)
+	globalInitialMessageScheduler = gocron.NewScheduler(utils.GetLocalLocation())
+	globalInitialMessageScheduler.Every(1).Day().At(timestampString).LimitRunsTo(1).Do(initialMessageJob)
 	zap.S().Infof("Next initial message scheduled for %s", timestampString)
 
-	schedulerInMensaTimezone.StartAsync()
+	globalInitialMessageScheduler.StartAsync()
 	return nil
 }
 
