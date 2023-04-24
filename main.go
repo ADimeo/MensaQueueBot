@@ -178,6 +178,11 @@ func legacyRequestSwitch(chatID int, sentMessage string, bodyAsStruct *telegram_
 			requestSwitch(chatID, sentMessage, bodyAsStruct)
 			telegram_connector.SendMessage(chatID, "Upgrading your keyboard...", telegram_connector.MainKeyboard)
 		}
+	case sentMessage == "/settings":
+		{
+			zap.S().Infof("Migrating from /settings", chatID)
+			requestSwitch(chatID, "/settings", bodyAsStruct)
+		}
 	default:
 		{
 			zap.S().Infof("Received unknown message in legacy: %s", sentMessage)
