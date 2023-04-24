@@ -61,7 +61,15 @@ func scheduleNextInitialMessage(nowInUTC time.Time, nowCESTMinute int) error {
 }
 
 func sendInitialMessagesThatShouldBeSentAt(nowInUTC time.Time, nowCESTMinute int) error {
-	users, err := db_connectors.GetUsersWithInitialMessageInTimeframe(nowInUTC, globalLastInitialMessageCESTMinute, nowCESTMinute)
+	var openingCESTMinute int
+	if globalLastInitialMessageCESTMinute > nowCESTMinute {
+		// The last message we sent had a timestamp after now, this means it was send on a different day
+		// -> Re-Start the interval at 0
+		openingCESTMinute = 0
+	} else {
+		openingCESTMinute = globalLastInitialMessageCESTMinute
+	}
+	users, err := db_connectors.GetUsersWithInitialMessageInTimeframe(nowInUTC, openingCESTMinute, nowCESTMinute)
 	if err != nil {
 		zap.S().Errorw("Can't get users that want initial message in this timeframe", "window lower bound", globalLastInitialMessageCESTMinute, "window upper bound", nowCESTMinute, "error", err)
 		return err
