@@ -8,6 +8,9 @@ import (
 	"go.uber.org/zap"
 )
 
+/*
+Sends a number of messages explaining how points work, used when requesting points help
+*/
 func SendPointsHelpMessages(chatID int) {
 	var messageArray = [...]string{
 		"If you want to, you can opt in to collect internetpoints for your reports!",
@@ -26,6 +29,10 @@ func SendPointsHelpMessages(chatID int) {
 	}
 }
 
+/*
+Returns a string which says how many points a user has,
+but in pretty words
+*/
 func GetPointsRequestResponseText(chatID int) string {
 	emojiRune := GetRandomAcceptableEmoji()
 	baseMessage := "You have collected %d points%s" + string(emojiRune)

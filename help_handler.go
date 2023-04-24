@@ -9,6 +9,10 @@ import (
 	"go.uber.org/zap"
 )
 
+/*
+SendHelpMessage sends out a number of messages that try to explain what we do. Use for when /help is called
+
+*/
 func SendHelpMessage(chatID int) {
 	var helpMessageArray = [...]string{
 		"Alright, I'll try to give you a detailed overview. Remember, for questions or other uncertainties either talk to @adimeo, or go directly to https://github.com/ADimeo/MensaQueueBot",
@@ -31,15 +35,15 @@ func SendHelpMessage(chatID int) {
 }
 
 /*
-   Returns a slice that contains a number of links to photographs and corresponding messages
-   encoded within a mensaLocation struct.
+GetMensaLocationSlice returns a slice that contains a number of links to photographs and corresponding messages
+encoded within a mensaLocation struct.
 
-   Should be sent together with the texts defined in getWelcomeMessageArray
-   (except for the last queuelength entry "even longer", which doesn't have an image)
-   The specific logic of how these two interact is encoded within sendWelcomeMessage
+Should be sent together with the texts defined in getWelcomeMessageArray
+(except for the last queuelength entry "even longer", which doesn't have an image)
+The specific logic of how these two interact is encoded within sendWelcomeMessage
 
-   The messages defined for these need to be consistent with the keyboard defined in ./keyboard.json, which is used by telegram_connector.go,
-   as well as with the regex REPORT_REGEX that is used to identify the type of inbound messages in reactToRequest
+The messages defined for these need to be consistent with the keyboard defined in ./keyboard.json, which is used by telegram_connector.go,
+as well as with the regex REPORT_REGEX that is used to identify the type of inbound messages in reactToRequest
 
 */
 func GetMensaLocationSlice() *[]mensaLocation {

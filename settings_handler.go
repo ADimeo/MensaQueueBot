@@ -11,11 +11,18 @@ import (
 	"go.uber.org/zap"
 )
 
+/*
+PreferenceSettings corresponds with how the settings html in the static folder
+structures its uploads
+*/
 type PreferenceSettings struct {
 	MensaPreferences db_connectors.MensaPreferenceSettings `json:"mensaPreferences"`
 	Points           bool                                  `json:"points"`
 }
 
+/*
+Deletes the accounts with the given chatID from the DB, and sends a confirmation message
+*/
 func HandleAccountDeletion(chatID int) {
 	err1 := db_connectors.DeleteAllUserPointData(chatID)
 	err2 := db_connectors.DeleteAllUserChangelogData(chatID)
@@ -31,6 +38,9 @@ func HandleAccountDeletion(chatID int) {
 	}
 }
 
+/*
+Adds the given user to the group of AB testers in the DB, and sends a confirmation message
+*/
 func HandleABTestJoining(chatID int) {
 	err := db_connectors.MakeUserABTester(chatID, true)
 	ABTestHandler(chatID)
@@ -66,6 +76,10 @@ func callReschedulerForInitialMensaMessageJob(mensaSettings db_connectors.MensaP
 	}
 }
 
+/*
+Saves the new settings in the DB and sends a confirmation message. May initiate rescheduling
+of inital message mensa job
+*/
 func HandleSettingsChange(chatID int, webAppData telegram_connector.WebhookRequestBodyWebAppData) {
 	typeOfKeyboard := webAppData.ButtonText
 	if typeOfKeyboard == "Change Settings" {
@@ -113,6 +127,10 @@ func changePointSettings(points bool, chatID int) error {
 	return err
 }
 
+/*
+Sends the message the user receives when they request /settings. Includes
+an overview over settings, which makes it slightly fiddly to generate
+*/
 func SendSettingsOverviewMessage(chatID int, endInMainMenu bool) error {
 	baseMessage := `<b>Settings</b>`
 	var lengthReportMessage string
@@ -157,23 +175,23 @@ func buildLengthReportMessage(userPreferences db_connectors.MensaPreferenceSetti
 		numberOfWeekdays := 0
 		if userPreferences.WeekdayBitmap&0b0100000 != 0 {
 			weekdaysString += ", Mondays"
-			numberOfWeekdays += 1
+			numberOfWeekdays++
 		}
 		if userPreferences.WeekdayBitmap&0b0010000 != 0 {
 			weekdaysString += ", Tuesdays"
-			numberOfWeekdays += 1
+			numberOfWeekdays++
 		}
 		if userPreferences.WeekdayBitmap&0b0001000 != 0 {
 			weekdaysString += ", Wednesdays"
-			numberOfWeekdays += 1
+			numberOfWeekdays++
 		}
 		if userPreferences.WeekdayBitmap&0b0000100 != 0 {
 			weekdaysString += ", Thursdays"
-			numberOfWeekdays += 1
+			numberOfWeekdays++
 		}
 		if userPreferences.WeekdayBitmap&0b0000010 != 0 {
 			weekdaysString += ", Fridays"
-			numberOfWeekdays += 1
+			numberOfWeekdays++
 		}
 		weekdaysString = weekdaysString[2:]
 		if numberOfWeekdays == 1 {
@@ -201,7 +219,6 @@ func buildPointsReportMessage(chatID int) string {
 func buildABTesterMessage(chatID int) string {
 	if db_connectors.GetIsUserABTester(chatID) {
 		return "You are currently opted in to test new features"
-	} else {
-		return "You are currently not a beta tester"
 	}
+	return "You are currently not a beta tester"
 }

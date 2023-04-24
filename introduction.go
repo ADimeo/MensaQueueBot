@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Used by SendTopViewOfMensa, static file link
 const TOP_VIEW_URL = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
 
 /*
@@ -31,8 +32,10 @@ func getWelcomeMessageArray() [5]string {
 	return messageArray
 }
 
+/*
+SendTopViewOfMensa sends a single message which contains a top down view of the mensa
+*/
 func SendTopViewOfMensa(chatID int) error {
-	const linkToTopView = "https://raw.githubusercontent.com/ADimeo/MensaQueueBot/master/queue_length_illustrations/top_view.jpg"
 	const topViewText = "I'm an artist"
 	keyboardIdentifier := telegram_connector.GetIdentifierViaRequestType(telegram_connector.IMAGE_REQUEST, chatID)
 	err := telegram_connector.SendStaticWebPhoto(chatID, TOP_VIEW_URL, topViewText, keyboardIdentifier)
@@ -40,8 +43,8 @@ func SendTopViewOfMensa(chatID int) error {
 }
 
 /*
-   Sends a number of messages to the specified user, explaining the base concept and instructing them on how to act
-   Tightly coupled with getWelcomeMessageArray and GetMensaLocationSlice
+SendWelcomeMessage sends a number of messages to the specified user, explaining the base concept and instructing them on how to act
+Tightly coupled with getWelcomeMessageArray and GetMensaLocationSlice
 */
 func SendWelcomeMessage(chatID int) {
 	messageArray := getWelcomeMessageArray()

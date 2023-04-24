@@ -50,16 +50,16 @@ func GetRandomAcceptableEmoji() rune {
 	dateToday := timestampNow.YearDay()
 	if globalEmojiOfTheDay.Emoji == 0 || dateToday != globalEmojiOfTheDay.Timestamp.YearDay() {
 		// Regenerate
-		emoji_filepath := "./emoji_list"
-		emojiFile, err := os.Open(emoji_filepath)
+		emojiFilepath := "./emoji_list"
+		emojiFile, err := os.Open(emojiFilepath)
 		if err != nil {
-			zap.S().Errorf("Can't access emoji file at", emoji_filepath)
+			zap.S().Errorf("Can't access emoji file at", emojiFilepath)
 		}
 		defer emojiFile.Close()
 
 		emojiAsBytes, err := ioutil.ReadAll(emojiFile)
 		if err != nil {
-			zap.S().Errorf("Can't access emoji file at", emoji_filepath)
+			zap.S().Errorf("Can't access emoji file at", emojiFilepath)
 		}
 
 		emojiRunesSlice := []rune(string(emojiAsBytes))
@@ -362,8 +362,8 @@ func runEnvironmentTests() {
 }
 
 func initDatabases() {
-	db_handle := db_connectors.GetDBHandle()
-	driver, err := sqlite3.WithInstance(db_handle, &sqlite3.Config{})
+	dbHandle := db_connectors.GetDBHandle()
+	driver, err := sqlite3.WithInstance(dbHandle, &sqlite3.Config{})
 	if err != nil {
 		zap.S().Panic("Can't get DB driver for migrations:", err)
 	}
@@ -407,9 +407,9 @@ func main() {
 	// it's wihtin our docker network, and assigning static IP addresses
 	// to containers [may not be recommended](https://stackoverflow.com/questions/39493490/provide-static-ip-to-docker-containers-via-docker-compose)
 
-	personalUrlPath := "/" + personalToken + "/"
-	zap.S().Infof("Sub-URL is %s", personalUrlPath)
+	personalURLPath := "/" + personalToken + "/"
+	zap.S().Infof("Sub-URL is %s", personalURLPath)
 
-	r.POST(personalUrlPath, reactToRequest)
+	r.POST(personalURLPath, reactToRequest)
 	r.Run()
 }

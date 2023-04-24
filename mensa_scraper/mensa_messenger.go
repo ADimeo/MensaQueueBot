@@ -19,6 +19,16 @@ var globalLastInitialMessageCESTMinute int
 // Gets overridden regularly
 var globalInitialMessageScheduler *gocron.Scheduler
 
+/*
+Responsible for initialising first of two regular jobs.
+"DailyInitialMessageJob" sends the initial message to users,
+which is to say the message a user receives when their window of interest
+for mensa menus opens (sent at 09:00 if user wants info from 09:00 to 10:00).
+
+This task schedules itself hop-to-hop, so on each execution it queries the DB
+for when it should next run, and schedules a new task for that point in time.
+
+*/
 func ScheduleDailyInitialMessageJob() {
 	nowInUTC := time.Now().UTC()
 	nowInLocal := nowInUTC.In(utils.GetLocalLocation())
@@ -100,7 +110,7 @@ func RescheduleNextInitialMessageJobIfNeeded(insertedTimeStringInCEST string) {
 }
 
 /*
-schedules the next initialMessage job based on what is stored in the DB.
+scheduleNextInitialMessage schedules the next initialMessage job based on what is stored in the DB.
 Specifically, this will return the next time during which any user wants to
 receive a mensa menu update which
 - is after nowCESTMinute (hh*60+mm)
@@ -145,6 +155,12 @@ func sendInitialMessagesThatShouldBeSentAt(nowInUTC time.Time, nowCESTMinute int
 	return sendLatestMenuToUsers(users)
 }
 
+/*
+SendLatestMenuToUsersCurrentlyListening gets a list of all users which want to be advised about a mensa change right now,
+and sends them a message of the current menu.
+Via the queries this calls it keeps in mind additional requirements (weekday, send at all flag),
+previously reported on this date)
+*/
 func SendLatestMenuToUsersCurrentlyListening() error {
 	// Called by menu scraper
 	nowInUTC := time.Now().UTC()
@@ -155,6 +171,10 @@ func SendLatestMenuToUsersCurrentlyListening() error {
 	return sendLatestMenuToUsers(idsOfInterestedUsers)
 }
 
+/*
+SendLatestMenuToSingleUser sends tha most recently added menu to the given user
+
+*/
 func SendLatestMenuToSingleUser(userID int) error {
 	sliceOfUserID := []int{userID}
 
