@@ -1,6 +1,6 @@
 # Mensa Queue Bot
 
-This is a telegram bot written in go that allows you to record the current length of the Griebnitzsee mensa queue.
+This is a telegram bot written in go that allows you to record and receive the current length of the Griebnitzsee mensa queue, as well as see the menus currently on offer.
 
 > Oh shit. Oh shit. Oh shit.
 >
@@ -14,6 +14,9 @@ This is a telegram bot written in go that allows you to record the current lengt
         - Users can collect internetpoints for their reports
 - Allows users to request the current queue length
     - Reports to users are graphic, and contain both historical and current data
+- Allows users to receive the mensa menu currently on offer
+    - Both via request and push
+    - Includes settings, including weekday and timeslot selection
 - Allows to define messages that should be sent to users the next time they interact with the bot
     - In praxis, this is mostly used for changelogs
     - To define a new message to be sent, edit `changelog.psv`
@@ -22,35 +25,30 @@ This is a telegram bot written in go that allows you to record the current lengt
 
 
 
-## Structure
+## Repo Structure
+This repo is at the point where starting to work on features requires institutional knowledge that is currently not explicitly documented. In general it is well structured, but not all code is documented as thoroughly as it could be. If you want to contribute feel free to request a guided tour from a maintainer.
+
+### Folders and modules
+- `analysis` includes python scripts and published queue length data. It is not relevant for bot development
+- `db/migrations` contains just that. We use golang-migrate to apply these
+- `db_connectors` act as "model", and implement all queries against the DB
+- `deployment` contains ansible scripts and server/docker-compose configs used for deployment
+- `mensa_scraper` is a relatively independent module that is responsible for both getting the current mensa menus, storing them in the db using `db_connectors`, and sending them out to users both when menus change and when requested.
 - `queue_length_illustrations` contains images that are sent to bot users to illustrate the different queue lengths
-- `mensa_locations.json` defines the different mensa locations, and should contain direct links to the images within `queue_length_illustrations`. These should also be consistent with the buttons defined in `keyboard.json`
-- `keyboard.json` defines the buttons that are shown to users
-- `emoji_list` contains selective non-aggressive emoji that can be used for whatever
+- `static` contains an html file that is used to modify bot settings. It needs to be hosted somewhere
+- `telegram_connector` is responsible for all interaction with telegram
+- `utils` contains utility functions
+
+### Further files of interest
 - `changelog.psv` is a csv (except with pipes as a separator) that defines messages to be sent to users. Pleaes keep IDs incrementing one by one
+- `mensa_locations` contains links to illustrations, and needs to be consistend with the keyboards defined in `telegram_connector/keyboards`
+- `db_connectors/db_utilities.go` contains the `DB_VERSION` variable, which is used to decide whether migrations should be applied. Only increment it, and keep it consistent with `db/migrations`
 
-
-- `db_utilities.go` implements a number of base functions that can be useful for all db related tasks
-- `db_connector.go` implements database logic related to storing and retrieving actual queue length reports
-- `changelog_db_connector.go` implements database logic related to tracking which users are aware of which changes, and what changelogs should still be sent out
-- `internetpoints_db_connector.go` implements database logic related to users collecting internetpoints
-
-
-- `points_handler.go` handles all requests that relate to point collection, e.g. signup, explanation, and number of points
-- `reports_handler.go` handles all requests that relate to reporting of queue length
-- `requests_handler.go` handles all requests that relate to requesting the queue length
-
-- `telegram_connector.go` implements most of the telegram-interaction related logic
-
-- `storage.go` contains functions that either act as static variables, or have encoded some knowledge that really should be stored somewhere else in a proper program. Basically, a catchall for functions that are hacky
-- `main.go` implements the rest
-
-- `deployment` folder contains
-        - A `Caddyfile` tht defines [web server](https://caddyserver.com/) configuration
-        - A `docker-compose` file that allows for relatively simple deployment of a server + reverse proxy setup
-        - A `deploy-mensa-queue.yaml` file for use with [ansible](https://www.ansible.com/), because I'm supposed to be learning that right now
-        - A `pull_csv.yaml` and `pull_db.yaml` ansible script, which pull only the reports, or the entitre database respectively, from within the remote docker folder ot the local filesystem
-
+### Debug mode
+During development the environment variable `MENSA_QUEUE_BOT_DEBUG_MODE` can be set. If it is set to a telegram user ID that ID will receive debug messages when running `egrap_test.go`. Additionally, if set to any value at all, it will alter behaviour:
+- Mensa length reports will be allowed at all times
+- The mensa scraper will run every minute of every day instead of every 10 minutes while the mensa is open
+- Different default values may be set, e.g. for mensa menu preferences
 
 
 # Development setup
