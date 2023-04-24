@@ -70,7 +70,8 @@ type KeyboardButton struct {
 }
 
 type ReplyKeyboardMarkupStruct struct { // https://core.telegram.org/bots/api/#replykeyboardmarkup
-	Keyboard [][]KeyboardButton `json:"keyboard"`
+	Keyboard       [][]KeyboardButton `json:"keyboard"`
+	ResizeKeyboard bool               `json:"resize_keyboard,omitempty"`
 }
 
 type ReplyKeyboardRemoveStruct struct { // from https://core.telegram.org/bots/api#replykeyboardremove

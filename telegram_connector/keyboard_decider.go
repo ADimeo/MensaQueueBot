@@ -218,7 +218,8 @@ func getReplyKeyboard(jsonPath string) *ReplyKeyboardMarkupStruct {
 	}
 
 	keyboardStruct := ReplyKeyboardMarkupStruct{
-		Keyboard: keyboardArray,
+		Keyboard:       keyboardArray,
+		ResizeKeyboard: true,
 	}
 	return &keyboardStruct
 }
