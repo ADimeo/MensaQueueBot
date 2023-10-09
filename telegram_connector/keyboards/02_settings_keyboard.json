@@ -1,5 +1,5 @@
 [
     [{"text":"General Help"}, {"text":"Points Help"}],
-    [{"text":"Change Settings","web_app":{"url":"https://59b4-190-71-145-195.ngrok.io/settings.html"}}, {"text":"Account Deletion"}],
+    [{"text":"Change Settings","web_app":{"url":"https://files.telegram.dimeo.de/settings.html"}}, {"text":"Account Deletion"}],
     [{"text":"Back"}]
 ]
