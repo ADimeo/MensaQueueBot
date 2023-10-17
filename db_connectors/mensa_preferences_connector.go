@@ -84,7 +84,7 @@ func GetUsersToSendMenuToByTimestamp(nowInUTC time.Time) ([]int, error) {
 		WHERE wantsMensaMessages = 1
 		AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
 		AND ? BETWEEN startTimeInCESTMinutes AND endTimeInCESTMinutes
-		AND ? & weekdayBitmap >= 0;`
+		AND ? & weekdayBitmap > 0;`
 
 	currentDate := nowInUTC.Format("2006-01-02")
 	currentCESTDate := nowInUTC.In(utils.GetLocalLocation())
@@ -126,7 +126,7 @@ func GetCESTMinuteForNextIntroMessage(nowInUTC time.Time, cestMinuteOfLastRun in
 	WHERE startTimeInCESTMinutes > ? 
 	AND wantsMensaMessages = 1
 	AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
-	AND ? & weekdayBitmap >= 0
+	AND ? & weekdayBitmap > 0
 	ORDER BY startTimeInCESTMinutes ASC 
 	LIMIT 1;`
 
@@ -183,7 +183,7 @@ func GetUsersWithInitialMessageInTimeframe(nowInUTC time.Time, lowerBoundCESTMin
 		WHERE wantsMensaMessages = 1
 		AND (lastReportDate IS NULL OR date(lastReportDate) != ?)
 		AND startTimeInCESTMinutes BETWEEN ? + 1 AND ? 
-		AND ? & weekdayBitmap >= 0;`
+		AND ? & weekdayBitmap > 0;`
 
 	currentDate := nowInUTC.Format("2006-01-02")
 	weekdayBitmap := getBitmapForToday(nowInUTC)
